@@ -28,6 +28,7 @@
 			<!--	Overview bar	-->
 			<MediaOverviewBar
 				:detail-mode="false"
+				:all-media-mode="allMediaMode"
 				:library-id="libraryId"
 				:media-type="mediaOverviewStore.mediaType"
 				@action="onAction" />
@@ -142,6 +143,7 @@ const libraryProgress = ref<LibraryProgress | null>(null);
 const props = defineProps<{
 	libraryId: number;
 	mediaType: PlexMediaType;
+	allMediaMode: boolean;
 }>();
 
 const library = computed(() => libraryStore.getLibrary(mediaOverviewStore.libraryId));
@@ -274,7 +276,7 @@ onMounted(() => {
 			size: 0,
 		}).subscribe());
 
-	if (!mediaOverviewStore.allMediaMode) {
+	if (!props.allMediaMode) {
 		useSubscription(
 			signalRStore.getLibraryProgress(mediaOverviewStore.libraryId)
 				.subscribe((data) => {

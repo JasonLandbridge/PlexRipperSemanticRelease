@@ -595,6 +595,22 @@ export interface PlexMediaSlimDTO {
   year: number;
 }
 
+export interface PlexMediaStatisticsDTO {
+  /** @format int32 */
+  episodeCount: number;
+  /** @format int32 */
+  mediaCount: number;
+  mediaList: PlexMediaSlimDTO[];
+  /** @format int64 */
+  mediaSize: number;
+  /** @format int32 */
+  movieCount: number;
+  /** @format int32 */
+  seasonCount: number;
+  /** @format int32 */
+  tvShowCount: number;
+}
+
 export enum PlexMediaType {
   None = "None",
   Movie = "Movie",
@@ -661,7 +677,6 @@ export interface PlexServerDTO {
   publicAddress: string;
   publicAddressMatches: boolean;
   relay: boolean;
-  serverFixApplyDNSFix: boolean;
   synced: boolean;
 }
 
@@ -871,6 +886,15 @@ export interface ResultDTOOfPlexMediaDTO {
   reasons: ReasonDTO[];
   successes: SuccessDTO[];
   value?: PlexMediaDTO | null;
+}
+
+export interface ResultDTOOfPlexMediaStatisticsDTO {
+  errors: ErrorDTO[];
+  isFailed: boolean;
+  isSuccess: boolean;
+  reasons: ReasonDTO[];
+  successes: SuccessDTO[];
+  value?: PlexMediaStatisticsDTO | null;
 }
 
 export interface ResultDTOOfPlexServerConnectionDTO {

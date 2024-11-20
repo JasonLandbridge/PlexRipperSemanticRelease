@@ -1,6 +1,7 @@
 <template>
 	<QPage>
 		<MediaOverview
+			:all-media-mode="false"
 			:library-id="libraryId"
 			:media-type="PlexMediaType.TvShow" />
 	</QPage>

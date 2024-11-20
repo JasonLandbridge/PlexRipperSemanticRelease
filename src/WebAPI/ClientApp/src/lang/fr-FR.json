@@ -259,6 +259,10 @@
         "background-activity-toggle-button": {
             "checking-plex-server-connections": "Vérification des connexions au serveur Plex",
             "no-active-background-activity": "Aucune activité d'arrière-plan active."
+        },
+        "media-overview-bar-header": {
+            "movies-metadata": "{movieCount} Films - {fileSize} ",
+            "tv-shows-metadata": "{tvShowCount} Séries TV - {seasonCount} Saisons - {episodeCount} Épisodes - {fileSize} "
         }
     },
     "confirmation": {

@@ -11,7 +11,7 @@
 
 import type { RequestParams } from "./http-client";
 
-import type { PlexMediaDTO, PlexMediaSlimDTO, PlexMediaType } from "./data-contracts";
+import type { PlexMediaDTO, PlexMediaSlimDTO, PlexMediaStatisticsDTO, PlexMediaType } from "./data-contracts";
 
 import { apiCheckPipe } from "@api/base";
 import Axios from "axios";
@@ -46,14 +46,14 @@ export class PlexMedia {
     params: RequestParams = {},
   ) =>
     from(
-      Axios.request<PlexMediaSlimDTO[]>({
+      Axios.request<PlexMediaStatisticsDTO>({
         url: `/api/PlexMedia`,
         method: "GET",
         params: query,
         format: "json",
         ...params,
       }),
-    ).pipe(apiCheckPipe<PlexMediaSlimDTO[]>);
+    ).pipe(apiCheckPipe<PlexMediaStatisticsDTO>);
 
   /**
  * No description

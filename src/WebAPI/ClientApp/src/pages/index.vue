@@ -2,6 +2,7 @@
 	<QPage>
 		<MediaOverview
 			:library-id="0"
+			all-media-mode
 			:media-type="settingsStore.displaySettings.allOverviewViewMode" />
 	</QPage>
 </template>

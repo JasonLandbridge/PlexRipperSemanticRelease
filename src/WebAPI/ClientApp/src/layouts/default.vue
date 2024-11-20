@@ -68,14 +68,15 @@ function toggleNotificationsDrawer() {
 }
 
 onMounted(() => {
-	if (settingsStore.generalSettings.firstTimeSetup) {
-		dialogStore.openDialog(DialogType.FirstTimeSetupDialog);
-	}
-
 	useSubscription(
 		useGlobalStore().getPageSetupReady.subscribe({
 			next: () => {
 				Log.debug('Loading has finished, displaying page now');
+				setTimeout(() => {
+					if (settingsStore.generalSettings.firstTimeSetup) {
+						dialogStore.openDialog(DialogType.FirstTimeSetupDialog);
+					}
+				}, 1000);
 			},
 			error: (err) => {
 				Log.error('Error while loading page', err);

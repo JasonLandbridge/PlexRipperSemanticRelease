@@ -1,7 +1,7 @@
 import { isEqual, orderBy } from 'lodash-es';
 import { defineStore, acceptHMRUpdate } from 'pinia';
 import { get } from '@vueuse/core';
-import { PlexMediaType, ViewMode, type PlexMediaSlimDTO } from '@dto';
+import { PlexMediaType, ViewMode, type PlexMediaSlimDTO, type PlexMediaStatisticsDTO } from '@dto';
 import type { IMediaOverviewSort } from '@composables/event-bus';
 import type { ISelection } from '@interfaces';
 import { plexLibraryApi, plexMediaApi } from '@api';
@@ -24,6 +24,11 @@ export const useMediaOverviewStore = defineStore('MediaOverviewStore', () => {
 		filterQuery: string;
 		lastMediaItemViewed: PlexMediaSlimDTO | null;
 		loading: boolean;
+		allMovieCount: number;
+		allTvShowCount: number;
+		allSeasonCount: number;
+		allEpisodeCount: number;
+		allFileSize: number;
 	}>({
 		libraryId: 0,
 		items: [],
@@ -38,6 +43,11 @@ export const useMediaOverviewStore = defineStore('MediaOverviewStore', () => {
 		filterQuery: '',
 		lastMediaItemViewed: null,
 		loading: false,
+		allMovieCount: 0,
+		allTvShowCount: 0,
+		allSeasonCount: 0,
+		allEpisodeCount: 0,
+		allFileSize: 0,
 	});
 
 	const settingsStore = useSettingsStore();
@@ -52,9 +62,9 @@ export const useMediaOverviewStore = defineStore('MediaOverviewStore', () => {
 			mediaType: PlexMediaType;
 			page: number;
 			size: number;
-		}): Observable<PlexMediaSlimDTO[]> {
+		}): Observable<PlexMediaStatisticsDTO | null> {
 			if (state.loading) {
-				return of([]);
+				return of(null);
 			}
 			state.loading = true;
 			return iif(
@@ -75,11 +85,11 @@ export const useMediaOverviewStore = defineStore('MediaOverviewStore', () => {
 					}),
 				),
 			).pipe(
-				map((response) => {
-					if (response && response.isSuccess) {
-						return response.value ?? [];
+				map(({ isSuccess, value }): PlexMediaStatisticsDTO | null => {
+					if (isSuccess && value) {
+						return value;
 					}
-					return [];
+					return null;
 				}),
 				tap((data) => {
 					actions.setMedia(data, mediaType);
@@ -87,10 +97,28 @@ export const useMediaOverviewStore = defineStore('MediaOverviewStore', () => {
 				}),
 			);
 		},
-		setMedia(items: PlexMediaSlimDTO[], mediaType: PlexMediaType) {
-			state.items = Object.freeze(items);
-			state.itemsLength = state.items.length;
-			state.mediaType = mediaType;
+		setMedia(data: PlexMediaStatisticsDTO | null, mediaType: PlexMediaType) {
+			if (data) {
+				state.items = Object.freeze(data.mediaList);
+				state.itemsLength = data.mediaCount;
+				state.mediaType = mediaType;
+
+				state.allMovieCount = data.movieCount;
+				state.allTvShowCount = data.tvShowCount;
+				state.allSeasonCount = data.seasonCount;
+				state.allEpisodeCount = data.episodeCount;
+				state.allFileSize = data.mediaSize;
+			} else {
+				state.items = Object.freeze([]);
+				state.itemsLength = 0;
+				state.mediaType = mediaType;
+
+				state.allMovieCount = 0;
+				state.allTvShowCount = 0;
+				state.allSeasonCount = 0;
+				state.allEpisodeCount = 0;
+				state.allFileSize = 0;
+			}
 			state.filterQuery = '';
 		},
 		changeAllMediaOverviewType(mediaType: PlexMediaType) {
