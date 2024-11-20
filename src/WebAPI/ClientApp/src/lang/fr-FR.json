@@ -250,6 +250,10 @@
         },
         "media-options-dialog": {
             "title": "Options de présentation des médias"
+        },
+        "first-time-setup-dialog": {
+            "setup-question": "Il semble que ce soit la première fois que vous utilisez PlexRipper, souhaitez-vous démarrer le processus de configuration ?",
+            "header": "Besoin d’aide pour configurer PlexRipper ?"
         }
     },
     "confirmation": {
@@ -545,9 +549,6 @@
         "error": {
             "header": "Erreur!",
             "return-link": "Retourner à la page d'accueil"
-        },
-        "home": {
-            "setup-question": "Il semble que ce soit la première fois que vous utilisez PlexRipper, souhaitez-vous le configurer ?"
         },
         "music": {
             "music-id": {

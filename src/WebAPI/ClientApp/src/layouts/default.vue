@@ -23,6 +23,7 @@
 			:key="alertItem.id"
 			:alert="alertItem" />
 		<CheckServerConnectionsDialog />
+		<FirstTimeSetupDialog />
 		<!--	Background	-->
 		<Background :hide-background="isEmptyLayout" />
 	</q-layout>
@@ -33,12 +34,22 @@ import Log from 'consola';
 import { useSubscription } from '@vueuse/rxjs';
 import { get, set } from '@vueuse/core';
 import type { IAlert } from '@interfaces';
-import { useHelpStore, useAlertStore, useGlobalStore, useDialogStore, useRoute, nextTick } from '#imports';
+import { DialogType } from '@enums';
+import {
+	useHelpStore,
+	useAlertStore,
+	useGlobalStore,
+	useDialogStore,
+	useSettingsStore,
+	useRoute,
+	nextTick,
+} from '#imports';
 
 const route = useRoute();
 const helpStore = useHelpStore();
 const alertStore = useAlertStore();
 const dialogStore = useDialogStore();
+const settingsStore = useSettingsStore();
 
 const alerts = ref<IAlert[]>([]);
 const showNavigationDrawerState = ref(true);
@@ -57,6 +68,10 @@ function toggleNotificationsDrawer() {
 }
 
 onMounted(() => {
+	if (settingsStore.generalSettings.firstTimeSetup) {
+		dialogStore.openDialog(DialogType.FirstTimeSetupDialog);
+	}
+
 	useSubscription(
 		useGlobalStore().getPageSetupReady.subscribe({
 			next: () => {

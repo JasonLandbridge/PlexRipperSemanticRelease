@@ -250,6 +250,10 @@
         },
         "media-options-dialog": {
             "title": "Medienübersicht Optionen"
+        },
+        "first-time-setup-dialog": {
+            "setup-question": "Es sieht so aus, als ob Sie PlexRipper zum ersten Mal verwenden. Möchten Sie den Einrichtungsvorgang starten?",
+            "header": "Benötigen Sie Hilfe beim Einrichten von PlexRipper?"
         }
     },
     "confirmation": {
@@ -545,9 +549,6 @@
         "error": {
             "header": "Fehler!",
             "return-link": "zurück zur Startseite"
-        },
-        "home": {
-            "setup-question": "Es sieht so aus, als ob Sie PlexRipper zum ersten Mal verwenden. Möchten Sie es einrichten?"
         },
         "music": {
             "music-id": {
