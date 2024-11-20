@@ -235,6 +235,7 @@ function onClose() {
 
 <style lang="scss">
 .layout-container {
+  height: 100%;
   display: grid;
   grid-template-columns: repeat(8, 1fr);
   grid-template-rows: repeat(1, 1fr);
