@@ -5,13 +5,13 @@
 		:options="languageOptions"
 		data-cy="language-selector">
 		<template #selected-item="scope">
-			<q-item :dense="dense">
+			<q-item
+				:dense="dense"
+				class="q-pl-none">
 				<q-item-section avatar>
 					<q-img
+						:ratio="16/9"
 						:src="scope.opt.img"
-						:height="dense ? '30' : '50'"
-						:max-width="80"
-						fit="fill"
 						:alt="scope.opt.text" />
 				</q-item-section>
 				<q-item-section>
@@ -26,10 +26,8 @@
 				:data-cy="`option-${scope.opt.code}`">
 				<q-item-section avatar>
 					<q-img
+						:ratio="16/9"
 						:src="scope.opt.img"
-						:height="dense ? '30' : '50'"
-						:max-width="80"
-						fit="fill"
 						:alt="scope.opt.text" />
 				</q-item-section>
 				<q-item-section>
@@ -49,6 +47,7 @@ interface ILanguageOption extends ILocaleConfig {
 	value: string;
 	img: string;
 }
+
 withDefaults(defineProps<{ dense?: boolean }>(), {
 	dense: false,
 });
