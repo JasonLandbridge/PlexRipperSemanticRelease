@@ -73,7 +73,10 @@
 				<QRow justify="center">
 					<QCol cols="auto">
 						<QAlert type="warning">
-							<template v-if="library?.syncedAt === null">
+							<template v-if="mediaOverviewStore.allMediaMode">
+								{{ $t('components.media-overview.no-media-items-available') }}
+							</template>
+							<template v-else-if="library?.syncedAt === null">
 								{{ $t('components.media-overview.library-not-yet-synced') }}
 							</template>
 							<template v-else-if="!mediaOverviewStore.itemsLength">
