@@ -248,13 +248,15 @@ function onAction(event: IMediaOverviewBarActions) {
 	}
 }
 
-function onOptionsClosed() {
-	useSubscription(
-		mediaOverviewStore.requestMedia({
-			mediaType: props.mediaType,
-			page: 0,
-			size: 0,
-		}).subscribe());
+function onOptionsClosed(hasChanged: boolean) {
+	if (hasChanged) {
+		useSubscription(
+			mediaOverviewStore.requestMedia({
+				mediaType: props.mediaType,
+				page: 0,
+				size: 0,
+			}).subscribe());
+	}
 }
 
 onMounted(() => {
