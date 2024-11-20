@@ -255,6 +255,10 @@
         "first-time-setup-dialog": {
             "setup-question": "Il semble que ce soit la première fois que vous utilisez PlexRipper, souhaitez-vous démarrer le processus de configuration ?",
             "header": "Besoin d’aide pour configurer PlexRipper ?"
+        },
+        "background-activity-toggle-button": {
+            "checking-plex-server-connections": "Vérification des connexions au serveur Plex",
+            "no-active-background-activity": "Aucune activité d'arrière-plan active."
         }
     },
     "confirmation": {

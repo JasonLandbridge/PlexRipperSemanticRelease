@@ -58,13 +58,13 @@
 import { get, set } from '@vueuse/core';
 import { JobStatus, JobTypes } from '@dto';
 import { useSubscription } from '@vueuse/rxjs';
-import { useBackgroundJobsStore, useDialogStore } from '@store';
+import { useBackgroundJobsStore, useDialogStore, useI18n } from '#imports';
 
 const size = 32;
 
+const { t } = useI18n();
 const backgroundJobStore = useBackgroundJobsStore();
 const dialogStore = useDialogStore();
-
 const checkPlexServerConnections = ref<Record<string, number[]>>({});
 
 const loading = computed(() => get(checkPlexServerConnections) && Object.keys(get(checkPlexServerConnections)).length > 0);
@@ -83,15 +83,23 @@ const menuItems = computed(() => {
 		label: string;
 		icon: string;
 		cy: string;
-		action: () => void;
+		action?: () => void;
 	}[] = [];
 
 	if (get(checkPlexServerConnections) && Object.keys(get(checkPlexServerConnections)).length > 0) {
 		items.push({
-			label: 'Checking Plex server connections',
+			label: t('components.background-activity-toggle-button.checking-plex-server-connections'),
 			icon: 'mdi-server-network',
 			cy: JobTypes.CheckAllConnectionsStatusByPlexServerJob + 'activity-button',
 			action: () => dialogStore.openCheckServerConnectionsDialog({ plexServersWithConnectionIds: get(checkPlexServerConnections) }),
+		});
+	}
+
+	if (items.length === 0) {
+		items.push({
+			label: t('components.background-activity-toggle-button.no-active-background-activity'),
+			icon: 'mdi-server-network',
+			cy: 'no-background-activity-button',
 		});
 	}
 
