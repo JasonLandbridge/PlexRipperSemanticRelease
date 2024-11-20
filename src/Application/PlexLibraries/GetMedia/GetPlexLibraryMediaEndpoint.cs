@@ -31,7 +31,7 @@ public class GetPlexLibraryMediaEndpointRequestValidator : Validator<GetPlexLibr
     }
 }
 
-public class GetPlexLibraryMediaEndpoint : BaseEndpoint<GetPlexLibraryMediaEndpointRequest, List<PlexMediaSlimDTO>>
+public class GetPlexLibraryMediaEndpoint : BaseEndpoint<GetPlexLibraryMediaEndpointRequest, PlexMediaStatisticsDTO>
 {
     private readonly IPlexRipperDbContext _dbContext;
 
@@ -47,7 +47,7 @@ public class GetPlexLibraryMediaEndpoint : BaseEndpoint<GetPlexLibraryMediaEndpo
         Get(EndpointPath);
         AllowAnonymous();
         Description(x =>
-            x.Produces(StatusCodes.Status200OK, typeof(ResultDTO<List<PlexMediaSlimDTO>>))
+            x.Produces(StatusCodes.Status200OK, typeof(ResultDTO<PlexMediaStatisticsDTO>))
                 .Produces(StatusCodes.Status400BadRequest, typeof(ResultDTO))
                 .Produces(StatusCodes.Status404NotFound, typeof(ResultDTO))
                 .Produces(StatusCodes.Status500InternalServerError, typeof(ResultDTO))
@@ -83,7 +83,7 @@ public class GetPlexLibraryMediaEndpoint : BaseEndpoint<GetPlexLibraryMediaEndpo
         if (plexServerConnection.IsFailed)
             plexServerConnection.ToResult().LogError();
 
-        var result = await _dbContext.GetMediaByType(
+        var mediaListResult = await _dbContext.GetMediaByType(
             mediaType: plexLibrary.Type,
             skip: skip,
             take: take,
@@ -93,6 +93,12 @@ public class GetPlexLibraryMediaEndpoint : BaseEndpoint<GetPlexLibraryMediaEndpo
             ct: ct
         );
 
-        await SendFluentResult(result, ct);
+        if (mediaListResult.IsFailed)
+        {
+            await SendFluentResult(mediaListResult, ct);
+            return;
+        }
+
+        await SendFluentResult(Result.Ok(mediaListResult.Value.ToStatisticsDTO()), ct);
     }
 }
