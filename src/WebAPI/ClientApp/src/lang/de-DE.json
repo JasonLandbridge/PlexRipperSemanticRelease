@@ -164,7 +164,8 @@
                 "media-size": "Größe",
                 "added-at": "Hinzugefügt am",
                 "updated-at": "Aktualisiert am",
-                "actions": "Aktionen"
+                "actions": "Aktionen",
+                "quality": "Qualität"
             }
         },
         "server-download-status": {

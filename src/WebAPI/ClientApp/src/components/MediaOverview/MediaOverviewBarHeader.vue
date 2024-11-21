@@ -2,7 +2,7 @@
 	<q-list class="no-background">
 		<q-item
 			v-ripple
-			clickable>
+			:clickable="allMediaMode">
 			<q-item-section avatar>
 				<QMediaTypeIcon
 					:media-type="mediaType"

@@ -164,7 +164,8 @@
                 "media-size": "Size",
                 "added-at": "Added At",
                 "updated-at": "Updated At",
-                "actions": "Actions"
+                "actions": "Actions",
+                "quality": "Quality"
             }
         },
         "server-download-status": {
