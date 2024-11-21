@@ -140,11 +140,13 @@ const isRefreshing = ref(false);
 
 const libraryProgress = ref<LibraryProgress | null>(null);
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	libraryId: number;
 	mediaType: PlexMediaType;
-	allMediaMode: boolean;
-}>();
+	allMediaMode?: boolean;
+}>(), {
+	allMediaMode: false,
+});
 
 const library = computed(() => libraryStore.getLibrary(mediaOverviewStore.libraryId));
 
