@@ -3,6 +3,7 @@ namespace Application.Contracts;
 public class PlexMediaStatisticsDTO
 {
     public required int MediaCount { get; set; }
+
     public required int MovieCount { get; set; }
 
     public required int TvShowCount { get; set; }

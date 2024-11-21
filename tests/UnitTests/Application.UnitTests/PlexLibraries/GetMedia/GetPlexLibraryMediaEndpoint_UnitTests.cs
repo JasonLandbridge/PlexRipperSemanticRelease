@@ -42,15 +42,19 @@ public class GetPlexLibraryMediaEndpoint_UnitTests : BaseUnitTest<GetPlexLibrary
 
         // Act
         await ep.HandleAsync(request, default);
-        var result = ep.Response as ResultDTO<List<PlexMediaSlimDTO>>;
+        var result = ep.Response as ResultDTO<PlexMediaStatisticsDTO>;
 
         // Assert
         result.ShouldNotBeNull();
         result.Value.ShouldNotBeNull();
-        result.Value.Count.ShouldBe(movieCount);
-        foreach (var plexMediaSlimDto in result.Value)
+        result.Value.MovieCount.ShouldBe(movieCount);
+        result.Value.TvShowCount.ShouldBe(0);
+        result.Value.SeasonCount.ShouldBe(0);
+        result.Value.EpisodeCount.ShouldBe(0);
+        result.Value.MediaCount.ShouldBe(result.Value.MediaList.Count);
+        foreach (var mediaSlimDTO in result.Value.MediaList)
         {
-            var validationResult = await PlexMediaSlimDtoValidator.ValidateAsync(plexMediaSlimDto);
+            var validationResult = await PlexMediaSlimDtoValidator.ValidateAsync(mediaSlimDTO);
             validationResult.Errors.ShouldBeEmpty();
         }
     }
@@ -85,13 +89,18 @@ public class GetPlexLibraryMediaEndpoint_UnitTests : BaseUnitTest<GetPlexLibrary
 
         // Act
         await ep.HandleAsync(request, default);
-        var result = ep.Response as ResultDTO<List<PlexMediaSlimDTO>>;
+        var result = ep.Response as ResultDTO<PlexMediaStatisticsDTO>;
 
         // Assert
         result.ShouldNotBeNull();
         result.Value.ShouldNotBeNull();
-        result.Value.Count.ShouldBe(100);
-        foreach (var plexMediaSlimDto in result.Value)
+        result.Value.MovieCount.ShouldBe(0);
+        result.Value.TvShowCount.ShouldBe(100);
+        result.Value.SeasonCount.ShouldBe(100 * 3);
+        result.Value.EpisodeCount.ShouldBe(100 * 3 * 5);
+        result.Value.MediaCount.ShouldBe(result.Value.MediaList.Count);
+
+        foreach (var plexMediaSlimDto in result.Value.MediaList)
         {
             var validationResult = await PlexMediaSlimDtoValidator.ValidateAsync(plexMediaSlimDto);
             validationResult.Errors.ShouldBeEmpty();
