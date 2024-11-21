@@ -130,6 +130,7 @@ public static partial class FakeData
             .UseSeed(seed.Next())
             .ApplyBasePlexMedia(seed, options)
             .RuleFor(x => x.Seasons, _ => GetPlexTvShowSeason(seed, options).Generate(config.TvShowSeasonCount))
+            .RuleFor(x => x.ChildCount, _ => config.TvShowSeasonCount)
             .RuleFor(x => x.GrandChildCount, _ => config.TvShowSeasonCount * config.TvShowEpisodeCount)
             .FinishWith(
                 (_, tvShow) =>

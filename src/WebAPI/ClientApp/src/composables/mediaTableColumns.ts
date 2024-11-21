@@ -4,7 +4,7 @@ import { useI18n } from '#build/imports';
 export const getMediaTableColumns = (): QTreeViewTableHeader[] => {
 	const { t } = useI18n();
 
-	return	[
+	return [
 		{
 			label: t('components.media-list.columns.index'),
 			field: 'sortIndex',
@@ -22,6 +22,12 @@ export const getMediaTableColumns = (): QTreeViewTableHeader[] => {
 			sortOrder: 'asc',
 			sortable: true,
 			required: true,
+		},
+		{
+			label: t('components.media-list.columns.quality'),
+			field: 'quality',
+			align: 'center',
+			sortable: false,
 		},
 		{
 			label: t('components.media-list.columns.year'),

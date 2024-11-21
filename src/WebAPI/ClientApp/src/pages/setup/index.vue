@@ -58,110 +58,113 @@
 									transition-prev="slide-down">
 									<!-- Introduction	-->
 									<q-tab-panel :name="1">
-										<QRow no-gutters>
-											<QCol>
+										<QSection>
+											<template #header>
 												<QText
 													size="h4"
 													align="center">
-													{{ t('pages.setup.intro.title') }}
+													{{ $t('pages.setup.intro.title') }}
 												</QText>
-												<p>{{ t('pages.setup.intro.text.p-1') }}</p>
+											</template>
+											<div class="q-pa-md">
+												<p>{{ $t('pages.setup.intro.text.p-1') }}</p>
 												<ul>
 													<li>
-														{{ t('pages.setup.intro.list.item-1') }}
+														{{ $t('pages.setup.intro.list.item-1') }}
 														<ExternalLinkButton
 															href="https://github.com/PlexRipper/PlexRipper/issues" />
 													</li>
-													<li>{{ t('pages.setup.intro.list.item-2') }}</li>
-													<li>{{ t('pages.setup.intro.list.item-3') }}</li>
-													<li>{{ t('pages.setup.intro.list.item-4') }}</li>
-													<li>{{ t('pages.setup.intro.list.item-5') }}</li>
+													<li>{{ $t('pages.setup.intro.list.item-2') }}</li>
+													<li>{{ $t('pages.setup.intro.list.item-3') }}</li>
+													<li>{{ $t('pages.setup.intro.list.item-4') }}</li>
+													<li>{{ $t('pages.setup.intro.list.item-5') }}</li>
 												</ul>
-											</QCol>
-										</QRow>
+											</div>
+										</QSection>
 									</q-tab-panel>
 									<!-- Future plans!	-->
 									<q-tab-panel :name="2">
-										<QRow no-gutters>
-											<QCol>
+										<QSection>
+											<template #header>
 												<QText
 													size="h4"
 													align="center"
-													class="mt-2">
-													{{ t('pages.setup.future-plans.title') }}
-												</QText>
-											</QCol>
-										</QRow>
-										<QRow no-gutters>
-											<QCol>
-												<p>{{ t('pages.setup.future-plans.text.p-1') }}</p>
+													class="mt-2"
+													:value="$t('pages.setup.future-plans.title')" />
+											</template>
+											<div class="q-pa-md">
+												<p>{{ $t('pages.setup.future-plans.text.p-1') }}</p>
 												<ul>
 													<li>
-														{{ t('pages.setup.future-plans.list.item-1') }}
+														{{ $t('pages.setup.future-plans.list.item-1') }}
 														<ul>
 															<li>
-																{{ t('pages.setup.future-plans.list.item-1-1') }}
+																{{ $t('pages.setup.future-plans.list.item-1-1') }}
 															</li>
 														</ul>
 													</li>
-													<li>{{ t('pages.setup.future-plans.list.item-2') }}</li>
-													<li>{{ t('pages.setup.future-plans.list.item-3') }}</li>
-													<li>{{ t('pages.setup.future-plans.list.item-4') }}</li>
+													<li>{{ $t('pages.setup.future-plans.list.item-2') }}</li>
+													<li>{{ $t('pages.setup.future-plans.list.item-3') }}</li>
+													<li>{{ $t('pages.setup.future-plans.list.item-4') }}</li>
 													<li>
-														{{ t('pages.setup.future-plans.list.item-6') }}
+														{{ $t('pages.setup.future-plans.list.item-6') }}
 														<ul>
 															<li>
-																{{ t('pages.setup.future-plans.list.item-6-1') }}
+																{{ $t('pages.setup.future-plans.list.item-6-1') }}
 															</li>
 														</ul>
 													</li>
 												</ul>
 												<QText
 													size="h4"
-													align="center">
-													{{ t('pages.setup.future-plans.text.p-2') }}
-												</QText>
-											</QCol>
-										</QRow>
+													align="center"
+													:value="$t('pages.setup.future-plans.text.p-2')" />
+											</div>
+										</QSection>
 									</q-tab-panel>
 									<!-- Checking paths	-->
 									<q-tab-panel :name="3">
-										<QText
-											size="h4"
-											align="center">
-											{{ t('pages.setup.paths.title') }}
-										</QText>
-										<QRow no-gutters>
-											<QCol align-self="stretch">
+										<QSection>
+											<template #header>
+												<QText
+													size="h4"
+													align="center">
+													{{ $t('pages.setup.paths.title') }}
+												</QText>
+											</template>
+											<div class="q-pa-md">
 												<FolderPathsOverview only-defaults />
-											</QCol>
-										</QRow>
+											</div>
+										</QSection>
 									</q-tab-panel>
 									<!-- Plex Accounts	-->
 									<q-tab-panel :name="4">
-										<QText
-											size="h4"
-											align="center"
-											class="mt-2">
-											{{ t('pages.setup.accounts.title') }}
-										</QText>
-										<AccountOverview />
-									</q-tab-panel>
-									<!-- Finished	-->
-									<q-tab-panel :name="5">
-										<QRow no-gutters>
-											<QCol>
+										<QSection>
+											<template #header>
 												<QText
 													size="h4"
 													align="center"
 													class="mt-2">
-													{{ t('pages.setup.finished.title') }}
+													{{ $t('pages.setup.accounts.title') }}
 												</QText>
-											</QCol>
-										</QRow>
-										<QRow no-gutters>
-											<QCol>
-												<p>{{ t('pages.setup.finished.text.p-1') }}</p>
+											</template>
+											<div class="q-pa-md">
+												<AccountOverview />
+											</div>
+										</QSection>
+									</q-tab-panel>
+									<!-- Finished	-->
+									<q-tab-panel :name="5">
+										<QSection>
+											<template #header>
+												<QText
+													size="h4"
+													align="center"
+													class="mt-2"
+													:value="$t('pages.setup.finished.title')" />
+											</template>
+											<div class="q-pa-md">
+												<p>{{ $t('pages.setup.finished.text.p-1') }}</p>
 												<q-list
 													class="no-background"
 													dense>
@@ -184,8 +187,8 @@
 														</q-item-section>
 													</q-item>
 												</q-list>
-											</QCol>
-										</QRow>
+											</div>
+										</QSection>
 									</q-tab-panel>
 								</q-tab-panels>
 							</QCol>
@@ -265,6 +268,7 @@
 <script lang="ts" setup>
 import Log from 'consola';
 import { DialogType } from '@enums';
+import QSection from '@components/Common/QSection.vue';
 import { useSettingsStore, useDialogStore, useRouter, useI18n } from '#imports';
 
 const { t } = useI18n();

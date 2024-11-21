@@ -75,7 +75,8 @@
             "no-data": "Die Bibliothek wurde synchronisiert, enthält aber keine Medien.",
             "library-not-yet-synced": "Die Mediendaten der Bibliothek wurden noch nicht synchronisiert. Bitte warten Sie oder aktualisieren Sie jetzt.",
             "steps-remaining": "Schritt {index} von {total}:",
-            "no-search-results": "Es wurden keine Medien gefunden, die \"{query}\" enthalten."
+            "no-search-results": "Es wurden keine Medien gefunden, die \"{query}\" enthalten.",
+            "no-media-items-available": "Keine Medienelemente gefunden!"
         },
         "navigation-drawer": {
             "accounts": "Konten",
@@ -163,7 +164,8 @@
                 "media-size": "Größe",
                 "added-at": "Hinzugefügt am",
                 "updated-at": "Aktualisiert am",
-                "actions": "Aktionen"
+                "actions": "Aktionen",
+                "quality": "Qualität"
             }
         },
         "server-download-status": {
@@ -250,6 +252,18 @@
         },
         "media-options-dialog": {
             "title": "Medienübersicht Optionen"
+        },
+        "first-time-setup-dialog": {
+            "setup-question": "Es sieht so aus, als ob Sie PlexRipper zum ersten Mal verwenden. Möchten Sie den Einrichtungsvorgang starten?",
+            "header": "Benötigen Sie Hilfe beim Einrichten von PlexRipper?"
+        },
+        "background-activity-toggle-button": {
+            "checking-plex-server-connections": "Überprüfen der Plex-Serververbindungen",
+            "no-active-background-activity": "Keine aktiven Hintergrundaktivitäten."
+        },
+        "media-overview-bar-header": {
+            "movies-metadata": "{movieCount} Filme - {fileSize} ",
+            "tv-shows-metadata": "{tvShowCount} TV-Sendungen - {seasonCount} Staffeln - {episodeCount} Folgen - {fileSize} "
         }
     },
     "confirmation": {
@@ -545,9 +559,6 @@
         "error": {
             "header": "Fehler!",
             "return-link": "zurück zur Startseite"
-        },
-        "home": {
-            "setup-question": "Es sieht so aus, als ob Sie PlexRipper zum ersten Mal verwenden. Möchten Sie es einrichten?"
         },
         "music": {
             "music-id": {

@@ -819,6 +819,57 @@
 								</children>
 							</folder_node>
 							<folder_node>
+								<name>background-activity-toggle-button</name>
+								<children>
+									<concept_node>
+										<name>checking-plex-server-connections</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>no-active-background-activity</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+								</children>
+							</folder_node>
+							<folder_node>
 								<name>check-server-connections-dialog</name>
 								<children>
 									<concept_node>
@@ -1840,6 +1891,57 @@
 								</children>
 							</folder_node>
 							<folder_node>
+								<name>first-time-setup-dialog</name>
+								<children>
+									<concept_node>
+										<name>header</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>setup-question</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+								</children>
+							</folder_node>
+							<folder_node>
 								<name>folder-paths-overview</name>
 								<children>
 									<folder_node>
@@ -2074,6 +2176,29 @@
 											</concept_node>
 											<concept_node>
 												<name>media-size</name>
+												<description/>
+												<comment/>
+												<translations>
+													<translation>
+														<language>de-DE</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>en-US</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>fr-FR</language>
+														<approved>false</approved>
+													</translation>
+													<translation>
+														<language>pl-PL</language>
+														<approved>false</approved>
+													</translation>
+												</translations>
+											</concept_node>
+											<concept_node>
+												<name>quality</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -2361,6 +2486,29 @@
 										</translations>
 									</concept_node>
 									<concept_node>
+										<name>no-media-items-available</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
 										<name>no-search-results</name>
 										<description/>
 										<comment/>
@@ -2462,6 +2610,57 @@
 											</concept_node>
 										</children>
 									</folder_node>
+								</children>
+							</folder_node>
+							<folder_node>
+								<name>media-overview-bar-header</name>
+								<children>
+									<concept_node>
+										<name>movies-metadata</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
+									<concept_node>
+										<name>tv-shows-metadata</name>
+										<description/>
+										<comment/>
+										<translations>
+											<translation>
+												<language>de-DE</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>en-US</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>fr-FR</language>
+												<approved>false</approved>
+											</translation>
+											<translation>
+												<language>pl-PL</language>
+												<approved>false</approved>
+											</translation>
+										</translations>
+									</concept_node>
 								</children>
 							</folder_node>
 							<folder_node>
@@ -8587,34 +8786,6 @@
 									</concept_node>
 									<concept_node>
 										<name>return-link</name>
-										<description/>
-										<comment/>
-										<translations>
-											<translation>
-												<language>de-DE</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>en-US</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>fr-FR</language>
-												<approved>false</approved>
-											</translation>
-											<translation>
-												<language>pl-PL</language>
-												<approved>false</approved>
-											</translation>
-										</translations>
-									</concept_node>
-								</children>
-							</folder_node>
-							<folder_node>
-								<name>home</name>
-								<children>
-									<concept_node>
-										<name>setup-question</name>
 										<description/>
 										<comment/>
 										<translations>

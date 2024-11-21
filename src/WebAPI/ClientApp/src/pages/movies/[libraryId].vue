@@ -1,6 +1,7 @@
 <template>
 	<QPage>
 		<MediaOverview
+
 			:library-id="libraryId"
 			:media-type="PlexMediaType.Movie" />
 	</QPage>

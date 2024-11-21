@@ -4,7 +4,9 @@
 		style="width: 100%">
 		<QCol cols="12">
 			<!-- Header	-->
-			<QRow no-gutters>
+			<QRow
+				v-if="$slots['header']"
+				no-gutters>
 				<QCol>
 					<QText
 						size="h5"
@@ -21,5 +23,3 @@
 		</QCol>
 	</QRow>
 </template>
-
-<script setup lang="ts"></script>

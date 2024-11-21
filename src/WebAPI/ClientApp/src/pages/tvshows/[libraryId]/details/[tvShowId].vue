@@ -5,7 +5,8 @@
 			<MediaOverviewBar
 				:media-type="mediaItemDetail.type"
 				:library-id="libraryId"
-				:detail-mode="true"
+				:media-detail-item="mediaItemDetail"
+				detail-mode
 				@action="onAction" />
 			<QScroll class="page-content-minus-media-overview-bar">
 				<!--	Header	-->

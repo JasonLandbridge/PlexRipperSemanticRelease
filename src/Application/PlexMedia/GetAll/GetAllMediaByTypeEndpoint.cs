@@ -38,7 +38,7 @@ public class GetAllMediaByTypeRequestValidator : Validator<GetAllMediaByTypeRequ
     }
 }
 
-public class GetAllMediaByTypeEndpoint : BaseEndpoint<GetAllMediaByTypeRequest, List<PlexMediaSlimDTO>>
+public class GetAllMediaByTypeEndpoint : BaseEndpoint<GetAllMediaByTypeRequest, PlexMediaStatisticsDTO>
 {
     private readonly IPlexRipperDbContext _dbContext;
 
@@ -54,7 +54,7 @@ public class GetAllMediaByTypeEndpoint : BaseEndpoint<GetAllMediaByTypeRequest, 
         Get(EndpointPath);
         AllowAnonymous();
         Description(x =>
-            x.Produces(StatusCodes.Status200OK, typeof(ResultDTO<List<PlexMediaSlimDTO>>))
+            x.Produces(StatusCodes.Status200OK, typeof(ResultDTO<PlexMediaStatisticsDTO>))
                 .Produces(StatusCodes.Status400BadRequest, typeof(ResultDTO))
                 .Produces(StatusCodes.Status500InternalServerError, typeof(ResultDTO))
         );
@@ -66,7 +66,7 @@ public class GetAllMediaByTypeEndpoint : BaseEndpoint<GetAllMediaByTypeRequest, 
         var take = req.Size <= 0 ? 0 : req.Size;
         var skip = req.Page * req.Size;
 
-        var entitiesResult = await _dbContext.GetMediaByType(
+        var mediaListResult = await _dbContext.GetMediaByType(
             mediaType: req.MediaType,
             skip: skip,
             take: take,
@@ -76,6 +76,12 @@ public class GetAllMediaByTypeEndpoint : BaseEndpoint<GetAllMediaByTypeRequest, 
             ct: ct
         );
 
-        await SendFluentResult(entitiesResult, ct);
+        if (mediaListResult.IsFailed)
+        {
+            await SendFluentResult(mediaListResult, ct);
+            return;
+        }
+
+        await SendFluentResult(Result.Ok(mediaListResult.Value.ToStatisticsDTO()), ct);
     }
 }

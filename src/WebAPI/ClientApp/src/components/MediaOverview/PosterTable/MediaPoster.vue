@@ -7,18 +7,10 @@
 				overlay
 				actions
 				@action="onAction" />
-			<!--	Poster bar	-->
-			<div
-				v-if="qualities.length"
-				class="media-poster-quality-bar">
-				<q-chip
-					v-for="(quality, j) in qualities"
-					:key="j"
-					:color="getQualityColor(quality.quality)"
-					size="md">
-					{{ quality.displayQuality }}
-				</q-chip>
-			</div>
+			<!--	Quality bar	-->
+			<MediaQuality
+				class="media-poster-quality-bar"
+				:qualities="mediaItem.qualities" />
 		</q-card-section>
 		<QLoadingOverlay :loading="loading" />
 	</q-card>
@@ -43,27 +35,6 @@ const emit = defineEmits<{
 
 const loading = ref(false);
 const mediaType = computed(() => props.mediaItem?.type ?? PlexMediaType.Unknown);
-const qualities = computed(() => props.mediaItem?.qualities ?? []);
-
-const getQualityColor = (quality: string): string => {
-	switch (quality) {
-		case 'sd':
-			return 'brown darken-4';
-		case '480':
-			return 'deep-orange';
-		case '576':
-			return 'yellow darken-1';
-		case '720':
-			return 'lime accent-4';
-		case '1080':
-			return 'blue accent-3';
-		case '4k':
-			return 'red darken-4';
-		default:
-			Log.debug('Missing quality color option', quality, props.mediaItem);
-			return 'black';
-	}
-};
 
 function onAction(event: 'download' | 'open-media-details') {
 	const downloadCommand: DownloadMediaDTO = {
@@ -92,8 +63,5 @@ function onAction(event: 'download' | 'open-media-details') {
 
 .media-poster-quality-bar {
   @extend .background-sm;
-
-  padding: 0;
-  text-align: center;
 }
 </style>

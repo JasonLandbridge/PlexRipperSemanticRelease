@@ -9,6 +9,7 @@ export enum DialogType {
 	CheckServerConnectionDialogName = 'check-server-connection-dialog',
 	DirectoryBrowserDialog = 'directory-browser-dialog',
 	DownloadDetailsDialog = 'download-details-dialog',
+	FirstTimeSetupDialog = 'first-time-setup-dialog',
 	HelpInfoDialog = 'help-info-dialog',
 	MediaDownloadConfirmationDialog = 'media-download-confirmation-dialog',
 	MediaSelectionDialog = 'media-selection-dialog',

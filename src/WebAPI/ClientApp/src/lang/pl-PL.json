@@ -75,7 +75,8 @@
             "no-data": "Biblioteka została zsynchronizowana, ale nie zawiera żadnych multimediów.",
             "library-not-yet-synced": "Dane multimediów bibliotecznych nie zostały jeszcze zsynchronizowane. Proszę czekać lub odświeżyć teraz.",
             "steps-remaining": "Krok {index} z {total}:",
-            "no-search-results": "Nie znaleziono nośników zawierających „{query}”"
+            "no-search-results": "Nie znaleziono nośników zawierających „{query}”",
+            "no-media-items-available": "Nie znaleziono żadnych elementów multimedialnych!"
         },
         "navigation-drawer": {
             "accounts": "Konta",
@@ -163,7 +164,8 @@
                 "media-size": "Rozmiar",
                 "added-at": "Dodano w",
                 "updated-at": "Zaktualizowano w",
-                "actions": "Działania"
+                "actions": "Działania",
+                "quality": "Jakość"
             }
         },
         "server-download-status": {
@@ -250,6 +252,18 @@
         },
         "media-options-dialog": {
             "title": "Opcje przeglądu mediów"
+        },
+        "first-time-setup-dialog": {
+            "setup-question": "Wygląda na to, że korzystasz z PlexRippera po raz pierwszy. Czy chcesz rozpocząć proces instalacji?",
+            "header": "Potrzebujesz pomocy w konfiguracji PlexRippera?"
+        },
+        "background-activity-toggle-button": {
+            "checking-plex-server-connections": "Sprawdzanie połączeń z serwerem Plex",
+            "no-active-background-activity": "Brak aktywnych działań w tle."
+        },
+        "media-overview-bar-header": {
+            "movies-metadata": "{movieCount} Filmy - {fileSize} ",
+            "tv-shows-metadata": "{tvShowCount} Programy telewizyjne - {seasonCount} Sezony - {episodeCount} Odcinki - {fileSize} "
         }
     },
     "confirmation": {
@@ -545,9 +559,6 @@
         "error": {
             "header": "Błąd!",
             "return-link": "Wróć do strony głównej"
-        },
-        "home": {
-            "setup-question": "Wygląda na to, że korzystasz z PlexRippera po raz pierwszy. Czy chcesz go skonfigurować?"
         },
         "music": {
             "music-id": {

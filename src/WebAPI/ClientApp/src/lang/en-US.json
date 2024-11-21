@@ -75,7 +75,8 @@
             "no-data": "The library has been synced but contains no media.",
             "library-not-yet-synced": "The library media data has not yet been synced. Please wait or refresh now.",
             "steps-remaining": "Step {index} of {total}:",
-            "no-search-results": "No media found that contains \"{query}\""
+            "no-search-results": "No media found that contains \"{query}\"",
+            "no-media-items-available": "No media items found!"
         },
         "navigation-drawer": {
             "accounts": "Accounts",
@@ -163,7 +164,8 @@
                 "media-size": "Size",
                 "added-at": "Added At",
                 "updated-at": "Updated At",
-                "actions": "Actions"
+                "actions": "Actions",
+                "quality": "Quality"
             }
         },
         "server-download-status": {
@@ -250,6 +252,18 @@
         },
         "media-options-dialog": {
             "title": "Media Overview Options"
+        },
+        "first-time-setup-dialog": {
+            "setup-question": "It looks like this is you're first time using PlexRipper, would you like to start the setup process?",
+            "header": "Need help with setting up PlexRipper?"
+        },
+        "background-activity-toggle-button": {
+            "checking-plex-server-connections": "Checking Plex server connections",
+            "no-active-background-activity": "No active background activities."
+        },
+        "media-overview-bar-header": {
+            "movies-metadata": "{movieCount} Movies - {fileSize} ",
+            "tv-shows-metadata": "{tvShowCount} TV Shows - {seasonCount} Seasons - {episodeCount} Episodes - {fileSize} "
         }
     },
     "confirmation": {
@@ -545,9 +559,6 @@
         "error": {
             "header": "Error!",
             "return-link": "Go back to home page"
-        },
-        "home": {
-            "setup-question": "It looks like this is you're first time using PlexRipper, would you like to set it up?"
         },
         "music": {
             "music-id": {

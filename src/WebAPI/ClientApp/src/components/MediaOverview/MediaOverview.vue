@@ -28,6 +28,7 @@
 			<!--	Overview bar	-->
 			<MediaOverviewBar
 				:detail-mode="false"
+				:all-media-mode="allMediaMode"
 				:library-id="libraryId"
 				:media-type="mediaOverviewStore.mediaType"
 				@action="onAction" />
@@ -73,7 +74,10 @@
 				<QRow justify="center">
 					<QCol cols="auto">
 						<QAlert type="warning">
-							<template v-if="library?.syncedAt === null">
+							<template v-if="mediaOverviewStore.allMediaMode">
+								{{ $t('components.media-overview.no-media-items-available') }}
+							</template>
+							<template v-else-if="library?.syncedAt === null">
 								{{ $t('components.media-overview.library-not-yet-synced') }}
 							</template>
 							<template v-else-if="!mediaOverviewStore.itemsLength">
@@ -136,10 +140,13 @@ const isRefreshing = ref(false);
 
 const libraryProgress = ref<LibraryProgress | null>(null);
 
-const props = defineProps<{
+const props = withDefaults(defineProps<{
 	libraryId: number;
 	mediaType: PlexMediaType;
-}>();
+	allMediaMode?: boolean;
+}>(), {
+	allMediaMode: false,
+});
 
 const library = computed(() => libraryStore.getLibrary(mediaOverviewStore.libraryId));
 
@@ -245,13 +252,15 @@ function onAction(event: IMediaOverviewBarActions) {
 	}
 }
 
-function onOptionsClosed() {
-	useSubscription(
-		mediaOverviewStore.requestMedia({
-			mediaType: props.mediaType,
-			page: 0,
-			size: 0,
-		}).subscribe());
+function onOptionsClosed(hasChanged: boolean) {
+	if (hasChanged) {
+		useSubscription(
+			mediaOverviewStore.requestMedia({
+				mediaType: props.mediaType,
+				page: 0,
+				size: 0,
+			}).subscribe());
+	}
 }
 
 onMounted(() => {
@@ -269,7 +278,7 @@ onMounted(() => {
 			size: 0,
 		}).subscribe());
 
-	if (!mediaOverviewStore.allMediaMode) {
+	if (!props.allMediaMode) {
 		useSubscription(
 			signalRStore.getLibraryProgress(mediaOverviewStore.libraryId)
 				.subscribe((data) => {

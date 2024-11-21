@@ -4,7 +4,8 @@
 		:name="DialogType.MediaOptionsDialog"
 		:loading="false"
 		close-button
-		@closed="$emit('closed')">
+		@opened="onOpen"
+		@closed="onClosing">
 		<template #title>
 			{{
 				$t('components.media-options-dialog.title')
@@ -50,8 +51,24 @@ import { DialogType } from '@enums';
 import { useSettingsStore } from '#imports';
 
 const settingsStore = useSettingsStore();
-
-defineEmits<{
-	(e: 'closed'): void;
+const originalValues: Record<string, boolean> = {};
+const emits = defineEmits<{
+	(e: 'closed', hasChanged: boolean): void;
 }>();
+
+function onOpen() {
+	originalValues.hideMediaFromOfflineServers = settingsStore.generalSettings.hideMediaFromOfflineServers;
+	originalValues.hideMediaFromOwnedServers = settingsStore.generalSettings.hideMediaFromOwnedServers;
+	originalValues.useLowQualityPosterImages = settingsStore.generalSettings.useLowQualityPosterImages;
+}
+
+function onClosing() {
+	const hasChanged = (
+		originalValues.hideMediaFromOfflineServers !== settingsStore.generalSettings.hideMediaFromOfflineServers
+		|| originalValues.hideMediaFromOwnedServers !== settingsStore.generalSettings.hideMediaFromOwnedServers
+		|| originalValues.useLowQualityPosterImages !== settingsStore.generalSettings.useLowQualityPosterImages
+	);
+
+	emits('closed', hasChanged);
+}
 </script>

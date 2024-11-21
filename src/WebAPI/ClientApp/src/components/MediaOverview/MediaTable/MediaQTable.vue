@@ -15,6 +15,12 @@
 				{{ row.title }}
 			</q-td>
 		</template>
+		<!-- Media Quality bar	-->
+		<template #body-cell-quality="{ row }: {row: PlexMediaSlimDTO}">
+			<q-td class="text-eclipse">
+				<MediaQuality :qualities="row.qualities" />
+			</q-td>
+		</template>
 		<!-- Media size -->
 		<template #body-cell-year="{ row }">
 			<q-td class="text-center">
