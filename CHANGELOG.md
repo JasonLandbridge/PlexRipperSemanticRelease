@@ -1,5 +1,77 @@
 PlexRipper Changelog
 
+# [0.25.0](https://github.com/PlexRipper/PlexRipper/compare/v0.24.0...v0.25.0) (2024-11-21)
+
+
+### Bug Fixes
+
+* **Web-UI:** Added missing text when there is no background activity ([b9ec0e6](https://github.com/PlexRipper/PlexRipper/commit/b9ec0e678e059d88f1113174ff227932099338ac))
+* **Web-UI:** cleaned up the styling of the download speed limit slider and input ([4e2da9e](https://github.com/PlexRipper/PlexRipper/commit/4e2da9e08b23467620f90854bd3f19045fd6a907))
+* **WebAPI:** Custom connection that are added will not be deleted when the server is retrieving connections from the PlexAPI ([785d6c6](https://github.com/PlexRipper/PlexRipper/commit/785d6c66d4ec39bd7bf56807c662c05cc13d4b94))
+* **WebAPI:** Don't refresh and sync library media when no connection can be established ([51508a9](https://github.com/PlexRipper/PlexRipper/commit/51508a96f3d0fc67d90ca024b4b7fc901e2204ec))
+* **WebAPI:** Fixed an issue where dupplicate connections for PlexServers would all be discarded instead of at least one server being that connection assigned ([5221d5b](https://github.com/PlexRipper/PlexRipper/commit/5221d5bf5b8a4b78cac2cb0726cfdec23da5f148))
+* **WebAPI:** Fixed an issue where missing properties that were marked required when deserializing JSON would throw exceptions, now it will use the default value set without exceptions ([97c450e](https://github.com/PlexRipper/PlexRipper/commit/97c450eb474bc8304744fc6ddd05578e19161c1e))
+* **Web-UI:** Fixed an issue where the root selection box would not work on the tv show detail page until a child selection had been made ([3cf237a](https://github.com/PlexRipper/PlexRipper/commit/3cf237a963cb2336afb1273c560c8886f305eb16))
+* **Web-UI:** Fixed auto scroll to last item viewed not working when viewing all TvShows ([9e91b22](https://github.com/PlexRipper/PlexRipper/commit/9e91b22539141182a62f2d988421810fb3843f38))
+* **Web-UI:** Fixed bug where when a server has no-connections that it would be displayed as if it did have in the checkServerConnectionsDialog ([2dc7e01](https://github.com/PlexRipper/PlexRipper/commit/2dc7e010e4f531483a82a7e0097654fff7741433))
+* **Web-UI:** Fixed changed job name causing the connections progress dialog to not show ([016fac2](https://github.com/PlexRipper/PlexRipper/commit/016fac27784e45b2ec6699a1eb5a71b6ebbe286b))
+* **WebAPI:** Fixed inaccurate downloadspeed, it now uses the last few seconds as a metric instead of the entire download duration ([b634756](https://github.com/PlexRipper/PlexRipper/commit/b6347569a502317aea90ebdc162238bf9f425713))
+* **WebAPI:** Fixed missing plex token to retrieve media poster when viewing tv show detail ([479924e](https://github.com/PlexRipper/PlexRipper/commit/479924ecbdaa4bda9931eb97f934554c82dcace7))
+* **Web-UI:** Fixed missing scrolling bars when opening a tv show detail page and opening the season overview ([6d1fc03](https://github.com/PlexRipper/PlexRipper/commit/6d1fc038c1f43a99a19f109fb50f6a7c6f9a3d53))
+* **WebAPI:** Fixed not retuning the next download task when it is downloading ([cd9861a](https://github.com/PlexRipper/PlexRipper/commit/cd9861a30ba2dd6f52c706c3ab0d89a14f8c51f9))
+* **WebAPI:** Fixed the DownloadQueue not correctly determining if a server is online ([7794792](https://github.com/PlexRipper/PlexRipper/commit/7794792d579617d16ba5ad4835becc323dec57f3))
+* **WebAPI:** Fixed the endpoint for hiding notifications ([726e54c](https://github.com/PlexRipper/PlexRipper/commit/726e54c8c1add58236cd14f749edb7f59bb53177))
+* **Web-UI:** Fixed the incorrect help text for the Re-sync media command in the server settings ([1ee526c](https://github.com/PlexRipper/PlexRipper/commit/1ee526c463676233527399c8edbb85a694506a05))
+* **WebAPI:** Fixed the incorrect sortIndex when requesting all media ([58a82cb](https://github.com/PlexRipper/PlexRipper/commit/58a82cbffe74ee0af43d1139a95b6f941b43b19f))
+* **Web-UI:** Fixed the jumpy effect when loading the page with all the media posters which goes from 1 column to the correct width ([ee4ed8f](https://github.com/PlexRipper/PlexRipper/commit/ee4ed8f298aa31bfd4f5b7239e433e21b1edb7b1))
+* **Web-UI:** Fixed the LanguageSelect size ([444a680](https://github.com/PlexRipper/PlexRipper/commit/444a6802fe20b72808ea30282ce3fa756cb33876))
+* **Web-UI:** Fixed the low resolution of media images in the posters ([ad498b5](https://github.com/PlexRipper/PlexRipper/commit/ad498b5dc19a06b26d9acdf8f23a564531747983))
+* **Web-UI:** Fixed the missing background when viewing a tv-show detail ([a28951d](https://github.com/PlexRipper/PlexRipper/commit/a28951d98c30ce981512585d4078eddd97833d0e))
+* **Web-UI:** Fixed the notification drawer visibility and displaying notifications ([417b5b7](https://github.com/PlexRipper/PlexRipper/commit/417b5b79fae5b3b9560b0199b5c8bad5f50e56c3))
+* **WebAPI:** Fixed the Plex account setup process failing when there is a server with no connections ([88504cf](https://github.com/PlexRipper/PlexRipper/commit/88504cfc3a5ba48053e55d61d87d98702cc269d2))
+* **WebAPI:** Fixed the stopped status for a DownloadWorker not propagated properly due to premature termination and disposal ([fdce761](https://github.com/PlexRipper/PlexRipper/commit/fdce7611c989897a0b7f6c8f6cf08aaa00af7190))
+* **Web-UI:** Fixed the ugly check background when clicking the view button in the media overview ([4462274](https://github.com/PlexRipper/PlexRipper/commit/446227487c561c796348e38e5b7ba88a59880423))
+* **WebAPI:** Fixed the verificationCode initialized to null when returning PlexAccounts from the API ([3bc1a04](https://github.com/PlexRipper/PlexRipper/commit/3bc1a0435e93e62c5432c29d6dcddaf2cda87542))
+* **Web-UI:** Fixed typescript errors ([0f8c8cb](https://github.com/PlexRipper/PlexRipper/commit/0f8c8cbcf002e9908f63693ba08ddc3a9c652026))
+* **Web-UI:** Lot of polish fixes to the detail page for tv show media ([2e4c336](https://github.com/PlexRipper/PlexRipper/commit/2e4c336d084ab6358f02c4faf50c1376061a7b86))
+* **Web-UI:** Prevent unneeded all media overview refresh when no media options have changed in the dialog on close ([ec1a613](https://github.com/PlexRipper/PlexRipper/commit/ec1a6134d5838ffd110679f913deb1480734f6af))
+* **WebAPI:** The IsOwned on a server is now determined if there is an PlexAccount setup that is the owner ([f04f9bc](https://github.com/PlexRipper/PlexRipper/commit/f04f9bc6890fa242186c5bb85f1a8b894ff956ed))
+
+
+### Features
+
+* **Web-UI:** Add media switch for the overview page by clicking on the header title ([305a96e](https://github.com/PlexRipper/PlexRipper/commit/305a96e30c9704c32cfdd0916942675262af8e9e))
+* **Web-UI:** Added background activity button to the appbar and removed the background animation toggle button ([c3adaf3](https://github.com/PlexRipper/PlexRipper/commit/c3adaf30efc0dd39b133811f4111a02d12921e3a))
+* **Web-UI:** Added button in the Plex server settings to create custom connections to connect to a Plex server ([65c792e](https://github.com/PlexRipper/PlexRipper/commit/65c792ee82381b20ea073c36e7b17ed430c3d5db))
+* **Web-UI:** Added button to freely generate tokens in the Account dialog when an account has a username and password authentication ([87a822e](https://github.com/PlexRipper/PlexRipper/commit/87a822e50deb3b2181db2ef9d49fc39f3c39ab2a))
+* **WebAPI:** Added CreateConnectionEndpoint ([64a07eb](https://github.com/PlexRipper/PlexRipper/commit/64a07eb8bcad0cfd57b0765491303604cae70ada))
+* **WebAPI:** Added endpoint for generating tokens for Plex accounts ([a67da40](https://github.com/PlexRipper/PlexRipper/commit/a67da40a16b894c9aac582cfb01558fb75f5f575))
+* **WebAPI:** Added endpoints for updating and deleting Plex connections ([4d9a8ed](https://github.com/PlexRipper/PlexRipper/commit/4d9a8ed6779f0669713917b0320e376c89aa2d96))
+* **Web-UI:** Added media options button to the media overview ([faf9e55](https://github.com/PlexRipper/PlexRipper/commit/faf9e5575e33eb6fb73829c6e5214efd34d77b35))
+* **Web-UI:** Added media overview filter options to hide media from owned servers and from offline libraries ([fd49fd4](https://github.com/PlexRipper/PlexRipper/commit/fd49fd4d43b0df3f130441745a15c498dd05772c))
+* **Web-UI:** Added menu to the activity button of running jobs ([b4ec627](https://github.com/PlexRipper/PlexRipper/commit/b4ec6277b118efad0717c7299685727c77ad54fd))
+* **WebAPI:** Added new endpoint for retrieving all media of all servers to have 1 big overview ([b3f5f7d](https://github.com/PlexRipper/PlexRipper/commit/b3f5f7d6b1e4db9795d9901ce5f2f938cee8279b))
+* **Web-UI:** Added override for data types in Cypress tests ([3a53c0e](https://github.com/PlexRipper/PlexRipper/commit/3a53c0e8f073857d7767d3919a5e9324be2eea03))
+* **Web-UI:** Added Server Unreachable status to a download when the server goes down while downloading ([1f8bd86](https://github.com/PlexRipper/PlexRipper/commit/1f8bd86c92351cde3968de9dd559379610d37ab4))
+* **Web-UI:** Added the quality of the episode in the tv show detail overview ([33c1080](https://github.com/PlexRipper/PlexRipper/commit/33c1080fb0108364bf2e7813726f332fe8706063))
+* **Web-UI:** Added validation check to prevent adding duplicate connection urls when it already exists for a different server ([18a4d4d](https://github.com/PlexRipper/PlexRipper/commit/18a4d4d6ab9897d8b27680c8dc1984f4b70823ab))
+* **WebAPI:** Added validation endpoint for a server connection url to ensure that it works ([14c3121](https://github.com/PlexRipper/PlexRipper/commit/14c3121cb180e28fb119cdbf4f5aca30db466cc5))
+* **Web-UI:** Added Webstorm Nuxt Debug run profile ([627a85f](https://github.com/PlexRipper/PlexRipper/commit/627a85fdfe79514c2a209bfe51d1207fdcd74f92))
+* **Web-UI:** All dialogs are now much more size responsive and work through the power of CSS grids ([5067225](https://github.com/PlexRipper/PlexRipper/commit/5067225b5f543e94d2506472a9eb137211a59d65))
+* **Web-UI:** Allow the editing and deletion of connections in the server settings ([55b714f](https://github.com/PlexRipper/PlexRipper/commit/55b714fcca3382c94c0545b93e0da3e1ad67d69f))
+* **Web-UI:** Polish the media statistics display in the media overview bar ([fdebd9b](https://github.com/PlexRipper/PlexRipper/commit/fdebd9b5d90b7a5bcaf7622c5f4a50b67380e94c))
+* **Web-UI:** The question if you want to start the setup process is now a dialog pop-up window ([6f42ee9](https://github.com/PlexRipper/PlexRipper/commit/6f42ee9377cf19ce78d33306d0d4122e498dc78f))
+* **Web-UI:** Toggling the media overview type is now saved when going to the home page ([20d9d83](https://github.com/PlexRipper/PlexRipper/commit/20d9d83958a8601bf268f5fabe8b25d19eb6f6fa))
+* **WebAPI:** When a DownloadTask is stopped due to offline server, it will now auto-resume when the server is back-online ([63abda9](https://github.com/PlexRipper/PlexRipper/commit/63abda9f240395b12e6d6a04ddf55cb6440a2619))
+
+
+### Performance Improvements
+
+* **WebAPI:** Calculate media list statistics in the back-end before sending it to the front-end ([f521702](https://github.com/PlexRipper/PlexRipper/commit/f52170245be57f8166c9cd32d2b76501e63fd638))
+* **WebAPI:** Further slight improvements to performance with sorting of querying media ([48f3500](https://github.com/PlexRipper/PlexRipper/commit/48f35004562a1c3f6d044adad6cca1906a0e1eb7))
+* **WebAPI:** Improved performance of querying media by projecting entity to DTO and moving the thumbnail url compiling to the front-end ([271d0d0](https://github.com/PlexRipper/PlexRipper/commit/271d0d0b9393c5b7883da9a2c2e11e779a131017))
+* **Web-UI:** the full thumbnail url is now compiled in the front-end since that data is already sent beforehand ([2b9535f](https://github.com/PlexRipper/PlexRipper/commit/2b9535f87dcf1dee7790024993b3fb743b342ac4))
+
 # [0.24.0](https://github.com/PlexRipper/PlexRipper/compare/v0.23.2...v0.24.0) (2024-10-26)
 
 
