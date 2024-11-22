@@ -5,6 +5,7 @@ on:
       - dev
     paths:
       - README.md
+      - export/
       - .github/workflows/dockerhub-description.yml
 jobs:
   dockerHubDescription:
