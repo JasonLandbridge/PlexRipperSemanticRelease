@@ -11,15 +11,9 @@
 ⭐ Star us on <a href="https://github.com/PlexRipper/PlexRipper">GitHub</a> and <a href="https://hub.docker.com/r/plexripper/plexripper">DockerHub</a> — it motivates us a lot and helps to pay the rent!</h4>
 
 <p align="center">
-  <a href="https://github.com/PlexRipper/PlexRipper">
-  <img src="https://img.shields.io/github/stars/plexripper/plexripper?style=social">
-  </a>
-  <a href="https://github.com/PlexRipper/PlexRipper">
-  <img src="https://img.shields.io/github/followers/plexripper?style=social">
-  </a>
-  <a href="https://hub.docker.com/r/plexripper/plexripper">
-  <img src="https://img.shields.io/docker/stars/plexripper/plexripper">
-  </a>
+  <a href="https://github.com/PlexRipper/PlexRipper"><img src="https://img.shields.io/github/stars/plexripper/plexripper?style=social"></a>
+  <a href="https://github.com/PlexRipper/PlexRipper"><img src="https://img.shields.io/github/followers/plexripper?style=social"></a>
+  <a href="https://hub.docker.com/r/plexripper/plexripper"><img src="https://img.shields.io/docker/stars/plexripper/plexripper"></a>
 </p>
 <p align="center">
 	<strong>
