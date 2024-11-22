@@ -1,33 +1,113 @@
+<h1 align="center">
+  <br>
+  <a href="https://www.plexripper.rocks/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/plexripper/logo/full/full-logo-256.png" alt="Markdownify" width="200"></a>
+  <br>
+  PlexRipper
+  <br>
+</h1>
 
-# <img src="./export/plexripper/logo/full/full-logo-256.png" alt="PlexRipper" width="32"> PlexRipper
+<h4 align="center">A cross-platform media downloader for Plex, designed to seamlessly add content to your own Plex server!</h4>
+<h4 align="center">
+⭐ Star us on <a href="https://github.com/PlexRipper/PlexRipper">GitHub</a> and <a href="https://hub.docker.com/r/plexripper/plexripper">DockerHub</a> — it motivates us a lot and helps to pay the rent!</h4>
 
-![Docker Pulls](https://img.shields.io/docker/pulls/plexripper/plexripper?label=Docker%20Pulls&style=flat-square)
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/plexripper/plexripper/latest?label=PlexRipper%20Latest%20Image%20Size&style=flat-square)
-![Docker Image Size (tag)](https://img.shields.io/docker/image-size/plexripper/plexripper/dev?label=PlexRipper%20Dev%20Image%20Size&style=flat-square)
-![Lines of code](https://img.shields.io/tokei/lines/github/plexripper/plexripper?label=Lines%20of%20Code&style=flat-square)
-![GitHub issues](https://img.shields.io/github/issues/plexripper/plexripper?label=Github%20Issues&style=flat-square)
+<p align="center">
+  <a href="https://github.com/PlexRipper/PlexRipper">
+  <img src="https://img.shields.io/github/stars/plexripper/plexripper?style=social">
+  </a>
+  <a href="https://github.com/PlexRipper/PlexRipper">
+  <img src="https://img.shields.io/github/followers/plexripper?style=social">
+  </a>
+  <a href="https://hub.docker.com/r/plexripper/plexripper">
+  <img src="https://img.shields.io/docker/stars/plexripper/plexripper">
+  </a>
+</p>
+<p align="center">
+	<strong>
+		<a href="https://www.plexripper.rocks/">Website</a> • <a href="#key-features">Features</a> • <a href="#what-is-plexripper">What is PlexRipper?</a> • <a href="#installation">Installation</a>
+	</strong>
+</p>
+<video src="./export/plexripper/video/plexripper-example-1.mp4" loop autoplay muted controls title="PlexRipper Demo"  style="max-width: 100%; height: auto; display: block;"></video>
 
-![GitHub](https://img.shields.io/github/license/plexripper/plexripper?style=flat-square)
-![GitHub followers](https://img.shields.io/github/followers/plexripper?style=social)
-![GitHub Repo stars](https://img.shields.io/github/stars/plexripper/plexripper?style=social)
-
-**UNDER ACTIVE DEVELOPMENT - ALPHA STAGE => IT "WORKS", BUT NOT ALWAYS!**
+## Key Features
+ - Automatic downloads of all movies and tv-shows!
+ - A gorgeous, intuitive user interface designed for ease of use!
+ - Works anywhere Docker runs — PCs, servers, and beyond!
+ - Connect multiple Plex accounts to organize and download content effortlessly!
+ - Scalable, multi-threaded, and resilient download manager to handle huge libraries!
+ - Packed with quality of life features and more!
 
 ## What is PlexRipper?
-Tired of searching for media on different torrent websites or paying for Usenet server access? Well look no further! You can now use PlexRipper to download everything from the Plex servers you have access to and expand your collection that way!
+Tired of scouring torrent sites or shelling out for expensive Usenet subscriptions? Say goodbye to that hassle because PlexRipper lets you effortlessly expand your media collection by downloading content directly from the Plex servers you have access to!
 
-PlexRipper is a cross-platform media downloader that indexes the Plex servers you have access to and allows you to download everything while adding it to your own Plex server.
+PlexRipper is a cross-platform media downloader that syncs with Plex servers that are shared with you, enabling you to download movies, TV shows, and more—all while seamlessly adding them to your own Plex library.
 
-Let others collect media for you and then just download everything!
+Why search and collect media yourself when others can do it for you? With PlexRipper, it's never been easier to grow your collection. Just download and enjoy!
 
-## Visit [www.plexripper.rocks](https://www.plexripper.rocks/) for more info!
+## Installation
 
-## JetBrains
+Follow one of these guides depending on your platform:
+<ul>
+    <li><a href="https://www.plexripper.rocks/guides/installation/docker" target="_blank">Docker</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/unraid" target="_blank">Unraid</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/windows" target="_blank">Windows</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/linux" target="_blank">Linux</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/macos" target="_blank">MacOS</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/synology" target="_blank">Synology</a></li>
+</ul>
 
-Huge thank you to [<img src="./export/jetbrains/jetbrains.svg" alt="JetBrains" width="32"> JetBrains](http://www.jetbrains.com/) for supporting open source projects and providing us with free licenses of their great tools!
+#### Visit [www.plexripper.rocks](https://www.plexripper.rocks/) for more information!
 
-- [<img src="./export/jetbrains/resharper.svg" alt="ReSharper" width="32"> ReSharper](http://www.jetbrains.com/resharper/)
-- [<img src="./export/jetbrains/webstorm.svg" alt="WebStorm" width="32"> WebStorm](http://www.jetbrains.com/webstorm/)
-- [<img src="./export/jetbrains/rider.svg" alt="Rider" width="32"> Rider](http://www.jetbrains.com/rider/)
+## Project Status
 
-- [<img src="./export/jetbrains/dottrace.svg" alt="dotTrace" width="32"> dotTrace](http://www.jetbrains.com/dottrace/)
+<table style="border: none;">
+    <tr style="border: none;">
+        <td style="border: none;">
+            <a href="https://hub.docker.com/r/plexripper/plexripper">
+                <img src="https://img.shields.io/docker/pulls/plexripper/plexripper?label=Docker%20Pulls&style=flat-square" />
+            </a>
+        </td>
+        <td style="border: none;">
+            <a href="https://github.com/PlexRipper/PlexRipper/graphs/contributors" alt="Commit Activity">
+                <img src="https://img.shields.io/github/commit-activity/y/plexripper/plexripper?style=flat-square&label=Commit%20Activity" alt="Commit Activity" />
+            </a>
+        </td>
+        <td style="border: none;">
+            <a href="https://github.com/PlexRipper/PlexRipper/actions/workflows/dev-test.yml" alt="Code Checks">
+                <img src="https://img.shields.io/github/actions/workflow/status/PlexRipper/PlexRipper/dev-test.yml?style=flat-square&label=Checks" alt="Code Checks" />
+            </a>
+        </td>
+        <td style="border: none;">
+            <a href="https://discord.gg/Y4rtjabmbQ">
+                <img src="https://img.shields.io/discord/1169347287135309834?style=flat-square&label=Discord" alt="Discord" />
+            </a>
+        </td>
+    </tr>
+    <tr style="border: none;">
+        <td style="border: none;">
+            <img src="https://img.shields.io/docker/image-size/plexripper/plexripper/latest?style=flat-square&label=PlexRipper%20Stable%20Image%20Size" alt="PlexRipper Stable Image Size" />
+        </td>
+        <td style="border: none;">
+            <img src="https://img.shields.io/docker/image-size/plexripper/plexripper/dev?style=flat-square&label=PlexRipper%20Dev%20Image Size" alt="PlexRipper Dev Image Size" />
+        </td>
+        <td style="border: none;">
+            <img src="https://img.shields.io/github/repo-size/plexripper/plexripper?style=flat-square&label=PlexRipper%20Repo%20Size" alt="PlexRipper Repo Size" />
+        </td>
+        <td style="border: none;">
+            <img src="https://img.shields.io/github/created-at/plexripper/plexripper?style=flat-square&label=PlexRipper%20Birthdate" alt="PlexRipper Birthdate" />
+        </td>
+    </tr>
+</table>
+
+## Sponsors
+
+<p>Huge thank you to <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/jetbrains.svg" alt="Jetbrains" width="32"> JetBrains </a> for supporting open source projects and providing us with free licenses of their great tools!</p>
+
+PlexRipper is very contentedly uses the following tools:
+
+  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/resharper.svg" alt="Jetbrains Resharper" width="32"> Resharper </a>
+
+  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/webstorm.svg" alt="Jetbrains WebStorm" width="32"> WebStorm </a>
+
+  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/rider.svg" alt="Jetbrains Rider" width="32"> Rider </a>
+
+  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/dottrace.svg" alt="Jetbrains DotTrace" width="32"> DotTrace </a>
