@@ -6,7 +6,7 @@
   <br>
 </h1>
 
-<h4 align="center">A cross-platform media downloader for Plex, designed to seamlessly add content to your own Plex server!</h4>
+<h4 align="center">A cross-platform Plex media downloader that seamlessly adds media from other Plex servers to your own!</h4>
 <h4 align="center">
 ⭐ Star us on <a href="https://github.com/PlexRipper/PlexRipper">GitHub</a> and <a href="https://hub.docker.com/r/plexripper/plexripper">DockerHub</a> — it motivates us a lot and helps to pay the rent!</h4>
 
@@ -48,12 +48,12 @@ Why search and collect media yourself when others can do it for you? With PlexRi
 
 Follow one of these guides depending on your platform:
 <ul>
-    <li><a href="https://www.plexripper.rocks/guides/installation/docker" target="_blank">Docker</a></li>
-    <li><a href="https://www.plexripper.rocks/guides/installation/unraid" target="_blank">Unraid</a></li>
-    <li><a href="https://www.plexripper.rocks/guides/installation/windows" target="_blank">Windows</a></li>
-    <li><a href="https://www.plexripper.rocks/guides/installation/linux" target="_blank">Linux</a></li>
-    <li><a href="https://www.plexripper.rocks/guides/installation/macos" target="_blank">MacOS</a></li>
-    <li><a href="https://www.plexripper.rocks/guides/installation/synology" target="_blank">Synology</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/docker">Docker</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/unraid">Unraid</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/windows">Windows</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/linux">Linux</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/macos">MacOS</a></li>
+    <li><a href="https://www.plexripper.rocks/guides/installation/synology">Synology</a></li>
 </ul>
 
 #### Visit [www.plexripper.rocks](https://www.plexripper.rocks/) for more information!
