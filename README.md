@@ -26,7 +26,7 @@
 		<a href="https://www.plexripper.rocks/">Website</a> • <a href="#key-features">Features</a> • <a href="#what-is-plexripper">What is PlexRipper?</a> • <a href="#installation">Installation</a>
 	</strong>
 </p>
-<video src="./export/plexripper/video/plexripper-example-1.mp4" loop autoplay muted controls title="PlexRipper Demo"  style="max-width: 100%; height: auto; display: block;"></video>
+<video src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/plexripper/video/plexripper-example-1.mp4" loop autoplay muted controls title="PlexRipper Demo"  style="max-width: 100%; height: auto; display: block;"></video>
 
 ## Key Features
  - Automatic downloads of all movies and tv-shows!
