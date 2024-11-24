@@ -1,6 +1,6 @@
 <h1 align="center">
   <br>
-  <a href="https://www.plexripper.rocks/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/plexripper/logo/full/full-logo-256.png" alt="PlexRipper" width="200"></a>
+  <a href="https://www.plexripper.rocks/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/plexripper/logo/full/full-logo-1024.png" alt="PlexRipper" width="200"></a>
   <br>
   PlexRipper
   <br>
