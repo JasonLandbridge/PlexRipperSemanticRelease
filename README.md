@@ -10,11 +10,21 @@
 <h4 align="center">
 ⭐ Star us on <a href="https://github.com/PlexRipper/PlexRipper">GitHub</a> and <a href="https://hub.docker.com/r/plexripper/plexripper">DockerHub</a> — it motivates us a lot and helps to pay the rent!</h4>
 
+
+
 <p align="center">
   <a href="https://github.com/PlexRipper/PlexRipper"><img src="https://img.shields.io/github/stars/plexripper/plexripper?style=social"></a>
   <a href="https://github.com/PlexRipper/PlexRipper"><img src="https://img.shields.io/github/followers/plexripper?style=social"></a>
   <a href="https://hub.docker.com/r/plexripper/plexripper"><img src="https://img.shields.io/docker/stars/plexripper/plexripper"></a>
 </p>
+
+<h4 align="center">Also maximize your PlexRipper experience! Join our <a href="https://discord.com/invite/Qa3BtxN77g">Discord</a> for expert tips, updates, and a helpful community!</h4>
+<p  align="center">
+            <a href="https://discord.com/invite/Qa3BtxN77g">
+                <img src="https://img.shields.io/discord/1169347287135309834?style=flat-square&label=Discord" alt="Discord" />
+            </a>
+</p>
+
 <p align="center">
 	<strong>
 		<a href="https://www.plexripper.rocks/">Website</a> • <a href="#key-features">Features</a> • <a href="#what-is-plexripper">What is PlexRipper?</a> • <a href="#installation">Installation</a>
@@ -72,7 +82,7 @@ Follow one of these guides depending on your platform:
             </a>
         </td>
         <td style="border: none;">
-            <a href="https://discord.gg/Y4rtjabmbQ">
+            <a href="https://discord.com/invite/Qa3BtxN77g">
                 <img src="https://img.shields.io/discord/1169347287135309834?style=flat-square&label=Discord" alt="Discord" />
             </a>
         </td>
@@ -95,14 +105,14 @@ Follow one of these guides depending on your platform:
 
 ## Sponsors
 
-<p>Huge thank you to <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/jetbrains.svg" alt="Jetbrains" width="32"> JetBrains </a> for supporting open source projects and providing us with free licenses of their great tools!</p>
+<p>Huge thank you to <a href="http://www.jetbrains.com/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/jetbrains.svg" alt="Jetbrains" width="32"> JetBrains </a> for supporting open source projects and providing us with free licenses of their great tools!</p>
 
 PlexRipper is very contentedly uses the following tools:
 
   <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/resharper.svg" alt="Jetbrains Resharper" width="32"> Resharper </a>
 
-  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/webstorm.svg" alt="Jetbrains WebStorm" width="32"> WebStorm </a>
+  <a href="http://www.jetbrains.com/webstorm/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/webstorm.svg" alt="Jetbrains WebStorm" width="32"> WebStorm </a>
 
-  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/rider.svg" alt="Jetbrains Rider" width="32"> Rider </a>
+  <a href="http://www.jetbrains.com/rider/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/rider.svg" alt="Jetbrains Rider" width="32"> Rider </a>
 
-  <a href="http://www.jetbrains.com/resharper/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/dottrace.svg" alt="Jetbrains DotTrace" width="32"> DotTrace </a>
+  <a href="http://www.jetbrains.com/profiler/"><img src="https://raw.githubusercontent.com/plexripper/plexripper/dev/export/jetbrains/dottrace.svg" alt="Jetbrains DotTrace" width="32"> DotTrace </a>
