@@ -266,7 +266,7 @@
             "tv-shows-metadata": "{tvShowCount} TV-Sendungen - {seasonCount} Staffeln - {episodeCount} Folgen - {fileSize} "
         },
         "discord-invite-dialog": {
-            "discord-invite-button-text": "",
+            "discord-invite-button-text": "Treten Sie dem PlexRipper Discord bei!",
             "header": "Treten Sie dem neuen PlexRipper Discord bei!",
             "reasons": {
                 "1": "Teilen und tauschen Sie den Plex-Server-Zugriff!",

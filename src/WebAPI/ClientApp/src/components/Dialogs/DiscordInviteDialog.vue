@@ -4,7 +4,8 @@
 		width="600px"
 		close-button
 		persistent
-		button-align="end">
+		button-align="center"
+		@closed="onClosed">
 		<template #title>
 			{{ $t('components.discord-invite-dialog.header') }}
 		</template>
@@ -19,6 +20,7 @@
 		</template>
 		<template #actions="{ close }">
 			<BaseButton
+				block
 				@click="onInviteClick(close)">
 				<!-- Discord Logo -->
 				<q-icon class="q-mr-md">
@@ -39,9 +41,16 @@
 <script setup lang="ts">
 import { DialogType } from '@enums';
 
+const settingsStore = useSettingsStore();
+
 function onInviteClick(close: () => void): void {
 	const discordLink = 'https://discord.com/invite/Qa3BtxN77g';
 	window.open(discordLink, '_blank');
+	settingsStore.generalSettings.hasBeenInvitedToDiscord = true;
 	close();
+}
+
+function onClosed(): void {
+	settingsStore.generalSettings.hasBeenInvitedToDiscord = true;
 }
 </script>
