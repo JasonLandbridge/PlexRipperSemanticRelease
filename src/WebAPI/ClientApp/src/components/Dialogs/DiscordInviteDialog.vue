@@ -11,11 +11,11 @@
 		</template>
 		<template #default>
 			<ul class="q-mt-none">
-				<li>{{ $t('components.discord-invite-dialog.reasons.1') }}</li>
-				<li>{{ $t('components.discord-invite-dialog.reasons.2') }}</li>
-				<li>{{ $t('components.discord-invite-dialog.reasons.3') }}</li>
-				<li>{{ $t('components.discord-invite-dialog.reasons.4') }}</li>
-				<li>{{ $t('components.discord-invite-dialog.reasons.5') }}</li>
+				<li>{{ $t('components.discord-invite-dialog.reasons.reason-1') }}</li>
+				<li>{{ $t('components.discord-invite-dialog.reasons.reason-2') }}</li>
+				<li>{{ $t('components.discord-invite-dialog.reasons.reason-3') }}</li>
+				<li>{{ $t('components.discord-invite-dialog.reasons.reason-4') }}</li>
+				<li>{{ $t('components.discord-invite-dialog.reasons.reason-5') }}</li>
 			</ul>
 		</template>
 		<template #actions="{ close }">

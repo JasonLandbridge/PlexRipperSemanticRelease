@@ -269,11 +269,11 @@
             "discord-invite-button-text": "Treten Sie dem PlexRipper Discord bei!",
             "header": "Treten Sie dem neuen PlexRipper Discord bei!",
             "reasons": {
-                "1": "Teilen und tauschen Sie den Plex-Server-Zugriff!",
-                "2": "Erhalten Sie Echtzeit-Support für die Einrichtung und Fehlerbehebung von PlexRipper!",
-                "3": "Engagieren Sie sich in einer Community gleichgesinnter PlexRipper und Plex-Enthusiasten!",
-                "4": "Beteiligen Sie sich an Diskussionen zu neuen Funktionen und Releases!",
-                "5": "Erhalten Sie Zugriff auf exklusive Updates und Ankündigungen zu PlexRipper!"
+                "reason-1": "Teilen und tauschen Sie den Plex-Server-Zugriff!",
+                "reason-2": "Erhalten Sie Echtzeit-Support für die Einrichtung und Fehlerbehebung von PlexRipper!",
+                "reason-3": "Engagieren Sie sich in einer Community gleichgesinnter PlexRipper und Plex-Enthusiasten!",
+                "reason-4": "Beteiligen Sie sich an Diskussionen zu neuen Funktionen und Releases!",
+                "reason-5": "Erhalten Sie Zugriff auf exklusive Updates und Ankündigungen zu PlexRipper!"
             }
         }
     },

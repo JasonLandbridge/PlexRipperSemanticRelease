@@ -269,11 +269,11 @@
             "discord-invite-button-text": "Join the PlexRipper Discord!",
             "header": "Join the new PlexRipper Discord!",
             "reasons": {
-                "1": "Share and exchange Plex server access!",
-                "2": "Get real-time support for PlexRipper setup and troubleshooting!",
-                "3": "Engage with a community of like-minded PlexRippers and Plex enthusiasts!",
-                "4": "Participate in discussions about new features and releases!",
-                "5": "Access exclusive updates and announcements about PlexRipper!"
+                "reason-1": "Share and exchange Plex server access!",
+                "reason-2": "Get real-time support for PlexRipper setup and troubleshooting!",
+                "reason-3": "Engage with a community of like-minded PlexRippers and Plex enthusiasts!",
+                "reason-4": "Participate in discussions about new features and releases!",
+                "reason-5": "Access exclusive updates and announcements about PlexRipper!"
             }
         }
     },

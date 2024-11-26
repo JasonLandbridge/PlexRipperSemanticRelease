@@ -1448,7 +1448,7 @@
 										<name>reasons</name>
 										<children>
 											<concept_node>
-												<name>1</name>
+												<name>reason-1</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -1471,7 +1471,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>2</name>
+												<name>reason-2</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -1494,7 +1494,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>3</name>
+												<name>reason-3</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -1517,7 +1517,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>4</name>
+												<name>reason-4</name>
 												<description/>
 												<comment/>
 												<translations>
@@ -1540,7 +1540,7 @@
 												</translations>
 											</concept_node>
 											<concept_node>
-												<name>5</name>
+												<name>reason-5</name>
 												<description/>
 												<comment/>
 												<translations>
