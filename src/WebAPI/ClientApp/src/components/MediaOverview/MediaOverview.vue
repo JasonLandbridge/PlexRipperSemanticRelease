@@ -150,21 +150,6 @@ const props = withDefaults(defineProps<{
 
 const library = computed(() => libraryStore.getLibrary(mediaOverviewStore.libraryId));
 
-const isConfirmationEnabled = computed(() => {
-	switch (props.mediaType) {
-		case PlexMediaType.Movie:
-			return settingsStore.confirmationSettings.askDownloadMovieConfirmation;
-		case PlexMediaType.TvShow:
-			return settingsStore.confirmationSettings.askDownloadTvShowConfirmation;
-		case PlexMediaType.Season:
-			return settingsStore.confirmationSettings.askDownloadSeasonConfirmation;
-		case PlexMediaType.Episode:
-			return settingsStore.confirmationSettings.askDownloadEpisodeConfirmation;
-		default:
-			return true;
-	}
-});
-
 const refreshingText = computed(() => {
 	const server = libraryStore.getServerByLibraryId(mediaOverviewStore.libraryId);
 	return t('components.media-overview.is-refreshing', {
@@ -211,7 +196,7 @@ listenMediaOverviewDownloadCommand((command) => {
 	Log.info('MediaOverview => Received download command', command);
 	// Only show if there is more than 1 selection
 	if (command.length > 0 && command.some((x) => x.mediaIds.length > 0)) {
-		if (isConfirmationEnabled.value) {
+		if (settingsStore.isConfirmationEnabled(props.mediaType)) {
 			dialogStore.openMediaConfirmationDownloadDialog(command);
 		} else {
 			downloadStore.downloadMedia(command);

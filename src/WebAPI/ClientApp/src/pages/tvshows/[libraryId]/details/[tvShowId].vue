@@ -80,6 +80,9 @@
 			</QScroll>
 		</template>
 
+		<!-- Download confirmation dialog	-->
+		<DownloadConfirmation @download="downloadStore.downloadMedia($event)" />
+
 		<QLoadingOverlay :loading="loading" />
 	</QPage>
 </template>
@@ -92,10 +95,10 @@ import { type PlexMediaDTO, PlexMediaType } from '@dto';
 import { useRouter } from 'vue-router';
 import type { IMediaOverviewBarActions } from '@interfaces';
 import {
-	definePageMeta,
+	definePageMeta, listenMediaOverviewDownloadCommand, useDialogStore, useDownloadStore,
 	useI18n,
 	useMediaOverviewStore,
-	useMediaStore,
+	useMediaStore, useSettingsStore,
 	useSubscription,
 } from '#imports';
 
@@ -106,7 +109,11 @@ definePageMeta({
 const route = useRoute();
 
 const mediaStore = useMediaStore();
+const dialogStore = useDialogStore();
 const mediaOverviewStore = useMediaOverviewStore();
+const downloadStore = useDownloadStore();
+const settingsStore = useSettingsStore();
+
 const router = useRouter();
 
 const { t } = useI18n();
@@ -143,6 +150,15 @@ function onAction(event: IMediaOverviewBarActions) {
 		router.go(-1);
 	}
 }
+
+listenMediaOverviewDownloadCommand((command) => {
+	const type: PlexMediaType = command[0].type;
+	if (settingsStore.isConfirmationEnabled(type)) {
+		dialogStore.openMediaConfirmationDownloadDialog(command);
+	} else {
+		downloadStore.downloadMedia(command);
+	}
+});
 
 onMounted(() => {
 	const type = PlexMediaType.TvShow;

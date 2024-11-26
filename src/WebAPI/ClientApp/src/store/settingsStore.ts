@@ -38,6 +38,7 @@ export const useSettingsStore = defineStore('SettingsStore', () => {
 			hideMediaFromOfflineServers: false,
 			hideMediaFromOwnedServers: false,
 			useLowQualityPosterImages: false,
+			hasBeenInvitedToDiscord: false,
 		},
 		debugSettings: { debugModeEnabled: false, maskLibraryNames: false, maskServerNames: false },
 		confirmationSettings: {
@@ -136,6 +137,20 @@ export const useSettingsStore = defineStore('SettingsStore', () => {
 		},
 		getServerSettings: (machineIdentifier?: string) =>
 			machineIdentifier ? state.serverSettings.data.find((user) => user.machineIdentifier === machineIdentifier) : null,
+		isConfirmationEnabled: (type: PlexMediaType) => {
+			switch (type) {
+				case PlexMediaType.Movie:
+					return state.confirmationSettings.askDownloadMovieConfirmation;
+				case PlexMediaType.TvShow:
+					return state.confirmationSettings.askDownloadTvShowConfirmation;
+				case PlexMediaType.Season:
+					return state.confirmationSettings.askDownloadSeasonConfirmation;
+				case PlexMediaType.Episode:
+					return state.confirmationSettings.askDownloadEpisodeConfirmation;
+				default:
+					return true;
+			}
+		},
 	};
 
 	// Getters
