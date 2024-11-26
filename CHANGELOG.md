@@ -1,5 +1,19 @@
 PlexRipper Changelog
 
+# [0.26.0](https://github.com/PlexRipper/PlexRipper/compare/v0.25.0...v0.26.0) (2024-11-26)
+
+
+### Bug Fixes
+
+* **Web-UI:** Fixed download selection not triggering when selecting a tv show episode ([d726e50](https://github.com/PlexRipper/PlexRipper/commit/d726e5035457a0d123c442e238f8b61966056553))
+* **Web-UI:** Fixed missing scrollbar when viewing many download tasks on the download page ([7afecc4](https://github.com/PlexRipper/PlexRipper/commit/7afecc41affbf5cbccfe78cbe2c5a814c2b97334))
+* **Web-UI:** Fixed the media selection dialog not closing after setting the selection ([746d700](https://github.com/PlexRipper/PlexRipper/commit/746d700f00984b844de3aa6b7c11a9c007c4177d))
+
+
+### Features
+
+* **Web-UI:** Added discord invite dialog which is shown once ([73a9ab1](https://github.com/PlexRipper/PlexRipper/commit/73a9ab1f04cfa8fbf1cce6687a6bd141293585ee))
+
 # [0.25.0](https://github.com/PlexRipper/PlexRipper/compare/v0.24.0...v0.25.0) (2024-11-21)
 
 
