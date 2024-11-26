@@ -43,6 +43,7 @@ public static partial class FakeData
             .RuleFor(x => x.HideMediaFromOwnedServers, f => f.Random.Bool())
             .RuleFor(x => x.HideMediaFromOfflineServers, f => f.Random.Bool())
             .RuleFor(x => x.UseLowQualityPosterImages, f => f.Random.Bool())
+            .RuleFor(x => x.HasBeenInvitedToDiscord, f => f.Random.Bool())
             .RuleFor(x => x.ActiveAccountId, f => f.Random.Int(1, 10));
     }
 

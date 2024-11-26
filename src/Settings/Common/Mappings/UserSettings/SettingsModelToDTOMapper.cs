@@ -28,6 +28,7 @@ public static class SettingsModelToDTOMapper
             HideMediaFromOfflineServers = dto.HideMediaFromOfflineServers,
             HideMediaFromOwnedServers = dto.HideMediaFromOwnedServers,
             UseLowQualityPosterImages = dto.UseLowQualityPosterImages,
+            HasBeenInvitedToDiscord = dto.HasBeenInvitedToDiscord,
         };
 
     public static ConfirmationSettingsModule ToModel(this ConfirmationSettingsDTO dto) =>
@@ -98,6 +99,7 @@ public static class SettingsModelToDTOMapper
             HideMediaFromOfflineServers = module.HideMediaFromOfflineServers,
             HideMediaFromOwnedServers = module.HideMediaFromOwnedServers,
             UseLowQualityPosterImages = module.UseLowQualityPosterImages,
+            HasBeenInvitedToDiscord = module.HasBeenInvitedToDiscord,
         };
 
     public static ConfirmationSettingsDTO ToDTO(this ConfirmationSettingsModule module) =>

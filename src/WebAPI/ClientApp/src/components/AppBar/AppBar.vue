@@ -29,8 +29,19 @@
 				<q-btn
 					icon="mdi-github"
 					flat
+					rounded
+					style="padding: 0.5rem"
 					href="https://github.com/PlexRipper/PlexRipper"
 					target="_blank" />
+
+				<q-btn
+					flat
+					rounded
+					style="padding: 0.5rem"
+					href="https://discord.com/invite/Qa3BtxN77g"
+					target="_blank">
+					<DiscordIcon />
+				</q-btn>
 
 				<!-- Background Activity Toggle -->
 				<BackgroundActivityToggleButton />
@@ -47,6 +58,7 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@store';
+import DiscordIcon from '@components/Icons/DiscordIcon.vue';
 
 const { t } = useI18n();
 const globalStore = useGlobalStore();

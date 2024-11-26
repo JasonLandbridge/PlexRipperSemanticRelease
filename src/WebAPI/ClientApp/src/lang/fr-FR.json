@@ -264,6 +264,17 @@
     "media-overview-bar-header": {
       "movies-metadata": "{movieCount} Films - {fileSize} ",
       "tv-shows-metadata": "{tvShowCount} Séries TV - {seasonCount} Saisons - {episodeCount} Épisodes - {fileSize} "
+    },
+    "discord-invite-dialog": {
+      "discord-invite-button-text": "Rejoignez le Discord PlexRipper!",
+      "header": "Rejoignez le nouveau Discord de PlexRipper!",
+      "reasons": {
+        "reason-1": "Partagez et échangez l'accès au serveur Plex !",
+        "reason-2": "Obtenez une assistance en temps réel pour la configuration et le dépannage de PlexRipper!",
+        "reason-3": "Engagez-vous avec une communauté de PlexRippers et de passionnés de Plex partageant les mêmes idées!",
+        "reason-4": "Participez aux discussions sur les nouvelles fonctionnalités et versions!",
+        "reason-5": "Accédez à des mises à jour et annonces exclusives sur PlexRipper!"
+      }
     }
   },
   "confirmation": {
@@ -680,7 +691,8 @@
           "server-dialog": "Boîte de dialogue du serveur",
           "check-server-connections-dialog": "Boîte de dialogue Vérifier les connexions au serveur",
           "directory-browser": "Boîte de dialogue Navigateur de répertoire",
-          "verification-dialog": "Boîte de dialogue de vérification 2FA"
+          "verification-dialog": "Boîte de dialogue de vérification 2FA",
+          "discord-invite": "Invitation Discord"
         },
         "header": "Modaux de dialogue de débogage",
         "account-dialog-header": "Dialogue de compte",

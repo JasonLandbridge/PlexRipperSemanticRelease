@@ -76,3 +76,12 @@ const buttons = computed<
 	];
 });
 </script>
+
+<style lang="scss">
+@import '@/assets/scss/_mixins.scss';
+
+.download-overview-bar {
+  @extend .default-border;
+  max-height: $download-page-bar-height;
+}
+</style>

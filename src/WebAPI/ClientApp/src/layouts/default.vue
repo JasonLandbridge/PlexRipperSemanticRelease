@@ -24,6 +24,7 @@
 			:alert="alertItem" />
 		<CheckServerConnectionsDialog />
 		<FirstTimeSetupDialog />
+		<DiscordInviteDialog />
 		<!--	Background	-->
 		<Background :hide-background="isEmptyLayout" />
 	</q-layout>
@@ -75,6 +76,8 @@ onMounted(() => {
 				setTimeout(() => {
 					if (settingsStore.generalSettings.firstTimeSetup) {
 						dialogStore.openDialog(DialogType.FirstTimeSetupDialog);
+					} else if (!settingsStore.generalSettings.hasBeenInvitedToDiscord) {
+						dialogStore.openDialog(DialogType.DiscordServerInviteDialog);
 					}
 				}, 1000);
 			},

@@ -47,17 +47,19 @@ $button-dark-shadow-active: $dark-shadow-5;
 $tooltip-color: #ffffff;
 $tooltip-background: $dark-md-background-color;
 $tooltip-fontsize: 16px;
+
 /*
  * Component Variables
  */
 $app-bar-height: 48px;
-$download-page-bar-height: 64px;
+$download-page-bar-height: 80px;
 $media-overview-bar-height: 85px;
 $media-table-row-height: 42px;
 $navigation-drawer-width: 400px;
 
 $page-height-minus-app-bar: calc(100vh - #{$app-bar-height});
 $page-height-minus-app-bar-minus-media-overview-bar: calc($page-height-minus-app-bar - $media-overview-bar-height);
+$page-height-minus-app-bar-minus-download-bar: calc($page-height-minus-app-bar - $download-page-bar-height);
 
 
 $q-card-dialog-title-height: 68px;

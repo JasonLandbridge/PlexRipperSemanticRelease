@@ -193,7 +193,7 @@ body {
     &-content {
       grid-area: content;
       overflow-y: scroll;
-      margin: 1rem;
+      margin: 0 1rem;
 
       &-20 {
         min-height: calc(20vh - $q-card-dialog-title-height - $q-card-dialog-actions-height) !important;
@@ -230,7 +230,7 @@ body {
     &-actions {
       grid-area: actions;
       max-height: $q-card-dialog-actions-height;
-      margin: 0 1rem 1rem;
+      margin: 1rem;
       display: flex;
     }
   }

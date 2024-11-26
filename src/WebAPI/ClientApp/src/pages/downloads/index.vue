@@ -3,21 +3,23 @@
 		<template v-if="downloadStore.getServersWithDownloads.length > 0">
 			<!-- Download Toolbar -->
 			<DownloadBar />
-
-			<!--	The Download Table	-->
-			<QRow
-				justify="center">
-				<QCol cols="12">
-					<q-list>
-						<DownloadsTable
-							v-for="{ plexServer, downloads } in downloadStore.getServersWithDownloads"
-							:key="plexServer.id"
-							:download-rows="downloads"
-							:plex-server="plexServer"
-							@action="commandSwitch($event)" />
-					</q-list>
-				</QCol>
-			</QRow>
+			<QScroll class="page-content-minus-download-bar">
+				<!--	The Download Table	-->
+				<QRow
+					justify="center"
+					class="q-mb-lg">
+					<QCol cols="12">
+						<q-list>
+							<DownloadsTable
+								v-for="{ plexServer, downloads } in downloadStore.getServersWithDownloads"
+								:key="plexServer.id"
+								:download-rows="downloads"
+								:plex-server="plexServer"
+								@action="commandSwitch($event)" />
+						</q-list>
+					</QCol>
+				</QRow>
+			</QScroll>
 			<DownloadDetailsDialog />
 		</template>
 		<QRow
@@ -34,10 +36,8 @@
 import type { DownloadProgressDTO } from '@dto';
 import { useDownloadStore, useDialogStore } from '#imports';
 
-const downloadStore = useDownloadStore();
 const dialogStore = useDialogStore();
-
-// region single commands
+const downloadStore = useDownloadStore();
 
 function commandSwitch({ action, item }: { action: string; item: DownloadProgressDTO }) {
 	const ids: string[] = [item.id];
@@ -49,6 +49,4 @@ function commandSwitch({ action, item }: { action: string; item: DownloadProgres
 
 	downloadStore.executeDownloadCommand(action, ids);
 }
-
-// endregion
 </script>

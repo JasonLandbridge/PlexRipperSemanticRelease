@@ -8,6 +8,7 @@ public record GeneralSettingsModule : BaseSettingsModule<GeneralSettingsModule>,
     private bool _hideMediaFromOfflineServers;
     private bool _hideMediaFromOwnedServers;
     private bool _useLowQualityPosterImages;
+    private bool _hasBeenInvitedToDiscord;
 
     public static GeneralSettingsModule Create() =>
         new()
@@ -18,6 +19,7 @@ public record GeneralSettingsModule : BaseSettingsModule<GeneralSettingsModule>,
             HideMediaFromOfflineServers = false,
             HideMediaFromOwnedServers = false,
             UseLowQualityPosterImages = false,
+            HasBeenInvitedToDiscord = false,
         };
 
     public required bool FirstTimeSetup
@@ -54,5 +56,11 @@ public record GeneralSettingsModule : BaseSettingsModule<GeneralSettingsModule>,
     {
         get => _useLowQualityPosterImages;
         set => SetProperty(ref _useLowQualityPosterImages, value);
+    }
+
+    public required bool HasBeenInvitedToDiscord
+    {
+        get => _hasBeenInvitedToDiscord;
+        set => SetProperty(ref _hasBeenInvitedToDiscord, value);
     }
 }

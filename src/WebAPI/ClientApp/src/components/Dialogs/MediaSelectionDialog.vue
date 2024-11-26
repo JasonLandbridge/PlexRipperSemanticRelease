@@ -86,7 +86,7 @@
 						:label="$t('general.commands.set-selection')"
 						color="positive"
 						block
-						@click="setSelection" />
+						@click="setSelection(close)" />
 				</QCol>
 			</QRow>
 		</template>
@@ -129,8 +129,9 @@ function adjustValue(type: string, value: number) {
 	get(selectedRange)[type] = clamp(get(selectedRange)[type] + value, minValue, maxValue);
 }
 
-function setSelection() {
+function setSelection(close: () => void) {
 	mediaOverviewStore.setSelectionRange(selectedRange.value.min, selectedRange.value.max);
+	close();
 }
 
 function onOpen(): void {
