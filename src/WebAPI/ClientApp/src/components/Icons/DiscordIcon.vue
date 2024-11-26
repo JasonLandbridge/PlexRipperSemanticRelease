@@ -9,11 +9,3 @@
 		</svg>
 	</q-icon>
 </template>
-
-<script setup lang="ts">
-
-</script>
-
-<style lang="scss">
-
-</style>

@@ -31,7 +31,6 @@
 
 <script setup lang="ts">
 import { DialogType } from '@enums';
-import DiscordIcon from '@components/Icons/DiscordIcon.vue';
 
 const settingsStore = useSettingsStore();
 
