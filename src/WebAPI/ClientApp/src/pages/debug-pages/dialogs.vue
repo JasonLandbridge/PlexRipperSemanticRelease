@@ -8,7 +8,7 @@
 				<q-tr>
 					<q-td>
 						<DebugButton
-							:label="t('pages.debug.dialogs.buttons.server-dialog')"
+							:label="$t('pages.debug.dialogs.buttons.server-dialog')"
 							@click="dialogStore.openServerSettingsDialog(1)" />
 						<ServerDialog />
 					</q-td>
@@ -16,7 +16,7 @@
 				<q-tr>
 					<q-td>
 						<DebugButton
-							:label="t('pages.debug.dialogs.buttons.download-confirmation')"
+							:label="$t('pages.debug.dialogs.buttons.download-confirmation')"
 							@click="openDownloadConfirmationDialog" />
 						<DownloadConfirmation />
 					</q-td>
@@ -24,7 +24,7 @@
 				<q-tr>
 					<q-td>
 						<DebugButton
-							:label="t('pages.debug.dialogs.buttons.help-dialog')"
+							:label="$t('pages.debug.dialogs.buttons.help-dialog')"
 							@click="openHelpDialog" />
 					</q-td>
 				</q-tr>
@@ -67,8 +67,18 @@
 					<q-td>
 						<DebugButton
 							data-cy="directory-browser-dialog-button"
-							:label="t('pages.debug.dialogs.buttons.directory-browser')"
+							:label="$t('pages.debug.dialogs.buttons.directory-browser')"
 							@click="dialogStore.openDirectoryBrowserDialog(folderPath)" />
+						<DirectoryBrowser />
+					</q-td>
+				</q-tr>
+
+				<q-tr>
+					<q-td>
+						<DebugButton
+							data-cy="directory-browser-dialog-button"
+							:label="$t('pages.debug.dialogs.buttons.discord-invite')"
+							@click="dialogStore.openDialog(DialogType.DiscordServerInviteDialog)" />
 						<DirectoryBrowser />
 					</q-td>
 				</q-tr>
@@ -115,7 +125,7 @@
 							<DebugButton
 								cy="account-dialog-validate-button"
 								label="Validate Account"
-								@click=" dialogStore.openDialog(DialogType.AccountTokenValidateDialog)" />
+								@click="dialogStore.openDialog(DialogType.AccountTokenValidateDialog)" />
 						</q-td>
 					</q-tr>
 					<!--	Delete Confirmation Dialog	-->
