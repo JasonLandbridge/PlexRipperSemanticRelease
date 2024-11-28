@@ -21,7 +21,11 @@ public class Program
         {
             LogManager.SetupLogging(EnvironmentExtensions.GetLogLevel());
 
-            _log.Information("Currently running on {CurrentOS}", OsInfo.CurrentOS);
+            _log.Information(
+                "Currently running version {Version} on {CurrentOS}",
+                EnvironmentExtensions.GetVersion(),
+                OsInfo.CurrentOS
+            );
 
             var builder = WebApplication.CreateBuilder(args);
 

@@ -12,6 +12,7 @@
       <env name="PGID" value="1000" />
       <env name="PUID" value="1000" />
       <env name="UNMASKED" value="true" />
+      <env name="VERSION" value="0.26.0" />
     </envs>
     <option name="USE_EXTERNAL_CONSOLE" value="0" />
     <option name="USE_MONO" value="0" />
