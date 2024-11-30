@@ -73,11 +73,7 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
             }
             else if (await _fileMergeScheduler.IsDownloadTaskMerging(downloadTaskKey))
             {
-                var fileTaskId = _dbContext
-                    .FileTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
-                    .Select(x => x.Id)
-                    .FirstOrDefault();
-                await _fileMergeScheduler.StopFileMergeJob(fileTaskId);
+                await _fileMergeScheduler.StopFileMergeJob(downloadTaskKey);
             }
 
             if (downloadTask.DownloadStatus is DownloadStatus.Downloading or DownloadStatus.Merging)

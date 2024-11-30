@@ -67,7 +67,7 @@ public static partial class FakeData
             .StrictMode(true)
             .UseSeed(seed.Next())
             .ApplyDownloadTaskBase(seed)
-            .RuleFor(x => x.Percentage, _ => 0)
+            .RuleFor(x => x.DownloadPercentage, _ => 0)
             .RuleFor(x => x.DataReceived, _ => 0)
             .RuleFor(
                 x => x.DataTotal,
@@ -92,7 +92,7 @@ public static partial class FakeData
                     SeasonFolder = string.Empty,
                 }
             )
-            .RuleFor(x => x.DownloadWorkerTasks, _ => new List<DownloadWorkerTask>());
+            .RuleFor(x => x.DownloadWorkerTasks, _ => GetDownloadWorkerTask(seed).Generate(config.DownloadWorkerTasks));
     }
 
     #endregion

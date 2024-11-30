@@ -1,31 +1,33 @@
+using System.Diagnostics;
 using System.Reactive.Subjects;
 using Application.Contracts;
+using Data.Contracts;
 using FileSystem.Contracts;
 using FluentValidation;
 using Logging.Interface;
+using Microsoft.EntityFrameworkCore;
+using PlexRipper.Application.Notifications;
 
 namespace PlexRipper.Application;
 
-public record MergeFilesFromFileTaskCommand(FileTask FileTask, Subject<FileMergeProgress> FileMergeProgress)
-    : IRequest<Result<FileTask>>;
+public record MergeFilesFromFileTaskCommand(
+    DownloadTaskKey Key,
+    Subject<IDownloadFileTransferProgress>? FileMergeProgress = null
+) : IRequest<Result>;
 
 public class MergeFilesFromFileTaskCommandValidator : AbstractValidator<MergeFilesFromFileTaskCommand>
 {
-    public MergeFilesFromFileTaskCommandValidator()
-    {
-        RuleFor(x => x.FileTask.FilePathsCompressed).NotEmpty();
-        RuleFor(x => x.FileTask.FilePaths.Count).GreaterThan(0);
-        RuleFor(x => x.FileTask.DestinationFilePath).NotEmpty();
-        RuleFor(x => x.FileTask.FileName).NotEmpty();
-    }
+    public MergeFilesFromFileTaskCommandValidator() { }
 }
 
-public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFromFileTaskCommand, Result<FileTask>>
+public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFromFileTaskCommand, Result>
 {
     private readonly ILog _log;
     private readonly IMediator _mediator;
+    private readonly IPlexRipperDbContext _dbContext;
     private readonly IFileSystem _fileSystem;
     private readonly IDirectorySystem _directorySystem;
+    private readonly IFileMergeSystem _fileMergeSystem;
     private Stream? _readStream;
     private Stream? _writeStream;
 
@@ -34,35 +36,42 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
     public MergeFilesFromFileTaskCommandHandler(
         ILog log,
         IMediator mediator,
+        IPlexRipperDbContext dbContext,
         IFileSystem fileSystem,
-        IDirectorySystem directorySystem
+        IDirectorySystem directorySystem,
+        IFileMergeSystem fileMergeSystem
     )
     {
         _log = log;
         _mediator = mediator;
+        _dbContext = dbContext;
         _fileSystem = fileSystem;
         _directorySystem = directorySystem;
+        _fileMergeSystem = fileMergeSystem;
     }
 
-    public async Task<Result<FileTask>> Handle(
-        MergeFilesFromFileTaskCommand command,
-        CancellationToken cancellationToken
-    )
+    public async Task<Result> Handle(MergeFilesFromFileTaskCommand command, CancellationToken cancellationToken)
     {
-        var fileTask = command.FileTask;
+        var key = command.Key;
         var fileMergeProgress = command.FileMergeProgress;
-        var transferStarted = DateTime.UtcNow;
+
+        var downloadTask = await _dbContext.GetDownloadTaskFileAsync(command.Key, CancellationToken.None);
+        if (downloadTask == null)
+        {
+            return ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), command.Key.Id).LogError();
+        }
+
+        var sourceFilePaths = downloadTask.FilePaths;
+        _log.Here()
+            .Debug(
+                "Starting file merge process for {FilePathsCount} parts into a file {FileName}",
+                sourceFilePaths.Count,
+                downloadTask.FileName
+            );
 
         try
         {
-            _log.Here()
-                .Debug(
-                    "Starting file merge process for {FilePathsCount} parts into a file {FileName}",
-                    fileTask.FilePaths.Count,
-                    fileTask.FileName
-                );
-
-            var writeStreamResult = await OpenOrCreateMergeStream(fileTask.DestinationFilePath);
+            var writeStreamResult = await OpenOrCreateMergeStream(downloadTask.DestinationFilePath);
             if (writeStreamResult.IsFailed)
             {
                 return writeStreamResult.ToResult();
@@ -71,16 +80,38 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
             _writeStream = writeStreamResult.Value;
 
             // Resume the file merge if it was previously interrupted
-            if (fileTask.CurrentBytesOffset > 0)
+            if (downloadTask.CurrentFileTransferBytesOffset > 0)
             {
-                _writeStream.Seek(fileTask.CurrentBytesOffset, SeekOrigin.Begin);
+                _writeStream.Seek(downloadTask.CurrentFileTransferBytesOffset, SeekOrigin.Begin);
             }
 
-            long totalRead = 0;
+            // Update download task status
+            await UpdateDownloadTaskStatus(
+                key,
+                downloadTask.IsSingleFile ? DownloadStatus.Moving : DownloadStatus.Merging
+            );
 
-            for (var index = fileTask.CurrentFilePathIndex; index < fileTask.FilePaths.Count; index++)
+            var stopwatch = Stopwatch.StartNew(); // Start timing for speed calculation
+            var previousDataTransferred = downloadTask.FileDataTransferred;
+
+            for (var index = downloadTask.CurrentFileTransferPathIndex; index < sourceFilePaths.Count; index++)
             {
-                var filePath = fileTask.FilePaths[index];
+                var filePath = sourceFilePaths[index];
+
+                if (!_fileMergeSystem.FileExists(filePath))
+                {
+                    var result = Result
+                        .Fail($"Filepath: {filePath} does not exist and cannot be used to merge/move the file!")
+                        .LogError();
+
+                    await UpdateDownloadTaskStatus(
+                        key,
+                        downloadTask.IsSingleFile ? DownloadStatus.MoveError : DownloadStatus.MergeError
+                    );
+
+                    await _mediator.SendNotificationAsync(result);
+                    return result;
+                }
 
                 var inputStreamResult = _fileSystem.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 if (inputStreamResult.IsFailed)
@@ -92,8 +123,8 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
 
                 _readStream = inputStreamResult.Value;
 
-                fileTask.CurrentFilePathIndex = index;
-                fileTask.CurrentBytesOffset = 0;
+                downloadTask.CurrentFileTransferPathIndex = index;
+                downloadTask.CurrentFileTransferBytesOffset = 0;
 
                 var buffer = new byte[_bufferSize];
                 int bytesRead;
@@ -101,11 +132,30 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 {
                     await _writeStream.WriteAsync(buffer, 0, bytesRead, CancellationToken.None);
 
-                    fileTask.CurrentBytesOffset += bytesRead;
-                    totalRead += bytesRead;
-                    SendProgress(totalRead);
+                    downloadTask.CurrentFileTransferBytesOffset += bytesRead;
 
-                    cancellationToken.ThrowIfCancellationRequested();
+                    // Send progress
+                    if (stopwatch.ElapsedMilliseconds > 1000)
+                    {
+                        downloadTask.FileDataTransferred += bytesRead;
+                        downloadTask.FileTransferPercentage = DataFormat.GetPercentage(
+                            downloadTask.FileDataTransferred,
+                            downloadTask.DataTotal
+                        );
+                        downloadTask.FileTransferSpeed = DataFormat.GetTransferSpeed(
+                            downloadTask.FileDataTransferred - previousDataTransferred,
+                            stopwatch.Elapsed.TotalSeconds
+                        );
+                        previousDataTransferred = downloadTask.FileDataTransferred;
+
+                        await _dbContext.UpdateDownloadFileTransferProgress(key, downloadTask);
+
+                        fileMergeProgress?.OnNext(downloadTask);
+
+                        stopwatch.Restart();
+
+                        cancellationToken.ThrowIfCancellationRequested();
+                    }
                 }
 
                 _readStream.Close();
@@ -113,7 +163,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _log.Debug(
                     "The file at {FilePath} has been merged into the single media file at {DestinationPath}",
                     filePath,
-                    fileTask.DestinationFilePath,
+                    downloadTask.DestinationDirectory,
                     0
                 );
                 _log.Debug("Deleting file {FilePath} since it has been merged already", filePath);
@@ -125,16 +175,30 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 }
             }
 
-            fileTask.CurrentBytesOffset = 0;
-            SendProgress(totalRead);
+            downloadTask.CurrentFileTransferBytesOffset = 0;
+
+            _log.Here()
+                .Information(
+                    "Finished combining {FilePathsCount} files into {FileTaskFileName}",
+                    downloadTask.FilePaths.Count,
+                    downloadTask.FileName
+                );
+
+            await _mediator.Publish(new FileMergeFinishedNotification(key), CancellationToken.None);
+
+            return Result.Ok();
         }
         catch (OperationCanceledException)
         {
-            _log.Warning("The file merge operation was cancelled for file task {FileTaskId}", fileTask.Id);
-            return Result.Ok(fileTask);
+            _log.Warning("The file merge operation was cancelled for file task {FileTaskId}", key.Id);
+            return Result.Ok();
         }
         catch (Exception ex)
         {
+            downloadTask.DownloadStatus = downloadTask.IsSingleFile
+                ? DownloadStatus.MoveError
+                : DownloadStatus.MergeError;
+
             return _log.Error(ex).ToResult();
         }
         finally
@@ -151,28 +215,19 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _writeStream = null;
             }
 
-            fileMergeProgress.OnCompleted();
-        }
+            if (cancellationToken.IsCancellationRequested)
+            {
+                await UpdateDownloadTaskStatus(
+                    key,
+                    downloadTask.IsSingleFile ? DownloadStatus.MovePaused : DownloadStatus.MergePaused
+                );
+            }
 
-        return Result.Ok(fileTask);
+            await _dbContext.UpdateDownloadFileTransferProgress(key, downloadTask);
 
-        void SendProgress(long dataTransferred)
-        {
-            var elapsedTime = DateTime.UtcNow.Subtract(transferStarted);
-            fileMergeProgress.OnNext(
-                new FileMergeProgress
-                {
-                    Id = fileTask.Id,
-                    DownloadTaskId = fileTask.DownloadTaskId,
-                    DownloadTaskType = fileTask.DownloadTaskType,
-                    CurrentFilePathIndex = fileTask.CurrentFilePathIndex,
-                    DataTransferred = dataTransferred,
-                    DataTotal = fileTask.FileSize,
-                    PlexLibraryId = fileTask.DownloadTaskKey.PlexLibraryId,
-                    PlexServerId = fileTask.DownloadTaskKey.PlexServerId,
-                    TransferSpeed = DataFormat.GetTransferSpeed(dataTransferred, elapsedTime.TotalSeconds),
-                }
-            );
+            fileMergeProgress?.OnNext(downloadTask);
+
+            fileMergeProgress?.OnCompleted();
         }
     }
 
@@ -187,5 +242,15 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
         }
 
         return _fileSystem.Create(fileDestinationPath, _bufferSize, FileOptions.SequentialScan);
+    }
+
+    private async Task UpdateDownloadTaskStatus(DownloadTaskKey downloadTaskKey, DownloadStatus newDownloadStatus)
+    {
+        await _dbContext.SetDownloadStatus(downloadTaskKey, newDownloadStatus);
+        await _dbContext
+            .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
+            .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, newDownloadStatus));
+
+        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey));
     }
 }

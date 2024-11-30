@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace PlexRipper.Application.Notifications;
 
-public record FileMergeFinishedNotification(int FileTaskId) : INotification;
+public record FileMergeFinishedNotification(DownloadTaskKey Key) : INotification;
 
 public class FileMergeFinishedHandler : INotificationHandler<FileMergeFinishedNotification>
 {
@@ -25,29 +25,18 @@ public class FileMergeFinishedHandler : INotificationHandler<FileMergeFinishedNo
 
     public async Task Handle(FileMergeFinishedNotification notification, CancellationToken cancellationToken)
     {
-        var fileTask = await _dbContext.FileTasks.GetAsync(notification.FileTaskId, cancellationToken);
-        if (fileTask is null)
-        {
-            ResultExtensions.EntityNotFound(nameof(FileTask), notification.FileTaskId).LogError();
-            return;
-        }
-
-        var downloadTask = await _dbContext.GetDownloadTaskAsync(
-            fileTask.DownloadTaskId,
-            cancellationToken: cancellationToken
-        );
+        var downloadTask = await _dbContext.GetDownloadTaskFileAsync(notification.Key, CancellationToken.None);
         if (downloadTask is null)
         {
-            ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), fileTask.DownloadTaskId).LogError();
+            ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), notification.Key.Id).LogError();
             return;
         }
 
-        _fileMergeSystem.DeleteDirectoryFromFilePath(fileTask.FilePaths.First());
+        // TODO - Delete the directory of the tv-show
+        _fileMergeSystem.DeleteDirectoryFromFilePath(downloadTask.FilePaths.First());
 
-        await _dbContext.SetDownloadStatus(downloadTask.ToKey(), DownloadStatus.Completed);
+        await _dbContext.SetDownloadStatus(notification.Key, DownloadStatus.Completed);
 
-        await _dbContext.FileTasks.Where(x => x.Id == notification.FileTaskId).ExecuteDeleteAsync(cancellationToken);
-
-        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTask.ToKey()), cancellationToken);
+        await _mediator.Send(new DownloadTaskUpdatedNotification(notification.Key), cancellationToken);
     }
 }

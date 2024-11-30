@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Data.Contracts;
 using FileSystem.Contracts;
 using Logging.Interface;
@@ -19,42 +20,18 @@ public class FileMergeScheduler : IFileMergeScheduler
         _dbContext = dbContext;
     }
 
-    /// <summary>
-    /// Creates an FileTask from a completed <see cref="DownloadTaskGeneric"/> and adds this to the database.
-    /// </summary>
-    /// <param name="downloadTaskKey"></param>
-    public async Task<Result<FileTask>> CreateFileTaskFromDownloadTask(DownloadTaskKey downloadTaskKey)
+    public async Task<Result> StartFileMergeJob(DownloadTaskKey downloadTaskKey)
     {
-        var downloadTask = await _dbContext.GetDownloadTaskAsync(downloadTaskKey);
-        if (downloadTask is null)
-            return ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), downloadTaskKey.Id);
+        if (!downloadTaskKey.IsValid)
+            return ResultExtensions.IsInvalidId(nameof(DownloadTaskKey), downloadTaskKey.Id).LogWarning();
 
-        _log.Here()
-            .Debug(
-                "Adding DownloadTask \"{DownloadTaskTitle}\" with id {Id} to a FileTask to be merged",
-                downloadTask.FullTitle,
-                downloadTask.Id
-            );
-
-        await _dbContext.FileTasks.AddAsync(downloadTask.ToFileTask());
-        await _dbContext.SaveChangesAsync();
-
-        // Always found because it was just created
-        return (await _dbContext.FileTasks.FirstOrDefaultAsync(x => x.DownloadTaskId == downloadTaskKey.Id))!;
-    }
-
-    public async Task<Result> StartFileMergeJob(int fileTaskId)
-    {
-        if (fileTaskId <= 0)
-            return ResultExtensions.IsInvalidId(nameof(fileTaskId), fileTaskId).LogWarning();
-
-        var jobKey = FileMergeJob.GetJobKey(fileTaskId);
+        var jobKey = FileMergeJob.GetJobKey(downloadTaskKey.Id);
         if (await _scheduler.IsJobRunning(jobKey))
             return Result.Fail($"{nameof(FileMergeJob)} with {jobKey} already exists").LogWarning();
 
         var job = JobBuilder
             .Create<FileMergeJob>()
-            .UsingJobData(FileMergeJob.FileTaskId, fileTaskId)
+            .UsingJobData(FileMergeJob.DownloadTaskIdParameter, JsonSerializer.Serialize(downloadTaskKey))
             .WithIdentity(jobKey)
             .Build();
 
@@ -65,18 +42,18 @@ public class FileMergeScheduler : IFileMergeScheduler
         return Result.Ok();
     }
 
-    public async Task<Result> StopFileMergeJob(int fileTaskId)
+    public async Task<Result> StopFileMergeJob(DownloadTaskKey downloadTaskKey)
     {
-        if (fileTaskId <= 0)
-            return ResultExtensions.IsInvalidId(nameof(fileTaskId), fileTaskId).LogWarning();
+        if (!downloadTaskKey.IsValid)
+            return ResultExtensions.IsInvalidId(nameof(DownloadTaskKey), downloadTaskKey.Id).LogWarning();
 
         _log.Information(
             "Stopping FileMergeJob for {NameOfDownloadFileTask)} with id: {FileTaskId}",
-            nameof(FileTask),
-            fileTaskId
+            nameof(DownloadTaskKey),
+            downloadTaskKey.Id
         );
 
-        var jobKey = FileMergeJob.GetJobKey(fileTaskId);
+        var jobKey = FileMergeJob.GetJobKey(downloadTaskKey.Id);
         if (!await _scheduler.IsJobRunning(jobKey))
         {
             return Result
@@ -84,16 +61,12 @@ public class FileMergeScheduler : IFileMergeScheduler
                 .LogWarning();
         }
 
-        return Result.OkIf(await _scheduler.StopJob(jobKey), $"Failed to stop {nameof(FileTask)} with id {fileTaskId}");
+        return Result.OkIf(
+            await _scheduler.StopJob(jobKey),
+            $"Failed to stop {nameof(DownloadTaskKey)} with id {downloadTaskKey.Id}"
+        );
     }
 
-    public async Task<bool> IsDownloadTaskMerging(DownloadTaskKey downloadTaskKey)
-    {
-        var fileTaskId = await _dbContext
-            .FileTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
-            .Select(x => x.Id)
-            .FirstOrDefaultAsync();
-
-        return await _scheduler.IsJobRunningAsync(FileMergeJob.GetJobKey(fileTaskId));
-    }
+    public async Task<bool> IsDownloadTaskMerging(DownloadTaskKey downloadTaskKey) =>
+        await _scheduler.IsJobRunningAsync(FileMergeJob.GetJobKey(downloadTaskKey.Id));
 }

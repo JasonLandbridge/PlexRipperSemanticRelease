@@ -4,6 +4,7 @@ using FileSystem.Contracts;
 
 namespace PlexRipper.Application;
 
+// TODO this should be a notification
 public record DownloadTaskUpdatedNotification(DownloadTaskKey Key) : IRequest;
 
 public class DownloadTaskUpdatedHandler : IRequestHandler<DownloadTaskUpdatedNotification>
@@ -50,14 +51,7 @@ public class DownloadTaskUpdatedHandler : IRequestHandler<DownloadTaskUpdatedNot
 
         if (changedDownloadTask.DownloadStatus == DownloadStatus.DownloadFinished)
         {
-            var addFileTaskResult = await _fileMergeScheduler.CreateFileTaskFromDownloadTask(notification.Key);
-            if (addFileTaskResult.IsFailed)
-            {
-                addFileTaskResult.LogError();
-                return;
-            }
-
-            await _fileMergeScheduler.StartFileMergeJob(addFileTaskResult.Value.Id);
+            await _fileMergeScheduler.StartFileMergeJob(notification.Key);
             await _mediator.Publish(
                 new CheckDownloadQueueNotification(notification.Key.PlexServerId),
                 cancellationToken

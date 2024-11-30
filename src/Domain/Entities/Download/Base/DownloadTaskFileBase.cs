@@ -2,43 +2,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlexRipper.Domain;
 
-public abstract class DownloadTaskFileBase : DownloadTaskBase
+public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTransferProgress
 {
-    /// <summary>
-    /// Gets or sets the percentage of the data received from the DataTotal.
-    /// NOTE: This is calculated at runtime and not stored in the database.
-    /// </summary>
-    [Column(Order = 4)]
-    public required decimal Percentage { get; set; }
-
-    /// <summary>
-    /// Gets or sets the total size received of the file in bytes.
-    /// NOTE: This is calculated at runtime and not stored in the database.
-    /// </summary>
-    [Column(Order = 5)]
-    public required long DataReceived { get; set; }
-
-    /// <summary>
-    /// Gets or sets the total size of the file in bytes.
-    /// NOTE: This is calculated at runtime and not stored in the database.
-    /// </summary>
-    [Column(Order = 6)]
-    public required long DataTotal { get; set; }
-
-    /// <summary>
-    /// Gets or sets get the download speeds in bytes per second.
-    /// NOTE: This is calculated at runtime and not stored in the database.
-    /// </summary>
-    [Column(Order = 18)]
-    public required long DownloadSpeed { get; set; }
-
-    /// <summary>
-    /// Gets or sets the file transfer speeds when the finished download is being merged/moved.
-    /// NOTE: This is calculated at runtime and not stored in the database.
-    /// </summary>
-    [Column(Order = 19)]
-    public required long FileTransferSpeed { get; set; }
-
     [Column(Order = 11)]
     public required string FileName { get; set; }
 
@@ -58,9 +23,63 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase
     [Column(Order = 16)]
     public required DownloadTaskDirectory DirectoryMeta { get; init; }
 
+    #region Download Progress
+
+    /// <summary>
+    /// Gets or sets the percentage of the data received from the DataTotal.
+    /// </summary>
+    [Column(Order = 4)]
+    public required decimal DownloadPercentage { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total size received of the file in bytes.
+    /// </summary>
+    [Column(Order = 5)]
+    public required long DataReceived { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total size of the file in bytes.
+    /// </summary>
+    [Column(Order = 6)]
+    public required long DataTotal { get; set; }
+
+    /// <summary>
+    /// Gets or sets get the download speeds in bytes per second.
+    /// </summary>
+    [Column(Order = 18)]
+    public required long DownloadSpeed { get; set; }
+
+    #endregion
+
+    #region File Transfer Progress
+
+    /// <summary>
+    /// Gets or sets the percentage of the data received from the DataTotal.
+    /// </summary>
+    [Column(Order = 4)]
+    public required decimal FileTransferPercentage { get; set; }
+
+    /// <summary>
+    /// Gets or sets the file transfer speeds when the finished download is being merged/moved.
+    /// </summary>
+    [Column(Order = 19)]
+    public required long FileTransferSpeed { get; set; }
+
+    /// <summary>
+    /// Gets or sets the total size received of the file in bytes.
+    /// </summary>
+    [Column(Order = 5)]
+    public required long FileDataTransferred { get; set; }
+
+    public int CurrentFileTransferPathIndex { get; set; }
+
+    public long CurrentFileTransferBytesOffset { get; set; }
+
+    #endregion
+
     #region Relationships
 
-    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; set; } = new();
+    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; set; } = [];
 
     #endregion
 
@@ -69,6 +88,10 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase
     public override PlexMediaType MediaType => PlexMediaType.None;
 
     public override DownloadTaskType DownloadTaskType => DownloadTaskType.None;
+
+    public string DestinationFilePath => Path.Join(DestinationDirectory, FileName);
+
+    public List<string> FilePaths => DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToList();
 
     /// <summary>
     /// Gets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
@@ -139,6 +162,9 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase
 
     [NotMapped]
     public long TimeRemaining => DataFormat.GetTimeRemaining(DataTotal - DataReceived, DownloadSpeed);
+
+    [NotMapped]
+    public bool IsSingleFile => DownloadWorkerTasks.Count == 1;
 
     #endregion
 }

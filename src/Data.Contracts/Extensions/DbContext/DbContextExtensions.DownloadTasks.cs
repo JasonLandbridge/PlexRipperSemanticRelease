@@ -273,7 +273,7 @@ public static partial class DbContextExtensions
                     .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.Percentage, progress.Percentage)
+                            p.SetProperty(x => x.DownloadPercentage, progress.Percentage)
                                 .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
@@ -285,11 +285,58 @@ public static partial class DbContextExtensions
                     .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.Percentage, progress.Percentage)
+                            p.SetProperty(x => x.DownloadPercentage, progress.Percentage)
                                 .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
                         cancellationToken
+                    );
+                break;
+            case DownloadTaskType.Movie:
+            case DownloadTaskType.TvShow:
+            case DownloadTaskType.Season:
+            case DownloadTaskType.Episode:
+                _log.Here()
+                    .Error(
+                        "{Name} of type {Type} is not supported in {MethodName}",
+                        nameof(DownloadTaskType),
+                        key.Type,
+                        nameof(UpdateDownloadProgress)
+                    );
+                return;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public static async Task UpdateDownloadFileTransferProgress(
+        this IPlexRipperDbContext dbContext,
+        DownloadTaskKey key,
+        IDownloadFileTransferProgress progress
+    )
+    {
+        switch (key.Type)
+        {
+            case DownloadTaskType.MovieData:
+                await dbContext
+                    .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(p =>
+                        p.SetProperty(x => x.FileTransferPercentage, progress.FileTransferPercentage)
+                            .SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                            .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
+                            .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
+                            .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)
+                    );
+                break;
+            case DownloadTaskType.EpisodeData:
+                await dbContext
+                    .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(p =>
+                        p.SetProperty(x => x.FileTransferPercentage, progress.FileTransferPercentage)
+                            .SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                            .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
+                            .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
+                            .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)
                     );
                 break;
             case DownloadTaskType.Movie:
