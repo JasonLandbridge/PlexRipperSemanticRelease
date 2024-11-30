@@ -23,6 +23,10 @@ public class FileTask : BaseEntity
 
     public required DownloadTaskType DownloadTaskType { get; init; }
 
+    public int CurrentFilePathIndex { get; set; }
+
+    public long CurrentBytesOffset { get; set; }
+
     #region Relationships
 
     public PlexServer? PlexServer { get; init; }

@@ -10,4 +10,6 @@ public static partial class FakeData
         RandomInstance.NextBytes(b);
         return b;
     }
+
+    public static MemoryStream GetFileStream(int sizeInMib) => new(GetDownloadFile(sizeInMib));
 }

@@ -34,7 +34,6 @@ public class TestModule : Module
 
         builder.RegisterType<TestStreamTracker>().As<ITestStreamTracker>().SingleInstance();
         builder.RegisterType<MockDownloadFileStream>().As<IDownloadFileStream>().SingleInstance();
-        builder.RegisterType<MockFileMergeStreamProvider>().As<IFileMergeStreamProvider>().SingleInstance();
         builder.RegisterType<MockFileMergeSystem>().As<IFileMergeSystem>().SingleInstance();
         builder.RegisterType<MockConfigManager>().As<IConfigManager>().SingleInstance();
 

@@ -19,23 +19,15 @@ public class FileMergeJob : IJob
     private readonly IMediator _mediator;
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IFileMergeSystem _fileMergeSystem;
-    private readonly IFileMergeStreamProvider _fileMergeStreamProvider;
-    private readonly Subject<long> _bytesReceivedProgress = new();
+    private readonly Subject<FileMergeProgress> _bytesReceivedProgress = new();
     private readonly TaskCompletionSource<object> _progressCompletionSource = new();
 
-    public FileMergeJob(
-        ILog log,
-        IMediator mediator,
-        IPlexRipperDbContext dbContext,
-        IFileMergeSystem fileMergeSystem,
-        IFileMergeStreamProvider fileMergeStreamProvider
-    )
+    public FileMergeJob(ILog log, IMediator mediator, IPlexRipperDbContext dbContext, IFileMergeSystem fileMergeSystem)
     {
         _log = log;
         _mediator = mediator;
         _dbContext = dbContext;
         _fileMergeSystem = fileMergeSystem;
-        _fileMergeStreamProvider = fileMergeStreamProvider;
     }
 
     public static string FileTaskId => "FileTaskId";
@@ -116,47 +108,23 @@ public class FileMergeJob : IJob
                     return;
                 }
 
-            Stream? outputStream = null;
-
             try
             {
                 // Create FileMergeProgress from bytes received progress
-                SetupSubscription(fileTask, token);
+                SetupSubscription(token);
 
-                var streamResult = await _fileMergeStreamProvider.OpenOrCreateMergeStream(fileTask.DestinationFilePath);
-                if (streamResult.IsFailed)
-                {
-                    streamResult.LogError();
-                    return;
-                }
-
-                outputStream = streamResult.Value;
-
-                if (EnvironmentExtensions.IsIntegrationTestMode())
-                    outputStream = new ThrottledStream(streamResult.Value, 50000);
-
-                _log.Here()
-                    .Debug(
-                        "Starting file merge process for {FilePathsCount} parts into a file {FileName}",
-                        fileTask.FilePaths.Count,
-                        fileTask.FileName
-                    );
-                await _fileMergeStreamProvider.MergeFiles(fileTask, outputStream, _bytesReceivedProgress, token);
+                var mergedFileTaskResult = await _mediator.Send(
+                    new MergeFilesFromFileTaskCommand(fileTask, _bytesReceivedProgress),
+                    token
+                );
             }
             catch (Exception e)
             {
                 await _mediator.SendNotificationAsync(Result.Fail(new ExceptionalError(e)).LogError());
             }
-            finally
-            {
-                if (outputStream != null)
-                    await outputStream.DisposeAsync();
-            }
 
             // Clean-up
-            _bytesReceivedProgress.OnCompleted();
             await _progressCompletionSource.Task;
-            _bytesReceivedProgress.Dispose();
             _log.Here()
                 .Information(
                     "Finished combining {FilePathsCount} files into {FileTaskFileName}",
@@ -172,27 +140,12 @@ public class FileMergeJob : IJob
         }
     }
 
-    private void SetupSubscription(FileTask fileTask, CancellationToken token)
+    private void SetupSubscription(CancellationToken token)
     {
         var timeContext = new EventLoopScheduler();
-        var transferStarted = DateTime.UtcNow;
 
         _bytesReceivedProgress
             .Sample(TimeSpan.FromSeconds(1), timeContext)
-            .Select(dataTransferred =>
-            {
-                var elapsedTime = DateTime.UtcNow.Subtract(transferStarted);
-                return new FileMergeProgress
-                {
-                    Id = fileTask.Id,
-                    DataTransferred = dataTransferred,
-                    DataTotal = fileTask.FileSize,
-                    DownloadTaskId = fileTask.DownloadTaskKey.Id,
-                    PlexLibraryId = fileTask.DownloadTaskKey.PlexLibraryId,
-                    PlexServerId = fileTask.DownloadTaskKey.PlexServerId,
-                    TransferSpeed = DataFormat.GetTransferSpeed(dataTransferred, elapsedTime.TotalSeconds),
-                };
-            })
             .SelectMany(async data =>
                 await _mediator.Publish(new FileMergeProgressNotification(data), token).ToObservable()
             )
