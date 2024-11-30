@@ -10,17 +10,17 @@ public class FileMergeFinishedHandler : INotificationHandler<FileMergeFinishedNo
 {
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IMediator _mediator;
-    private readonly IFileMergeSystem _fileMergeSystem;
+    private readonly IDirectorySystem _directorySystem;
 
     public FileMergeFinishedHandler(
         IPlexRipperDbContext dbContext,
         IMediator mediator,
-        IFileMergeSystem fileMergeSystem
+        IDirectorySystem directorySystem
     )
     {
         _dbContext = dbContext;
         _mediator = mediator;
-        _fileMergeSystem = fileMergeSystem;
+        _directorySystem = directorySystem;
     }
 
     public async Task Handle(FileMergeFinishedNotification notification, CancellationToken cancellationToken)
@@ -33,7 +33,7 @@ public class FileMergeFinishedHandler : INotificationHandler<FileMergeFinishedNo
         }
 
         // TODO - Delete the directory of the tv-show
-        _fileMergeSystem.DeleteDirectoryFromFilePath(downloadTask.FilePaths.First());
+        _directorySystem.DeleteDirectoryFromFilePath(downloadTask.FilePaths.First());
 
         await _dbContext.SetDownloadStatus(notification.Key, DownloadStatus.Completed);
 

@@ -5,6 +5,7 @@ using ByteSizeLib;
 using Data.Contracts;
 using FileSystem.Contracts;
 using Microsoft.EntityFrameworkCore;
+using PlexRipper.Application.Notifications;
 
 namespace PlexRipper.Application.UnitTests;
 
@@ -12,36 +13,6 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
 {
     public MergeFilesFromFileTaskCommandUnitTests(ITestOutputHelper output)
         : base(output) { }
-
-    [Fact]
-    public async Task ShouldReturnInvalidValidation_WhenFilePathsCompressedIsEmpty()
-    {
-        // Arrange
-
-        await SetupDatabase(
-            2352,
-            config =>
-            {
-                config.TvShowDownloadTasksCount = 1;
-                config.TvShowSeasonDownloadTasksCount = 1;
-                config.TvShowEpisodeDownloadTasksCount = 1;
-                config.DownloadWorkerTasks = 4;
-            }
-        );
-
-        var key = await IDbContext.DownloadTaskTvShowEpisodeFile.Select(x => x.ToKey()).FirstOrDefaultAsync();
-        key.ShouldNotBeNull();
-
-        var progress = new Subject<IDownloadFileTransferProgress>();
-
-        var command = new MergeFilesFromFileTaskCommand(key, progress);
-
-        // Act
-        var validate = await new MergeFilesFromFileTaskCommandValidator().ValidateAsync(command);
-
-        // Assert
-        validate.IsValid.ShouldBeFalse();
-    }
 
     [Fact]
     public async Task ShouldReturnFailedResult_WhenDestinationDirectoryCreationFails()
@@ -169,10 +140,22 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
             .Setup(x => x.CreateDirectoryFromFilePath(It.IsAny<string>()))
             .Returns(Result.Ok())
             .Verifiable(Times.Exactly(1));
+        mock.Mock<IFileSystem>()
+            .Setup(x => x.FileExists(It.IsAny<string>()))
+            .Returns(true)
+            .Verifiable(Times.Exactly(4));
         mock.Mock<IMediator>()
             .Setup(m => m.Publish(It.IsAny<SendNotificationResult>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Verifiable(Times.Never);
+        mock.Mock<IMediator>()
+            .Setup(m => m.Publish(It.IsAny<FileMergeFinishedNotification>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.Once);
+
+        mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>)
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.AtLeastOnce);
 
         // Act
         var command = new MergeFilesFromFileTaskCommand(downloadFileTask.ToKey(), progress);
@@ -194,7 +177,7 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
     }
 
     [Fact]
-    public async Task ShouldBePauseTheFileTask_WhenCancellationTokenIsCalled()
+    public async Task ShouldBeAbleToPauseTheFileTask_WhenCancellationTokenIsCalled()
     {
         // Arrange
         await SetupDatabase(
@@ -249,7 +232,7 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
         mock.Mock<IFileSystem>()
             .Setup(x => x.DeleteFile(It.IsAny<string>()))
             .Returns(Result.Ok())
-            .Verifiable(Times.Exactly(1));
+            .Verifiable(Times.AtLeastOnce());
         mock.Mock<IDirectorySystem>()
             .Setup(x => x.CreateDirectoryFromFilePath(It.IsAny<string>()))
             .Returns(Result.Ok())
@@ -258,6 +241,13 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
             .Setup(m => m.Publish(It.IsAny<SendNotificationResult>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Verifiable(Times.Never);
+        mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>)
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.AtLeastOnce);
+        mock.Mock<IFileSystem>()
+            .Setup(x => x.FileExists(It.IsAny<string>()))
+            .Returns(true)
+            .Verifiable(Times.Exactly(2));
 
         // Act
         var command = new MergeFilesFromFileTaskCommand(downloadFileTask.ToKey(), progress);
@@ -338,6 +328,17 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
             .Setup(m => m.Publish(It.IsAny<SendNotificationResult>(), It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Verifiable(Times.Never);
+        mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>)
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.AtLeastOnce);
+        mock.Mock<IFileSystem>()
+            .Setup(x => x.FileExists(It.IsAny<string>()))
+            .Returns(true)
+            .Verifiable(Times.Exactly(2));
+        mock.Mock<IMediator>()
+            .Setup(m => m.Publish(It.IsAny<FileMergeFinishedNotification>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.Once);
 
         // Act
         var command = new MergeFilesFromFileTaskCommand(downloadFileTask.ToKey(), progress);

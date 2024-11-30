@@ -66,7 +66,7 @@ public class DownloadWorkerTask : BaseEntity
 
     public PlexServer? PlexServer { get; init; }
 
-    public required int PlexServerId { get; init; }
+    public required int PlexServerId { get; set; }
 
     public ICollection<DownloadWorkerLog> DownloadWorkerTaskLogs { get; init; } = [];
 
