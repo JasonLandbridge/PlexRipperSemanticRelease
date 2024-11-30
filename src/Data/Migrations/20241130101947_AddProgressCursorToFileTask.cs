@@ -15,26 +15,24 @@ namespace PlexRipper.Data.Migrations
                 table: "FileTasks",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0L);
+                defaultValue: 0L
+            );
 
             migrationBuilder.AddColumn<int>(
                 name: "CurrentFilePathIndex",
                 table: "FileTasks",
                 type: "INTEGER",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: 0
+            );
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.DropColumn(
-                name: "CurrentBytesOffset",
-                table: "FileTasks");
+            migrationBuilder.DropColumn(name: "CurrentBytesOffset", table: "FileTasks");
 
-            migrationBuilder.DropColumn(
-                name: "CurrentFilePathIndex",
-                table: "FileTasks");
+            migrationBuilder.DropColumn(name: "CurrentFilePathIndex", table: "FileTasks");
         }
     }
 }

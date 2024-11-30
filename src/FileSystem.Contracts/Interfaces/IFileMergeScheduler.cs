@@ -14,4 +14,6 @@ public interface IFileMergeScheduler
     /// </summary>
     /// <param name="downloadTaskKey"></param>
     Task<Result<FileTask>> CreateFileTaskFromDownloadTask(DownloadTaskKey downloadTaskKey);
+
+    Task<bool> IsDownloadTaskMerging(DownloadTaskKey downloadTaskKey);
 }

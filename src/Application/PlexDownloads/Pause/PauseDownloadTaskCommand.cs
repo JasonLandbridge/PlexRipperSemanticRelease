@@ -1,5 +1,6 @@
 using Application.Contracts;
 using Data.Contracts;
+using FileSystem.Contracts;
 using FluentValidation;
 using Logging.Interface;
 
@@ -26,18 +27,21 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IMediator _mediator;
     private readonly IDownloadTaskScheduler _downloadTaskScheduler;
+    private readonly IFileMergeScheduler _fileMergeScheduler;
 
     public PauseDownloadTaskCommandHandler(
         ILog log,
         IPlexRipperDbContext dbContext,
         IMediator mediator,
-        IDownloadTaskScheduler downloadTaskScheduler
+        IDownloadTaskScheduler downloadTaskScheduler,
+        IFileMergeScheduler fileMergeScheduler
     )
     {
         _log = log;
         _dbContext = dbContext;
         _mediator = mediator;
         _downloadTaskScheduler = downloadTaskScheduler;
+        _fileMergeScheduler = fileMergeScheduler;
     }
 
     public async Task<Result> Handle(PauseDownloadTaskCommand command, CancellationToken cancellationToken)
@@ -67,21 +71,26 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
                     return stopResult.LogError();
                 }
             }
+            else if (await _fileMergeScheduler.IsDownloadTaskMerging(downloadTaskKey))
+            {
+                var fileTaskId = _dbContext
+                    .FileTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
+                    .Select(x => x.Id)
+                    .FirstOrDefault();
+                await _fileMergeScheduler.StopFileMergeJob(fileTaskId);
+            }
 
             if (downloadTask.DownloadStatus is DownloadStatus.Downloading or DownloadStatus.Merging)
             {
                 await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Paused);
+                await _mediator.Send(new DownloadTaskUpdatedNotification(key), cancellationToken);
+
+                _log.Debug(
+                    "DownloadTask {DownloadTaskId} has been Paused, meaning no downloaded files have been deleted",
+                    command.DownloadTaskGuid
+                );
             }
-
-            _log.Debug(
-                "DownloadTask {DownloadTaskId} has been Paused, meaning no downloaded files have been deleted",
-                command.DownloadTaskGuid
-            );
-
-            // TODO delete file tasks but first check if already merging
         }
-
-        await _mediator.Send(new DownloadTaskUpdatedNotification(key), cancellationToken);
 
         return Result.Ok();
     }

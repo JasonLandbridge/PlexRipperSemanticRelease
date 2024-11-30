@@ -19,7 +19,7 @@ public class FileMergeJob : IJob
     private readonly IMediator _mediator;
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IFileMergeSystem _fileMergeSystem;
-    private readonly Subject<FileMergeProgress> _bytesReceivedProgress = new();
+    private readonly Subject<FileMergeProgress> _fileMergeProgress = new();
     private readonly TaskCompletionSource<object> _progressCompletionSource = new();
 
     public FileMergeJob(ILog log, IMediator mediator, IPlexRipperDbContext dbContext, IFileMergeSystem fileMergeSystem)
@@ -82,20 +82,12 @@ public class FileMergeJob : IJob
                 return;
             }
 
-            var newDownloadStatus = DownloadStatus.Merging;
-            if (fileTask.FilePaths.Count == 1)
-                newDownloadStatus = DownloadStatus.Moving;
-
-            downloadTask.DownloadStatus = newDownloadStatus;
-            downloadTask.DownloadWorkerTasks.ForEach(x => x.DownloadStatus = newDownloadStatus);
-
-            await _dbContext.SetDownloadStatus(downloadTask.ToKey(), newDownloadStatus);
-            var downloadWorkerIds = downloadTask.DownloadWorkerTasks.Select(x => x.Id).ToList();
-            await _dbContext
-                .DownloadWorkerTasks.Where(x => downloadWorkerIds.Contains(x.Id))
-                .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, newDownloadStatus), token);
-
-            await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTask.ToKey()), token);
+            // Update download task status
+            var downloadTaskKey = downloadTask.ToKey();
+            await UpdateDownloadTaskStatus(
+                downloadTaskKey,
+                fileTask.FilePaths.Count == 1 ? DownloadStatus.Moving : DownloadStatus.Merging
+            );
 
             // Verify all file paths exists
             foreach (var path in fileTask.FilePaths)
@@ -104,33 +96,67 @@ public class FileMergeJob : IJob
                     var result = Result
                         .Fail($"Filepath: {path} does not exist and cannot be used to merge/move the file!")
                         .LogError();
+
+                    await UpdateDownloadTaskStatus(
+                        downloadTaskKey,
+                        fileTask.FilePaths.Count == 1 ? DownloadStatus.MoveError : DownloadStatus.MergeError
+                    );
+
                     await _mediator.SendNotificationAsync(result);
                     return;
                 }
 
-            try
-            {
-                // Create FileMergeProgress from bytes received progress
-                SetupSubscription(token);
+            // Create FileMergeProgress from bytes received progress
+            SetupSubscription();
 
-                var mergedFileTaskResult = await _mediator.Send(
-                    new MergeFilesFromFileTaskCommand(fileTask, _bytesReceivedProgress),
-                    token
-                );
-            }
-            catch (Exception e)
-            {
-                await _mediator.SendNotificationAsync(Result.Fail(new ExceptionalError(e)).LogError());
-            }
+            var mergedFileTaskResult = await _mediator.Send(
+                new MergeFilesFromFileTaskCommand(fileTask, _fileMergeProgress),
+                token
+            );
 
-            // Clean-up
+            // Wait until progress subscription has completed
             await _progressCompletionSource.Task;
+
+            // FileTask was paused
+            if (token.IsCancellationRequested)
+            {
+                var fileTaskProcessed = mergedFileTaskResult.Value;
+                await _dbContext
+                    .FileTasks.Where(x => x.Id == fileTaskProcessed.Id)
+                    .ExecuteUpdateAsync(
+                        x =>
+                            x.SetProperty(y => y.CurrentFilePathIndex, fileTaskProcessed.CurrentFilePathIndex)
+                                .SetProperty(y => y.CurrentBytesOffset, fileTaskProcessed.CurrentBytesOffset),
+                        cancellationToken: CancellationToken.None
+                    );
+
+                await UpdateDownloadTaskStatus(
+                    downloadTaskKey,
+                    fileTask.FilePaths.Count == 1 ? DownloadStatus.MovePaused : DownloadStatus.MergePaused
+                );
+                return;
+            }
+
+            if (mergedFileTaskResult.IsFailed)
+            {
+                await UpdateDownloadTaskStatus(
+                    downloadTaskKey,
+                    fileTask.FilePaths.Count == 1 ? DownloadStatus.MoveError : DownloadStatus.MergeError
+                );
+                return;
+            }
+
             _log.Here()
                 .Information(
                     "Finished combining {FilePathsCount} files into {FileTaskFileName}",
                     fileTask.FilePaths.Count,
                     fileTask.FileName
                 );
+
+            await UpdateDownloadTaskStatus(
+                downloadTaskKey,
+                fileTask.FilePaths.Count == 1 ? DownloadStatus.MoveFinished : DownloadStatus.MergeFinished
+            );
 
             await _mediator.Publish(new FileMergeFinishedNotification(fileTaskId), token);
         }
@@ -140,21 +166,30 @@ public class FileMergeJob : IJob
         }
     }
 
-    private void SetupSubscription(CancellationToken token)
+    private async Task UpdateDownloadTaskStatus(DownloadTaskKey downloadTaskKey, DownloadStatus newDownloadStatus)
+    {
+        await _dbContext.SetDownloadStatus(downloadTaskKey, newDownloadStatus);
+        await _dbContext
+            .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
+            .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, newDownloadStatus));
+
+        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey));
+    }
+
+    private void SetupSubscription()
     {
         var timeContext = new EventLoopScheduler();
 
-        _bytesReceivedProgress
+        _fileMergeProgress
             .Sample(TimeSpan.FromSeconds(1), timeContext)
-            .SelectMany(async data =>
-                await _mediator.Publish(new FileMergeProgressNotification(data), token).ToObservable()
-            )
+            .SelectMany(async data => await _mediator.Publish(new FileMergeProgressNotification(data)).ToObservable())
             .Subscribe(
                 _ => { },
                 ex =>
                 {
                     _log.Error(ex);
                     _progressCompletionSource.SetException(ex);
+                    timeContext.Dispose();
                 },
                 () =>
                 {

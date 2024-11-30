@@ -19,8 +19,6 @@ public class FileMergeScheduler : IFileMergeScheduler
         _dbContext = dbContext;
     }
 
-    protected JobKey DefaultJobKey => new($"DownloadTaskId_", nameof(FileMergeJob));
-
     /// <summary>
     /// Creates an FileTask from a completed <see cref="DownloadTaskGeneric"/> and adds this to the database.
     /// </summary>
@@ -87,5 +85,15 @@ public class FileMergeScheduler : IFileMergeScheduler
         }
 
         return Result.OkIf(await _scheduler.StopJob(jobKey), $"Failed to stop {nameof(FileTask)} with id {fileTaskId}");
+    }
+
+    public async Task<bool> IsDownloadTaskMerging(DownloadTaskKey downloadTaskKey)
+    {
+        var fileTaskId = await _dbContext
+            .FileTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
+            .Select(x => x.Id)
+            .FirstOrDefaultAsync();
+
+        return await _scheduler.IsJobRunningAsync(FileMergeJob.GetJobKey(fileTaskId));
     }
 }

@@ -50,7 +50,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
     )
     {
         var fileTask = command.FileTask;
-        var bytesReceivedProgress = command.FileMergeProgress;
+        var fileMergeProgress = command.FileMergeProgress;
         var transferStarted = DateTime.UtcNow;
 
         try
@@ -127,7 +127,6 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
 
             fileTask.CurrentBytesOffset = 0;
             SendProgress(totalRead);
-            bytesReceivedProgress.OnCompleted();
         }
         catch (OperationCanceledException)
         {
@@ -151,6 +150,8 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 await _writeStream.DisposeAsync();
                 _writeStream = null;
             }
+
+            fileMergeProgress.OnCompleted();
         }
 
         return Result.Ok(fileTask);
@@ -158,7 +159,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
         void SendProgress(long dataTransferred)
         {
             var elapsedTime = DateTime.UtcNow.Subtract(transferStarted);
-            bytesReceivedProgress.OnNext(
+            fileMergeProgress.OnNext(
                 new FileMergeProgress
                 {
                     Id = fileTask.Id,
