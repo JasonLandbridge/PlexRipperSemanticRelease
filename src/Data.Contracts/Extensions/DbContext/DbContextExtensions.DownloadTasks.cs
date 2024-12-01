@@ -288,8 +288,7 @@ public static partial class DbContextExtensions
                     .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.DownloadPercentage, progress.Percentage)
-                                .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
+                            p.SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
                         cancellationToken
@@ -300,8 +299,7 @@ public static partial class DbContextExtensions
                     .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.DownloadPercentage, progress.Percentage)
-                                .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
+                            p.SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
                         cancellationToken

@@ -22,7 +22,6 @@ public static class DownloadTaskGenericMapper
             MediaType = downloadTaskMovie.MediaType,
             DownloadTaskType = downloadTaskMovie.DownloadTaskType,
             DownloadStatus = downloadTaskMovie.DownloadStatus,
-            Percentage = downloadTaskMovie.Percentage,
             DataReceived = downloadTaskMovie.DataReceived,
             DataTotal = downloadTaskMovie.DataTotal,
             CreatedAt = downloadTaskMovie.CreatedAt,
@@ -35,6 +34,7 @@ public static class DownloadTaskGenericMapper
             FileLocationUrl = string.Empty,
             DownloadSpeed = downloadTaskMovie.DownloadSpeed,
             FileTransferSpeed = downloadTaskMovie.FileTransferSpeed,
+            FileDataTransferred = downloadTaskMovie.FileDataTransferred,
             Children = children,
             DownloadWorkerTasks = [],
             ParentId = Guid.Empty,
@@ -63,10 +63,6 @@ public static class DownloadTaskGenericMapper
             MediaType = file.MediaType,
             DownloadTaskType = file.DownloadTaskType,
             DownloadStatus = file.DownloadStatus,
-            Percentage =
-                file.DownloadTaskPhase == DownloadTaskPhase.Downloading
-                    ? file.DownloadPercentage
-                    : file.FileTransferPercentage,
             DataReceived = file.DataReceived,
             DataTotal = file.DataTotal,
             CreatedAt = file.CreatedAt,
@@ -79,13 +75,14 @@ public static class DownloadTaskGenericMapper
             DownloadSpeed = file.DownloadSpeed,
             FileTransferSpeed = file.FileTransferSpeed,
             Children = [],
-            Quality = string.Empty,
+            Quality = file.Quality,
             DownloadWorkerTasks = file.DownloadWorkerTasks,
             ParentId = file.ParentId,
             PlexServer = file.PlexServer,
             PlexServerId = file.PlexServerId,
             PlexLibrary = file.PlexLibrary,
             PlexLibraryId = file.PlexLibraryId,
+            FileDataTransferred = file.FileDataTransferred,
         };
 
     #endregion
@@ -106,7 +103,6 @@ public static class DownloadTaskGenericMapper
             MediaType = downloadTaskTvShow.MediaType,
             DownloadTaskType = downloadTaskTvShow.DownloadTaskType,
             DownloadStatus = downloadTaskTvShow.DownloadStatus,
-            Percentage = downloadTaskTvShow.Percentage,
             DataReceived = downloadTaskTvShow.DataReceived,
             DataTotal = downloadTaskTvShow.DataTotal,
             CreatedAt = downloadTaskTvShow.CreatedAt,
@@ -119,6 +115,7 @@ public static class DownloadTaskGenericMapper
             FileLocationUrl = string.Empty,
             DownloadSpeed = downloadTaskTvShow.DownloadSpeed,
             FileTransferSpeed = downloadTaskTvShow.FileTransferSpeed,
+            FileDataTransferred = downloadTaskTvShow.FileDataTransferred,
             Children = children,
             DownloadWorkerTasks = [],
             ParentId = Guid.Empty,
@@ -151,7 +148,6 @@ public static class DownloadTaskGenericMapper
             MediaType = downloadTaskTvShowSeason.MediaType,
             DownloadTaskType = downloadTaskTvShowSeason.DownloadTaskType,
             DownloadStatus = downloadTaskTvShowSeason.DownloadStatus,
-            Percentage = downloadTaskTvShowSeason.Percentage,
             DataReceived = downloadTaskTvShowSeason.DataReceived,
             DataTotal = downloadTaskTvShowSeason.DataTotal,
             CreatedAt = downloadTaskTvShowSeason.CreatedAt,
@@ -160,6 +156,7 @@ public static class DownloadTaskGenericMapper
             TimeRemaining = downloadTaskTvShowSeason.TimeRemaining,
             DownloadDirectory = child?.DownloadDirectory ?? string.Empty,
             DestinationDirectory = child?.DestinationDirectory ?? string.Empty,
+            FileDataTransferred = downloadTaskTvShowSeason.FileDataTransferred,
             FileLocationUrl = string.Empty,
             Quality = string.Empty,
             DownloadSpeed = downloadTaskTvShowSeason.DownloadSpeed,
@@ -196,7 +193,7 @@ public static class DownloadTaskGenericMapper
             MediaType = downloadTaskTvShowEpisode.MediaType,
             DownloadTaskType = downloadTaskTvShowEpisode.DownloadTaskType,
             DownloadStatus = downloadTaskTvShowEpisode.DownloadStatus,
-            Percentage = downloadTaskTvShowEpisode.Percentage,
+            FileDataTransferred = downloadTaskTvShowEpisode.FileDataTransferred,
             DataReceived = downloadTaskTvShowEpisode.DataReceived,
             DataTotal = downloadTaskTvShowEpisode.DataTotal,
             CreatedAt = downloadTaskTvShowEpisode.CreatedAt,
@@ -237,10 +234,7 @@ public static class DownloadTaskGenericMapper
             MediaType = file.MediaType,
             DownloadTaskType = file.DownloadTaskType,
             DownloadStatus = file.DownloadStatus,
-            Percentage =
-                file.DownloadTaskPhase == DownloadTaskPhase.Downloading
-                    ? file.DownloadPercentage
-                    : file.FileTransferPercentage,
+            FileDataTransferred = file.FileDataTransferred,
             DataReceived = file.DataReceived,
             DataTotal = file.DataTotal,
             CreatedAt = file.CreatedAt,

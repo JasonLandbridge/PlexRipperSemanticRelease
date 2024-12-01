@@ -19,6 +19,12 @@ public abstract class DownloadTaskParentBase : DownloadTaskBase, IDownloadTaskPr
     public required long DataReceived { get; set; }
 
     /// <summary>
+    /// Gets or sets the total size received of the file in bytes.
+    /// </summary>
+    [NotMapped]
+    public required long FileDataTransferred { get; set; }
+
+    /// <summary>
     /// Gets or sets the total size of the file in bytes.
     /// </summary>
     [NotMapped]

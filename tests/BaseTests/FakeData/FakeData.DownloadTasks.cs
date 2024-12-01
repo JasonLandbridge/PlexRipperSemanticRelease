@@ -67,7 +67,6 @@ public static partial class FakeData
             .StrictMode(true)
             .UseSeed(seed.Next())
             .ApplyDownloadTaskBase(seed)
-            .RuleFor(x => x.DownloadPercentage, _ => 0)
             .RuleFor(x => x.DataReceived, _ => 0)
             .RuleFor(
                 x => x.DataTotal,
@@ -78,7 +77,6 @@ public static partial class FakeData
             )
             .RuleFor(x => x.DownloadSpeed, _ => 0)
             .RuleFor(x => x.FileTransferSpeed, _ => 0)
-            .RuleFor(x => x.FileTransferPercentage, _ => 0)
             .RuleFor(x => x.FileDataTransferred, _ => 0)
             .RuleFor(x => x.CurrentFileTransferPathIndex, _ => 0)
             .RuleFor(x => x.CurrentFileTransferBytesOffset, _ => 0)

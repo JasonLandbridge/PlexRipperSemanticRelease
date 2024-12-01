@@ -21,6 +21,7 @@ public static class PlexMediaExtensions
             FullTitle = plexMovie.FullTitle,
             DataReceived = 0,
             DownloadSpeed = 0,
+            FileDataTransferred = 0,
             FileTransferSpeed = 0,
             Children = [],
         };
@@ -44,6 +45,7 @@ public static class PlexMediaExtensions
             DownloadSpeed = 0,
             Children = [],
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static DownloadTaskTvShowSeason MapToDownloadTask(this PlexTvShowSeason plexTvShowSeason) =>
@@ -67,6 +69,7 @@ public static class PlexMediaExtensions
             ParentId = default,
             Parent = null,
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static DownloadTaskTvShowEpisode MapToDownloadTask(this PlexTvShowEpisode plexTvShowEpisode) =>
@@ -90,6 +93,7 @@ public static class PlexMediaExtensions
             ParentId = default,
             Parent = null,
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static List<DownloadTaskMovieFile> MapToDownloadTask(this PlexMediaData plexMediaData, PlexMovie plexMovie)

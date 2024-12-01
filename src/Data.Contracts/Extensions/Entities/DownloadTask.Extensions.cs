@@ -13,9 +13,9 @@ public static class DownloadTaskExtensions
 
         downloadTask.DownloadSpeed = downloadTask.Children.Select(x => x.DownloadSpeed).Max();
         downloadTask.FileTransferSpeed = downloadTask.Children.Select(x => x.FileTransferSpeed).Max();
+        downloadTask.FileDataTransferred = downloadTask.Children.Select(x => x.FileDataTransferred).Sum();
         downloadTask.DataReceived = downloadTask.Children.Select(x => x.DataReceived).Sum();
         downloadTask.DataTotal = downloadTask.Children.Select(x => x.DataTotal).Sum();
-        downloadTask.Percentage = DataFormat.GetPercentage(downloadTask.DataReceived, downloadTask.DataTotal);
         downloadTask.TimeRemaining = downloadTask.Children.Select(x => x.TimeRemaining).Sum();
         downloadTask.DownloadStatus = DownloadTaskActions.Aggregate(
             downloadTask.Children.Select(x => x.DownloadStatus).ToList()
@@ -31,6 +31,7 @@ public static class DownloadTaskExtensions
 
         downloadTask.DownloadSpeed = downloadTask.Children.Select(x => x.DownloadSpeed).Max();
         downloadTask.FileTransferSpeed = downloadTask.Children.Select(x => x.FileTransferSpeed).Max();
+        downloadTask.FileDataTransferred = downloadTask.Children.Select(x => x.FileDataTransferred).Sum();
         downloadTask.DataReceived = downloadTask.Children.Select(x => x.DataReceived).Sum();
         downloadTask.DataTotal = downloadTask.Children.Select(x => x.DataTotal).Sum();
         downloadTask.DownloadStatus = DownloadTaskActions.Aggregate(
@@ -52,6 +53,7 @@ public static class DownloadTaskExtensions
 
         downloadTask.DownloadSpeed = downloadTask.Children.Select(x => x.DownloadSpeed).Max();
         downloadTask.FileTransferSpeed = downloadTask.Children.Select(x => x.FileTransferSpeed).Max();
+        downloadTask.FileDataTransferred = downloadTask.Children.Select(x => x.FileDataTransferred).Sum();
         downloadTask.DataReceived = downloadTask.Children.Select(x => x.DataReceived).Sum();
         downloadTask.DataTotal = downloadTask.Children.Select(x => x.DataTotal).Sum();
         downloadTask.DownloadStatus = DownloadTaskActions.Aggregate(
@@ -73,6 +75,7 @@ public static class DownloadTaskExtensions
 
         downloadTask.DownloadSpeed = downloadTask.Children.Select(x => x.DownloadSpeed).Max();
         downloadTask.FileTransferSpeed = downloadTask.Children.Select(x => x.FileTransferSpeed).Max();
+        downloadTask.FileDataTransferred = downloadTask.Children.Select(x => x.FileDataTransferred).Sum();
         downloadTask.DataReceived = downloadTask.Children.Select(x => x.DataReceived).Sum();
         downloadTask.DataTotal = downloadTask.Children.Select(x => x.DataTotal).Sum();
         downloadTask.DownloadStatus = DownloadTaskActions.Aggregate(
@@ -92,6 +95,7 @@ public static class DownloadTaskExtensions
 
         downloadTask.DownloadSpeed = downloadTask.Children.Select(x => x.DownloadSpeed).Max();
         downloadTask.FileTransferSpeed = downloadTask.Children.Select(x => x.FileTransferSpeed).Max();
+        downloadTask.FileDataTransferred = downloadTask.Children.Select(x => x.FileDataTransferred).Sum();
         downloadTask.DataReceived = downloadTask.Children.Select(x => x.DataReceived).Sum();
         downloadTask.DataTotal = downloadTask.Children.Select(x => x.DataTotal).Sum();
         downloadTask.DownloadStatus = DownloadTaskActions.Aggregate(

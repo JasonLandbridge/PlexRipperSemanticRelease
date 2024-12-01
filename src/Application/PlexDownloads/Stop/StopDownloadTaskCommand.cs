@@ -90,7 +90,6 @@ public class StopDownloadTaskCommandHandler : IRequestHandler<StopDownloadTaskCo
 
             // Reset the download progress
             downloadTask.DataReceived = 0;
-            downloadTask.Percentage = 0;
             await _dbContext.UpdateDownloadProgress(downloadTaskKey, downloadTask, cancellationToken);
 
             // TODO delete file tasks but first check if already merging

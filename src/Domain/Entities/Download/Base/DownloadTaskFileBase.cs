@@ -98,15 +98,16 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     public decimal DownloadPercentage => DataFormat.GetPercentage(DataReceived, DataTotal);
 
     [NotMapped]
-    public DownloadTaskPhase DownloadTaskPhase =>
-        DownloadPercentage switch
+    public decimal Percentage =>
+        DownloadTaskPhase switch
         {
-            0 when FileTransferPercentage == 0 => DownloadTaskPhase.None,
-            > 0 and < 100 when FileTransferPercentage == 0 => DownloadTaskPhase.Downloading,
-            100 when FileTransferPercentage is >= 0 and < 100 => DownloadTaskPhase.FileTransfer,
-            100 when FileTransferPercentage == 100 => DownloadTaskPhase.Completed,
-            _ => DownloadTaskPhase.Unknown,
+            DownloadTaskPhase.FileTransfer => FileTransferPercentage,
+            _ => DownloadPercentage,
         };
+
+    [NotMapped]
+    public DownloadTaskPhase DownloadTaskPhase =>
+        EnumExtensions.FromPercentage(DownloadPercentage, FileTransferPercentage);
 
     /// <summary>
     /// Gets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
