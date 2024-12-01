@@ -53,7 +53,7 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
         var downloadTasks = await _dbContext.GetDownloadableChildTaskKeys(key, cancellationToken);
         foreach (var downloadTaskKey in downloadTasks)
         {
-            var downloadTask = await _dbContext.GetDownloadTaskAsync(downloadTaskKey, cancellationToken);
+            var downloadTask = await _dbContext.GetDownloadTaskFileAsync(downloadTaskKey, cancellationToken);
             if (downloadTask is null)
             {
                 ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), downloadTaskKey.Id).LogError();
@@ -64,27 +64,12 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
 
             if (await _downloadTaskScheduler.IsDownloading(downloadTaskKey, cancellationToken))
             {
-                var stopResult = await _downloadTaskScheduler.StopDownloadTaskJob(downloadTaskKey, cancellationToken);
-                if (stopResult.IsFailed)
-                {
-                    // Since this command is done per server, we can abort since there will at most be 1 download task downloading at a time and if that fails we can't continue
-                    return stopResult.LogError();
-                }
+                return await _downloadTaskScheduler.StopDownloadTaskJob(downloadTaskKey, cancellationToken);
             }
-            else if (await _fileMergeScheduler.IsDownloadTaskMerging(downloadTaskKey))
+
+            if (await _fileMergeScheduler.IsDownloadTaskMerging(downloadTaskKey))
             {
                 await _fileMergeScheduler.StopFileMergeJob(downloadTaskKey);
-            }
-
-            if (downloadTask.DownloadStatus is DownloadStatus.Downloading or DownloadStatus.Merging)
-            {
-                await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Paused);
-                await _mediator.Send(new DownloadTaskUpdatedNotification(key), cancellationToken);
-
-                _log.Debug(
-                    "DownloadTask {DownloadTaskId} has been Paused, meaning no downloaded files have been deleted",
-                    command.DownloadTaskGuid
-                );
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using Application.Contracts;
 using Data.Contracts;
+using FileSystem.Contracts;
 using Microsoft.EntityFrameworkCore;
 
 namespace PlexRipper.Application.UnitTests;
@@ -24,7 +25,7 @@ public class StartDownloadTaskCommandUnitTests : BaseUnitTest<StartDownloadTaskC
     }
 
     [Fact]
-    public async Task ShouldReturnFailedResult_WhenNoDownloadTasksCanBeStarted()
+    public async Task ShouldNotPauseDownloadTasksInFileTransfer_WhenADownloadTaskIsAlreadyTransferring()
     {
         // Arrange
         await SetupDatabase(
@@ -45,45 +46,35 @@ public class StartDownloadTaskCommandUnitTests : BaseUnitTest<StartDownloadTaskC
             .ThenInclude(x => x.Children)
             .ToListAsync();
 
-        tvShowDownloadTasks.SetDownloadStatus(DownloadStatus.Completed);
-        var lastDownloadTask = tvShowDownloadTasks.Last();
-        lastDownloadTask.SetDownloadStatus(DownloadStatus.Paused);
+        var alreadyMergingTask = tvShowDownloadTasks.First();
+        var pausedMergeTask = tvShowDownloadTasks.Last();
+
+        alreadyMergingTask.SetDownloadStatus(DownloadStatus.Merging);
+        pausedMergeTask.SetDownloadStatus(DownloadStatus.MergePaused);
         await dbContext.SaveChangesAsync();
 
-        mock.Mock<IDownloadTaskScheduler>()
-            .Setup(x => x.GetCurrentlyDownloadingKeysByServer(It.IsAny<int>()))
-            .ReturnsAsync([]);
+        mock.Mock<IFileMergeScheduler>()
+            .Setup(x => x.IsDownloadTaskMerging(It.IsAny<DownloadTaskKey>()))
+            .ReturnsAsync(false)
+            .Verifiable(Times.Once);
 
-        mock.Mock<IDownloadTaskScheduler>()
-            .Setup(x => x.IsDownloading(It.IsAny<DownloadTaskKey>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
+        mock.Mock<IFileMergeScheduler>()
+            .Setup(x => x.StartFileMergeJob(It.IsAny<DownloadTaskKey>()))
+            .ReturnsAsync(Result.Ok())
+            .Verifiable(Times.Once);
 
-        mock.Mock<IDownloadTaskScheduler>()
-            .Setup(x => x.StartDownloadTaskJob(It.IsAny<DownloadTaskKey>()))
-            .ReturnsAsync(Result.Ok());
-
-        mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>).Returns(Task.CompletedTask);
-        mock.PublishMediator(It.IsAny<CheckDownloadQueueNotification>).Returns(Task.CompletedTask);
+        mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>)
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.Once);
+        mock.PublishMediator(It.IsAny<CheckDownloadQueueNotification>)
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.Once);
 
         // Act
-        var result = await _sut.Handle(new StartDownloadTaskCommand(lastDownloadTask.Id), CancellationToken.None);
+        var result = await _sut.Handle(new StartDownloadTaskCommand(pausedMergeTask.Id), CancellationToken.None);
 
         // Assert
         result.IsSuccess.ShouldBeTrue();
-        var downloadTasks = await IDbContext.GetDownloadableChildTasks(lastDownloadTask.ToKey());
-        for (var i = 0; i < downloadTasks.Count; i++)
-        {
-            if (i > 0)
-            {
-                downloadTasks[i].DownloadStatus.ShouldBe(DownloadStatus.Queued);
-                continue;
-            }
-
-            downloadTasks[i].DownloadStatus.ShouldBe(DownloadStatus.Downloading);
-        }
-
-        mock.VerifyMediator(It.IsAny<DownloadTaskUpdatedNotification>, Times.Once());
-        mock.VerifyMediator(It.IsAny<CheckDownloadQueueNotification>, Times.Once());
     }
 
     [Fact]
@@ -202,7 +193,7 @@ public class StartDownloadTaskCommandUnitTests : BaseUnitTest<StartDownloadTaskC
                 {
                     var key = IDbContext.GetDownloadTaskKeyAsync(command.DownloadTaskGuid, ct).Result;
                     key.ShouldNotBeNull();
-                    IDbContext.SetDownloadStatus(key, DownloadStatus.Paused).Wait(ct);
+                    IDbContext.SetDownloadStatus(key, DownloadStatus.Queued).Wait(ct);
                     return Result.Ok();
                 }
             );

@@ -4,7 +4,10 @@ using FileSystem.Contracts;
 
 namespace PlexRipper.Application;
 
-// TODO this should be a notification
+/// <summary>
+/// NOTE: This should be an IRequest to ensure there is always 1 handler for this notification.
+/// </summary>
+/// <param name="Key"></param>
 public record DownloadTaskUpdatedNotification(DownloadTaskKey Key) : IRequest;
 
 public class DownloadTaskUpdatedHandler : IRequestHandler<DownloadTaskUpdatedNotification>

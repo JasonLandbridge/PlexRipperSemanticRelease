@@ -124,8 +124,10 @@ public class DownloadJob : IJob, IDisposable
                     nameof(downloadTaskKey),
                     downloadTaskKey
                 );
-
                 await _plexDownloadClient.StopAsync();
+
+                await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Paused);
+                await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey), CancellationToken.None);
             }
         }
         catch (Exception ex) when (ex is not OperationCanceledException)

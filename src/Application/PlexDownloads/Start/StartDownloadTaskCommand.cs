@@ -1,5 +1,6 @@
 using Application.Contracts;
 using Data.Contracts;
+using FileSystem.Contracts;
 using FluentValidation;
 using Logging.Interface;
 
@@ -21,18 +22,21 @@ public class StartDownloadTaskCommandHandler : IRequestHandler<StartDownloadTask
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IMediator _mediator;
     private readonly IDownloadTaskScheduler _downloadTaskScheduler;
+    private readonly IFileMergeScheduler _fileMergeScheduler;
 
     public StartDownloadTaskCommandHandler(
         ILog log,
         IPlexRipperDbContext dbContext,
         IMediator mediator,
-        IDownloadTaskScheduler downloadTaskScheduler
+        IDownloadTaskScheduler downloadTaskScheduler,
+        IFileMergeScheduler fileMergeScheduler
     )
     {
         _log = log;
         _dbContext = dbContext;
         _mediator = mediator;
         _downloadTaskScheduler = downloadTaskScheduler;
+        _fileMergeScheduler = fileMergeScheduler;
     }
 
     public async Task<Result> Handle(StartDownloadTaskCommand command, CancellationToken cancellationToken)
@@ -41,50 +45,63 @@ public class StartDownloadTaskCommandHandler : IRequestHandler<StartDownloadTask
         if (key is null)
             return ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), command.DownloadTaskGuid).LogError();
 
+        // TODO Improve performance by fetching ALL download tasks in one query
         var downloadableChildTaskKeys = await _dbContext.GetDownloadableChildTaskKeys(key, cancellationToken);
+        if (!downloadableChildTaskKeys.Any())
+            return ResultExtensions.IsEmpty(nameof(downloadableChildTaskKeys)).LogWarning();
 
-        var nextDownloadTaskKey = downloadableChildTaskKeys.FirstOrDefault();
+        var nextDownloadTaskKey = downloadableChildTaskKeys.First();
+        var nextDownloadTask = await _dbContext.GetDownloadTaskFileAsync(nextDownloadTaskKey, cancellationToken);
+        if (nextDownloadTask is null)
+            return ResultExtensions.EntityNotFound(nameof(DownloadTaskFileBase), nextDownloadTaskKey.Id).LogError();
 
-        // Check if this server is already downloading something and then pause it
-        var activeDownloadKeys = await _downloadTaskScheduler.GetCurrentlyDownloadingKeysByServer(key.PlexServerId);
-        if (activeDownloadKeys.Any())
+        // Start the download task depending on the phase
+        switch (nextDownloadTask.DownloadTaskPhase)
         {
-            // avoid pausing if the download task is marked to be started
-            foreach (var downloadKey in activeDownloadKeys)
-                if (downloadKey != nextDownloadTaskKey)
-                    await _mediator.Send(new PauseDownloadTaskCommand(downloadKey.Id), cancellationToken);
-        }
+            case DownloadTaskPhase.None:
+            case DownloadTaskPhase.Downloading:
+                if (!await _downloadTaskScheduler.IsDownloading(nextDownloadTaskKey, cancellationToken))
+                {
+                    var startResult = await _downloadTaskScheduler.StartDownloadTaskJob(nextDownloadTaskKey);
+                    if (startResult.IsFailed)
+                        return startResult.LogError();
 
-        for (var i = 0; i < downloadableChildTaskKeys.Count; i++)
-        {
-            var downloadTaskKey = downloadableChildTaskKeys[i];
-            var downloadTask = await _dbContext.GetDownloadTaskAsync(downloadTaskKey, cancellationToken);
-            if (downloadTask is null)
-            {
-                ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), downloadTaskKey.Id).LogError();
-                continue;
-            }
+                    // TODO - This should be done in the DownloadJob
+                    await _dbContext.SetDownloadStatus(nextDownloadTaskKey, DownloadStatus.Downloading);
 
-            if (i > 0)
-            {
-                if (downloadTask.DownloadStatus == DownloadStatus.Paused)
-                    await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Queued);
-                continue;
-            }
+                    var activeDownloadKeys = await _downloadTaskScheduler.GetCurrentlyDownloadingKeysByServer(
+                        key.PlexServerId
+                    );
 
-            // Start the download task
-            if (!await _downloadTaskScheduler.IsDownloading(downloadTaskKey, cancellationToken))
-            {
-                _log.Information("Starting DownloadTask with id: {DownloadTaskGuid}", downloadTaskKey.Id);
-                var startResult = await _downloadTaskScheduler.StartDownloadTaskJob(downloadTaskKey);
-                if (startResult.IsFailed)
-                    return startResult.LogError();
+                    // Avoid pausing the download task that just started
+                    foreach (var downloadKey in activeDownloadKeys.Where(x => x != nextDownloadTaskKey))
+                        await _mediator.Send(new PauseDownloadTaskCommand(downloadKey.Id), cancellationToken);
+                }
 
-                await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Downloading);
-            }
+                break;
+
+            case DownloadTaskPhase.FileTransfer:
+                // Multiple merging tasks can be processing at the same time
+                if (!(await _fileMergeScheduler.IsDownloadTaskMerging(nextDownloadTaskKey)))
+                {
+                    await _fileMergeScheduler.StartFileMergeJob(nextDownloadTaskKey);
+                }
+
+                break;
+
+            case DownloadTaskPhase.Completed:
+                return Result.Fail("Download task is already completed and cannot be started again").LogWarning();
+
+            case DownloadTaskPhase.Unknown:
+                return Result.Fail("Download task is in an unknown phase and cannot be started").LogError();
+            default:
+                throw new ArgumentOutOfRangeException(
+                    $"{nextDownloadTask.DownloadTaskPhase} is not a valid DownloadTaskPhase enum value"
+                );
         }
 
         await _mediator.Send(new DownloadTaskUpdatedNotification(key), cancellationToken);
+
         await _mediator.Publish(new CheckDownloadQueueNotification(key.PlexServerId), cancellationToken);
 
         return Result.Ok();
