@@ -17,7 +17,11 @@ public record MergeFilesFromFileTaskCommand(
 
 public class MergeFilesFromFileTaskCommandValidator : AbstractValidator<MergeFilesFromFileTaskCommand>
 {
-    public MergeFilesFromFileTaskCommandValidator() { }
+    public MergeFilesFromFileTaskCommandValidator()
+    {
+        RuleFor(x => x.Key).NotNull();
+        RuleFor(x => x.Key.Id).NotEqual(Guid.Empty);
+    }
 }
 
 public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFromFileTaskCommand, Result>
@@ -28,7 +32,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
     private readonly IFileSystem _fileSystem;
     private readonly IDirectorySystem _directorySystem;
 
-    private List<Stream?> _readStreams = [];
+    private List<Stream> _readStreams = [];
     private Stream? _writeStream;
 
     private const int _bufferSize = 524288;
@@ -119,6 +123,11 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
 
                 _readStreams.Add(inputStreamResult.Value);
 
+                if (downloadTask.CurrentFileTransferBytesOffset > 0)
+                {
+                    _readStreams.Last().Seek(downloadTask.CurrentFileTransferBytesOffset, SeekOrigin.Begin);
+                }
+
                 downloadTask.CurrentFileTransferPathIndex = index;
                 downloadTask.CurrentFileTransferBytesOffset = 0;
 
@@ -127,7 +136,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 var buffer = new byte[_bufferSize];
                 int bytesRead;
                 while (
-                    (bytesRead = await _readStreams.Last()!.ReadAsync(buffer, 0, buffer.Length, CancellationToken.None))
+                    (bytesRead = await _readStreams.Last().ReadAsync(buffer, 0, buffer.Length, CancellationToken.None))
                     > 0
                 )
                 {
@@ -183,11 +192,18 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                     downloadTask.FileName
                 );
 
-            await _mediator.Publish(new FileMergeFinishedNotification(key), CancellationToken.None);
+            downloadTask.DownloadStatus = downloadTask.IsSingleFile
+                ? DownloadStatus.MoveFinished
+                : DownloadStatus.MergeFinished;
         }
         catch (OperationCanceledException)
         {
             _log.Warning("The file merge operation was cancelled for file task {FileTaskId}", key.Id);
+
+            downloadTask.DownloadStatus = downloadTask.IsSingleFile
+                ? DownloadStatus.MovePaused
+                : DownloadStatus.MergePaused;
+
             return Result.Ok();
         }
         catch (Exception ex)
@@ -212,19 +228,18 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _writeStream = null;
             }
 
-            if (cancellationToken.IsCancellationRequested)
-            {
-                await UpdateDownloadTaskStatus(
-                    key,
-                    downloadTask.IsSingleFile ? DownloadStatus.MovePaused : DownloadStatus.MergePaused
-                );
-            }
+            await UpdateDownloadTaskStatus(key, downloadTask.DownloadStatus);
 
             await _dbContext.UpdateDownloadFileTransferProgress(key, downloadTask);
 
             fileMergeProgress?.OnNext(downloadTask);
 
             fileMergeProgress?.OnCompleted();
+
+            if (downloadTask.DownloadStatus is DownloadStatus.MoveFinished or DownloadStatus.MergeFinished)
+            {
+                await _mediator.Publish(new FileMergeFinishedNotification(key), CancellationToken.None);
+            }
         }
 
         return Result.Ok();

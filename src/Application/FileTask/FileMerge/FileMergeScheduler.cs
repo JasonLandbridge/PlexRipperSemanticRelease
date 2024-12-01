@@ -1,8 +1,6 @@
 using System.Text.Json;
-using Data.Contracts;
 using FileSystem.Contracts;
 using Logging.Interface;
-using Microsoft.EntityFrameworkCore;
 using Quartz;
 
 namespace PlexRipper.Application;
@@ -11,13 +9,11 @@ public class FileMergeScheduler : IFileMergeScheduler
 {
     private readonly ILog _log;
     private readonly IScheduler _scheduler;
-    private readonly IPlexRipperDbContext _dbContext;
 
-    public FileMergeScheduler(ILog log, IScheduler scheduler, IPlexRipperDbContext dbContext)
+    public FileMergeScheduler(ILog log, IScheduler scheduler)
     {
         _log = log;
         _scheduler = scheduler;
-        _dbContext = dbContext;
     }
 
     public async Task<Result> StartFileMergeJob(DownloadTaskKey downloadTaskKey)
@@ -61,10 +57,11 @@ public class FileMergeScheduler : IFileMergeScheduler
                 .LogWarning();
         }
 
-        return Result.OkIf(
-            await _scheduler.StopJob(jobKey),
-            $"Failed to stop {nameof(DownloadTaskKey)} with id {downloadTaskKey.Id}"
-        );
+        var wasStopped = await _scheduler.StopJob(jobKey);
+
+        return !wasStopped
+            ? Result.Fail($"Failed to stop {nameof(DownloadTaskKey)} with id {downloadTaskKey.Id}").LogError()
+            : Result.Ok();
     }
 
     public async Task<bool> IsDownloadTaskMerging(DownloadTaskKey downloadTaskKey) =>
