@@ -44,6 +44,7 @@ public static partial class FakeData
             .RuleFor(x => x.FileTransferSpeed, _ => 0)
             .RuleFor(x => x.Percentage, _ => 0)
             .RuleFor(x => x.DataReceived, _ => 0)
+            .RuleFor(x => x.FileDataTransferred, _ => 0)
             .RuleFor(x => x.DownloadSpeed, _ => 0)
             .RuleFor(
                 x => x.DataTotal,

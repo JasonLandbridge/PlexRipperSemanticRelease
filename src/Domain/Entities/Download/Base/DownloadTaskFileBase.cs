@@ -59,8 +59,14 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     [Column(Order = 5)]
     public required long FileDataTransferred { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current file transfer path index used to pause and resume from this file path index.
+    /// </summary>
     public int CurrentFileTransferPathIndex { get; set; }
 
+    /// <summary>
+    /// Gets or sets the current file transfer bytes offset in combination with the CurrentFileTransferPathIndex used to pause and resume from this offset.
+    /// </summary>
     public long CurrentFileTransferBytesOffset { get; set; }
 
     #endregion
