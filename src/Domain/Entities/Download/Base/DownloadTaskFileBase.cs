@@ -93,6 +93,27 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
 
     public List<string> FilePaths => DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToList();
 
+    public DownloadTaskPhase DownloadTaskPhase
+    {
+        get
+        {
+            switch (DownloadPercentage)
+            {
+                case 0 when FileTransferPercentage == 0:
+                    return DownloadTaskPhase.None;
+                case > 0
+                and < 100 when FileTransferPercentage == 0:
+                    return DownloadTaskPhase.Downloading;
+                case 100 when FileTransferPercentage is >= 0 and < 100:
+                    return DownloadTaskPhase.FileTransfer;
+                case 100 when FileTransferPercentage == 100:
+                    return DownloadTaskPhase.Completed;
+                default:
+                    return DownloadTaskPhase.Unknown;
+            }
+        }
+    }
+
     /// <summary>
     /// Gets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
     /// </summary>
