@@ -13,12 +13,6 @@ public abstract class DownloadTaskParentBase : DownloadTaskBase, IDownloadTaskPr
     #region Helpers
 
     /// <summary>
-    /// Gets or sets the percentage of the data received from the DataTotal.
-    /// </summary>
-    [NotMapped]
-    public required decimal Percentage { get; set; }
-
-    /// <summary>
     /// Gets or sets the total size received of the file in bytes.
     /// </summary>
     [NotMapped]
@@ -29,6 +23,12 @@ public abstract class DownloadTaskParentBase : DownloadTaskBase, IDownloadTaskPr
     /// </summary>
     [NotMapped]
     public required long DataTotal { get; set; }
+
+    /// <summary>
+    /// Gets or sets the percentage of the data received from the DataTotal.
+    /// </summary>
+    [NotMapped]
+    public decimal Percentage => DataFormat.GetPercentage(DataReceived, DataTotal);
 
     /// <summary>
     /// Gets or sets get the download speeds in bytes per second.
