@@ -53,36 +53,39 @@ public static class DownloadTaskGenericMapper
 
     #region MovieFile
 
-    public static DownloadTaskGeneric ToGeneric(this DownloadTaskMovieFile downloadTaskMovieFile) =>
+    public static DownloadTaskGeneric ToGeneric(this DownloadTaskMovieFile file) =>
         new()
         {
-            Id = downloadTaskMovieFile.Id,
-            MediaKey = downloadTaskMovieFile.Key,
-            Title = downloadTaskMovieFile.Title,
-            FullTitle = downloadTaskMovieFile.FullTitle,
-            MediaType = downloadTaskMovieFile.MediaType,
-            DownloadTaskType = downloadTaskMovieFile.DownloadTaskType,
-            DownloadStatus = downloadTaskMovieFile.DownloadStatus,
-            Percentage = downloadTaskMovieFile.DownloadPercentage,
-            DataReceived = downloadTaskMovieFile.DataReceived,
-            DataTotal = downloadTaskMovieFile.DataTotal,
-            CreatedAt = downloadTaskMovieFile.CreatedAt,
-            FileName = downloadTaskMovieFile.FileName,
-            IsDownloadable = downloadTaskMovieFile.IsDownloadable,
-            TimeRemaining = downloadTaskMovieFile.TimeRemaining,
-            DownloadDirectory = downloadTaskMovieFile.DownloadDirectory,
-            DestinationDirectory = downloadTaskMovieFile.DestinationDirectory,
-            FileLocationUrl = downloadTaskMovieFile.FileLocationUrl,
-            DownloadSpeed = downloadTaskMovieFile.DownloadSpeed,
-            FileTransferSpeed = downloadTaskMovieFile.FileTransferSpeed,
+            Id = file.Id,
+            MediaKey = file.Key,
+            Title = file.Title,
+            FullTitle = file.FullTitle,
+            MediaType = file.MediaType,
+            DownloadTaskType = file.DownloadTaskType,
+            DownloadStatus = file.DownloadStatus,
+            Percentage =
+                file.DownloadTaskPhase == DownloadTaskPhase.Downloading
+                    ? file.DownloadPercentage
+                    : file.FileTransferPercentage,
+            DataReceived = file.DataReceived,
+            DataTotal = file.DataTotal,
+            CreatedAt = file.CreatedAt,
+            FileName = file.FileName,
+            IsDownloadable = file.IsDownloadable,
+            TimeRemaining = file.TimeRemaining,
+            DownloadDirectory = file.DownloadDirectory,
+            DestinationDirectory = file.DestinationDirectory,
+            FileLocationUrl = file.FileLocationUrl,
+            DownloadSpeed = file.DownloadSpeed,
+            FileTransferSpeed = file.FileTransferSpeed,
             Children = [],
             Quality = string.Empty,
-            DownloadWorkerTasks = downloadTaskMovieFile.DownloadWorkerTasks,
-            ParentId = downloadTaskMovieFile.ParentId,
-            PlexServer = downloadTaskMovieFile.PlexServer,
-            PlexServerId = downloadTaskMovieFile.PlexServerId,
-            PlexLibrary = downloadTaskMovieFile.PlexLibrary,
-            PlexLibraryId = downloadTaskMovieFile.PlexLibraryId,
+            DownloadWorkerTasks = file.DownloadWorkerTasks,
+            ParentId = file.ParentId,
+            PlexServer = file.PlexServer,
+            PlexServerId = file.PlexServerId,
+            PlexLibrary = file.PlexLibrary,
+            PlexLibraryId = file.PlexLibraryId,
         };
 
     #endregion
@@ -224,36 +227,39 @@ public static class DownloadTaskGenericMapper
 
     #region EpisodeFile
 
-    public static DownloadTaskGeneric ToGeneric(this DownloadTaskTvShowEpisodeFile downloadTaskTvShowEpisodeFile) =>
+    public static DownloadTaskGeneric ToGeneric(this DownloadTaskTvShowEpisodeFile file) =>
         new()
         {
-            Id = downloadTaskTvShowEpisodeFile.Id,
-            MediaKey = downloadTaskTvShowEpisodeFile.Key,
-            Title = downloadTaskTvShowEpisodeFile.Title,
-            FullTitle = downloadTaskTvShowEpisodeFile.FullTitle,
-            MediaType = downloadTaskTvShowEpisodeFile.MediaType,
-            DownloadTaskType = downloadTaskTvShowEpisodeFile.DownloadTaskType,
-            DownloadStatus = downloadTaskTvShowEpisodeFile.DownloadStatus,
-            Percentage = downloadTaskTvShowEpisodeFile.DownloadPercentage,
-            DataReceived = downloadTaskTvShowEpisodeFile.DataReceived,
-            DataTotal = downloadTaskTvShowEpisodeFile.DataTotal,
-            CreatedAt = downloadTaskTvShowEpisodeFile.CreatedAt,
-            FileName = downloadTaskTvShowEpisodeFile.FileName,
-            IsDownloadable = downloadTaskTvShowEpisodeFile.IsDownloadable,
-            TimeRemaining = downloadTaskTvShowEpisodeFile.TimeRemaining,
-            DownloadDirectory = downloadTaskTvShowEpisodeFile.DownloadDirectory,
-            DestinationDirectory = downloadTaskTvShowEpisodeFile.DestinationDirectory,
-            FileLocationUrl = downloadTaskTvShowEpisodeFile.FileLocationUrl,
-            DownloadSpeed = downloadTaskTvShowEpisodeFile.DownloadSpeed,
-            FileTransferSpeed = downloadTaskTvShowEpisodeFile.FileTransferSpeed,
+            Id = file.Id,
+            MediaKey = file.Key,
+            Title = file.Title,
+            FullTitle = file.FullTitle,
+            MediaType = file.MediaType,
+            DownloadTaskType = file.DownloadTaskType,
+            DownloadStatus = file.DownloadStatus,
+            Percentage =
+                file.DownloadTaskPhase == DownloadTaskPhase.Downloading
+                    ? file.DownloadPercentage
+                    : file.FileTransferPercentage,
+            DataReceived = file.DataReceived,
+            DataTotal = file.DataTotal,
+            CreatedAt = file.CreatedAt,
+            FileName = file.FileName,
+            IsDownloadable = file.IsDownloadable,
+            TimeRemaining = file.TimeRemaining,
+            DownloadDirectory = file.DownloadDirectory,
+            DestinationDirectory = file.DestinationDirectory,
+            FileLocationUrl = file.FileLocationUrl,
+            DownloadSpeed = file.DownloadSpeed,
+            FileTransferSpeed = file.FileTransferSpeed,
             Children = [],
             Quality = string.Empty,
-            DownloadWorkerTasks = downloadTaskTvShowEpisodeFile.DownloadWorkerTasks,
-            ParentId = downloadTaskTvShowEpisodeFile.ParentId,
-            PlexServer = downloadTaskTvShowEpisodeFile.PlexServer,
-            PlexServerId = downloadTaskTvShowEpisodeFile.PlexServerId,
-            PlexLibrary = downloadTaskTvShowEpisodeFile.PlexLibrary,
-            PlexLibraryId = downloadTaskTvShowEpisodeFile.PlexLibraryId,
+            DownloadWorkerTasks = file.DownloadWorkerTasks,
+            ParentId = file.ParentId,
+            PlexServer = file.PlexServer,
+            PlexServerId = file.PlexServerId,
+            PlexLibrary = file.PlexLibrary,
+            PlexLibraryId = file.PlexLibraryId,
         };
 
     #endregion

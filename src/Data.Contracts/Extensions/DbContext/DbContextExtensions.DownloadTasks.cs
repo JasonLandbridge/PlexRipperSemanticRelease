@@ -336,8 +336,7 @@ public static partial class DbContextExtensions
                 await dbContext
                     .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(p =>
-                        p.SetProperty(x => x.FileTransferPercentage, progress.FileTransferPercentage)
-                            .SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                        p.SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
                             .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
                             .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
                             .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)
@@ -347,8 +346,7 @@ public static partial class DbContextExtensions
                 await dbContext
                     .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(p =>
-                        p.SetProperty(x => x.FileTransferPercentage, progress.FileTransferPercentage)
-                            .SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                        p.SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
                             .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
                             .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
                             .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)

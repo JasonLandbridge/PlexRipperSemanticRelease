@@ -26,12 +26,6 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     #region Download Progress
 
     /// <summary>
-    /// Gets or sets the percentage of the data received from the DataTotal.
-    /// </summary>
-    [Column(Order = 4)]
-    public required decimal DownloadPercentage { get; set; }
-
-    /// <summary>
     /// Gets or sets the total size received of the file in bytes.
     /// </summary>
     [Column(Order = 5)]
@@ -52,12 +46,6 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     #endregion
 
     #region File Transfer Progress
-
-    /// <summary>
-    /// Gets or sets the percentage of the data received from the DataTotal.
-    /// </summary>
-    [Column(Order = 4)]
-    public required decimal FileTransferPercentage { get; set; }
 
     /// <summary>
     /// Gets or sets the file transfer speeds when the finished download is being merged/moved.
@@ -85,34 +73,40 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
 
     #region Helpers
 
+    [NotMapped]
     public override PlexMediaType MediaType => PlexMediaType.None;
 
+    [NotMapped]
     public override DownloadTaskType DownloadTaskType => DownloadTaskType.None;
 
+    [NotMapped]
     public string DestinationFilePath => Path.Join(DestinationDirectory, FileName);
 
+    [NotMapped]
     public List<string> FilePaths => DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToList();
 
-    public DownloadTaskPhase DownloadTaskPhase
-    {
-        get
+    /// <summary>
+    /// Gets the percentage of the data transferred to its destination.
+    /// </summary>
+    [NotMapped]
+    public decimal FileTransferPercentage => DataFormat.GetPercentage(FileDataTransferred, DataTotal);
+
+    /// <summary>
+    /// Gets  the percentage of the data received from the DataTotal.
+    /// </summary>
+    [NotMapped]
+    public decimal DownloadPercentage => DataFormat.GetPercentage(DataReceived, DataTotal);
+
+    [NotMapped]
+    public DownloadTaskPhase DownloadTaskPhase =>
+        DownloadPercentage switch
         {
-            switch (DownloadPercentage)
-            {
-                case 0 when FileTransferPercentage == 0:
-                    return DownloadTaskPhase.None;
-                case > 0
-                and < 100 when FileTransferPercentage == 0:
-                    return DownloadTaskPhase.Downloading;
-                case 100 when FileTransferPercentage is >= 0 and < 100:
-                    return DownloadTaskPhase.FileTransfer;
-                case 100 when FileTransferPercentage == 100:
-                    return DownloadTaskPhase.Completed;
-                default:
-                    return DownloadTaskPhase.Unknown;
-            }
-        }
-    }
+            0 when FileTransferPercentage == 0 => DownloadTaskPhase.None,
+            > 0 and < 100 when FileTransferPercentage == 0 => DownloadTaskPhase.Downloading,
+            100 when FileTransferPercentage is >= 0 and < 100 => DownloadTaskPhase.FileTransfer,
+            100 when FileTransferPercentage == 100 => DownloadTaskPhase.Completed,
+            _ => DownloadTaskPhase.Unknown,
+        };
 
     /// <summary>
     /// Gets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
