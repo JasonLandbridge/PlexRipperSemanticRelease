@@ -91,12 +91,27 @@ public static partial class DbContextExtensions
         return DownloadTaskType.None;
     }
 
+    /// <summary>
+    /// Retrieves a <see cref="DownloadTaskGeneric"/> from the database based on the <paramref name="id"/> and <paramref name="type"/> with all its children and related entities.
+    /// </summary>
+    /// <param name="dbContext"> The <see cref="IPlexRipperDbContext"/> to query. </param>
+    /// <param name="key"> The <see cref="DownloadTaskKey"/> to retrieve the <see cref="DownloadTaskGeneric"/> by. </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests. </param>
+    /// <returns> The <see cref="DownloadTaskGeneric"/> if found, otherwise null. </returns>
     public static Task<DownloadTaskGeneric?> GetDownloadTaskAsync(
         this IPlexRipperDbContext dbContext,
         DownloadTaskKey key,
         CancellationToken cancellationToken = default
     ) => dbContext.GetDownloadTaskAsync(key.Id, key.Type, cancellationToken);
 
+    /// <summary>
+    /// Retrieves a <see cref="DownloadTaskGeneric"/> from the database based on the <paramref name="id"/> and <paramref name="type"/> with all its children and related entities.
+    /// </summary>
+    /// <param name="dbContext"> The <see cref="IPlexRipperDbContext"/> to query. </param>
+    /// <param name="id"> The id of the <see cref="DownloadTaskGeneric"/> to retrieve. </param>
+    /// <param name="type"> The type of the root <see cref="DownloadTaskGeneric"/> to retrieve. </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests. </param>
+    /// <returns> The <see cref="DownloadTaskGeneric"/> if found, otherwise null. </returns>
     public static async Task<DownloadTaskGeneric?> GetDownloadTaskAsync(
         this IPlexRipperDbContext dbContext,
         Guid id,
