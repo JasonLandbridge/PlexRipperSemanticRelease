@@ -366,7 +366,13 @@
             "deleted": "Deleted",
             "merging": "Merging",
             "moving": "Moving",
-            "completed": "Completed"
+            "completed": "Completed",
+            "merge-error": "Merging Error",
+            "merge-finished": "Merging Finished",
+            "merge-paused": "Merging Paused",
+            "move-error": "Move Error",
+            "move-finished": "Moving Finished",
+            "move-paused": "Moving Paused"
         }
     },
     "help": {
