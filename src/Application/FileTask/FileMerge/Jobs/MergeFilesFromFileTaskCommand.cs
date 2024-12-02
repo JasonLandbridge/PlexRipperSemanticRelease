@@ -6,7 +6,6 @@ using FileSystem.Contracts;
 using FluentValidation;
 using Logging.Interface;
 using Microsoft.EntityFrameworkCore;
-using PlexRipper.Application.Notifications;
 
 namespace PlexRipper.Application;
 
@@ -251,11 +250,6 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
             }
 
             fileMergeProgress?.OnCompleted();
-
-            if (downloadTask.DownloadStatus is DownloadStatus.MoveFinished or DownloadStatus.MergeFinished)
-            {
-                await _mediator.Publish(new FileMergeFinishedNotification(key), CancellationToken.None);
-            }
         }
 
         return Result.Ok();

@@ -1,3 +1,5 @@
+using Data.Contracts;
+using FileSystem.Contracts;
 using Logging.Interface;
 using Quartz;
 
@@ -7,11 +9,15 @@ public class FileMergeJob : IJob
 {
     private readonly ILog _log;
     private readonly IMediator _mediator;
+    private readonly IPlexRipperDbContext _dbContext;
+    private readonly IDirectorySystem _directorySystem;
 
-    public FileMergeJob(ILog log, IMediator mediator)
+    public FileMergeJob(ILog log, IMediator mediator, IPlexRipperDbContext dbContext, IDirectorySystem directorySystem)
     {
         _log = log;
         _mediator = mediator;
+        _dbContext = dbContext;
+        _directorySystem = directorySystem;
     }
 
     public static string DownloadTaskIdParameter => "DownloadTaskId";
@@ -40,7 +46,27 @@ public class FileMergeJob : IJob
                     downloadTaskKey.Id
                 );
 
-            await _mediator.Send(new MergeFilesFromFileTaskCommand(downloadTaskKey), context.CancellationToken);
+            var result = await _mediator.Send(
+                new MergeFilesFromFileTaskCommand(downloadTaskKey),
+                context.CancellationToken
+            );
+
+            if (result.IsFailed)
+            {
+                return;
+            }
+
+            var downloadTask = await _dbContext.GetDownloadTaskFileAsync(downloadTaskKey, context.CancellationToken);
+
+            if (downloadTask!.DownloadStatus is DownloadStatus.MoveFinished or DownloadStatus.MergeFinished)
+            {
+                // TODO - Delete the directory of the tv-show
+                _directorySystem.DeleteDirectoryFromFilePath(downloadTask.FilePaths.First());
+
+                await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Completed);
+
+                await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey));
+            }
         }
         catch (Exception e)
         {
