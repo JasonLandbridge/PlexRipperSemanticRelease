@@ -94,8 +94,7 @@ public static class DownloadTaskGenericToDTOMapper
                     DataReceived = downloadTask.DataReceived,
                     DataTotal = downloadTask.DataTotal,
                     TimeRemaining = downloadTask.TimeRemaining,
-                    DownloadSpeed = downloadTask.DownloadSpeed,
-                    FileTransferSpeed = downloadTask.FileTransferSpeed,
+                    DownloadSpeed = downloadTask.Speed,
                     Children = downloadTask.Children.ToDownloadProgressDto(),
                     Actions = DownloadTaskActions.Convert(downloadTask.DownloadStatus),
                 }

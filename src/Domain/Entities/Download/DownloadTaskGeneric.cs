@@ -103,6 +103,9 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     #region Helpers
 
+    public DownloadTaskPhase DownloadTaskPhase =>
+        EnumExtensions.FromPercentage(DownloadPercentage, FileTransferPercentage);
+
     public decimal Percentage =>
         DownloadTaskPhase switch
         {
@@ -110,23 +113,24 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
             _ => DownloadPercentage,
         };
 
-    public DownloadTaskPhase DownloadTaskPhase =>
-        EnumExtensions.FromPercentage(DownloadPercentage, FileTransferPercentage);
-
-    public long TimeRemaining
-    {
-        get
+    public long Speed =>
+        DownloadTaskPhase switch
         {
-            return DownloadTaskPhase switch
-            {
-                DownloadTaskPhase.FileTransfer => DataFormat.GetTimeRemaining(
-                    DataTotal - FileDataTransferred,
-                    FileTransferSpeed
-                ),
-                _ => DataFormat.GetTimeRemaining(DataTotal - DataReceived, DownloadSpeed),
-            };
-        }
-    }
+            DownloadTaskPhase.FileTransfer => FileTransferSpeed,
+            DownloadTaskPhase.Completed => 0,
+            _ => DownloadSpeed,
+        };
+
+    public long TimeRemaining =>
+        DownloadTaskPhase switch
+        {
+            DownloadTaskPhase.FileTransfer => DataFormat.GetTimeRemaining(
+                DataTotal - FileDataTransferred,
+                FileTransferSpeed
+            ),
+            DownloadTaskPhase.Completed => 0,
+            _ => DataFormat.GetTimeRemaining(DataTotal - DataReceived, DownloadSpeed),
+        };
 
     public DownloadTaskKey ToKey() =>
         new()

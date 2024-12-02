@@ -150,12 +150,12 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                     downloadTask.CurrentFileTransferBytesOffset += bytesRead;
 
                     downloadTask.FileDataTransferred += bytesRead;
+                    previousDataTransferred += bytesRead;
 
                     downloadTask.FileTransferSpeed = DataFormat.GetTransferSpeed(
                         downloadTask.FileDataTransferred - previousDataTransferred,
                         stopwatch.Elapsed.TotalSeconds
                     );
-                    previousDataTransferred = downloadTask.FileDataTransferred;
 
                     // Send progress
                     var progress = new DownloadFileTransferProgress
@@ -171,8 +171,10 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                     if (stopwatch.ElapsedMilliseconds > 1000)
                     {
                         await _dbContext.UpdateDownloadFileTransferProgress(key, progress);
+                        await _mediator.Send(new DownloadTaskUpdatedNotification(key), CancellationToken.None);
 
                         stopwatch.Restart();
+                        previousDataTransferred = 0;
                     }
 
                     cancellationToken.ThrowIfCancellationRequested();
@@ -255,6 +257,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 CurrentFileTransferBytesOffset = downloadTask.CurrentFileTransferBytesOffset,
             };
             await _dbContext.UpdateDownloadFileTransferProgress(key, progress);
+            await _mediator.Send(new DownloadTaskUpdatedNotification(key), CancellationToken.None);
 
             fileMergeProgress?.OnNext(progress);
 

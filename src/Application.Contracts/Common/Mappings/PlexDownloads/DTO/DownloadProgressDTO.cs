@@ -26,8 +26,6 @@ public record DownloadProgressDTO
 
     public required long DownloadSpeed { get; set; }
 
-    public required long FileTransferSpeed { get; set; }
-
     public required long TimeRemaining { get; set; }
 
     public required List<string> Actions { get; set; }
