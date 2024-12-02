@@ -77,15 +77,18 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
 
         try
         {
-            var writeStreamResult = await OpenOrCreateMergeStream(downloadTask.DestinationFilePath);
-            if (writeStreamResult.IsFailed)
-            {
-                downloadTask.DownloadStatus = downloadTask.IsSingleFile
-                    ? DownloadStatus.MoveError
-                    : DownloadStatus.MergeError;
+            // Ensure destination directory exists and is otherwise created.
+            var createDirectoryResult = _directorySystem.CreateDirectoryFromFilePath(downloadTask.DestinationFilePath);
+            if (createDirectoryResult.IsFailed)
+                return (await ErrorDownloadTask(downloadTask, createDirectoryResult)).LogError();
 
-                return writeStreamResult.ToResult();
-            }
+            var writeStreamResult = _fileSystem.Create(
+                downloadTask.DestinationFilePath,
+                _bufferSize,
+                FileOptions.SequentialScan
+            );
+            if (writeStreamResult.IsFailed)
+                return (await ErrorDownloadTask(downloadTask, writeStreamResult.ToResult())).LogError();
 
             _writeStream = writeStreamResult.Value;
 
@@ -96,10 +99,8 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
             }
 
             // Update download task status
-            await UpdateDownloadTaskStatus(
-                key,
-                downloadTask.IsSingleFile ? DownloadStatus.Moving : DownloadStatus.Merging
-            );
+            downloadTask.DownloadStatus = downloadTask.IsSingleFile ? DownloadStatus.Moving : DownloadStatus.Merging;
+            await UpdateDownloadTaskStatus(downloadTask);
 
             var stopwatch = Stopwatch.StartNew(); // Start timing for speed calculation
             var previousDataTransferred = downloadTask.FileDataTransferred;
@@ -114,20 +115,12 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                         .Fail($"Filepath: {filePath} does not exist and cannot be used to merge/move the file!")
                         .LogError();
 
-                    await UpdateDownloadTaskStatus(
-                        key,
-                        downloadTask.IsSingleFile ? DownloadStatus.MoveError : DownloadStatus.MergeError
-                    );
-
-                    await _mediator.SendNotificationAsync(result);
-                    return result;
+                    return (await ErrorDownloadTask(downloadTask, result)).LogError();
                 }
 
                 var inputStreamResult = _fileSystem.Open(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
                 if (inputStreamResult.IsFailed)
-                {
-                    return inputStreamResult.ToResult();
-                }
+                    return (await ErrorDownloadTask(downloadTask, inputStreamResult.ToResult())).LogError();
 
                 _readStream = inputStreamResult.Value;
 
@@ -195,12 +188,10 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _log.Debug("Deleting file {FilePath} since it has been merged already", filePath);
                 await _readStream.DisposeAsync();
                 _readStream = null;
+
                 var deleteResult = _fileSystem.DeleteFile(filePath);
                 if (deleteResult.IsFailed)
-                {
-                    await _mediator.SendNotificationAsync(deleteResult);
-                    deleteResult.LogError();
-                }
+                    return (await ErrorDownloadTask(downloadTask, deleteResult)).LogError();
             }
 
             // Important: Reset the offset between files otherwise it skips parts of the file
@@ -213,9 +204,21 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                     downloadTask.FileName
                 );
 
+            var finalProgress = new DownloadFileTransferProgress
+            {
+                FileTransferSpeed = downloadTask.FileTransferSpeed,
+                FileDataTransferred = downloadTask.FileDataTransferred,
+                CurrentFileTransferPathIndex = downloadTask.CurrentFileTransferPathIndex,
+                CurrentFileTransferBytesOffset = downloadTask.CurrentFileTransferBytesOffset,
+            };
+            await _dbContext.UpdateDownloadFileTransferProgress(key, finalProgress);
+            fileMergeProgress?.OnNext(finalProgress);
+
             downloadTask.DownloadStatus = downloadTask.IsSingleFile
                 ? DownloadStatus.MoveFinished
                 : DownloadStatus.MergeFinished;
+
+            await UpdateDownloadTaskStatus(downloadTask);
         }
         catch (OperationCanceledException)
         {
@@ -225,15 +228,13 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 ? DownloadStatus.MovePaused
                 : DownloadStatus.MergePaused;
 
+            await UpdateDownloadTaskStatus(downloadTask);
+
             return Result.Ok();
         }
         catch (Exception ex)
         {
-            downloadTask.DownloadStatus = downloadTask.IsSingleFile
-                ? DownloadStatus.MoveError
-                : DownloadStatus.MergeError;
-
-            return _log.Error(ex).ToResult();
+            return (await ErrorDownloadTask(downloadTask, _log.Error(ex).ToResult()));
         }
         finally
         {
@@ -249,19 +250,6 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _writeStream = null;
             }
 
-            var progress = new DownloadFileTransferProgress
-            {
-                FileTransferSpeed = downloadTask.FileTransferSpeed,
-                FileDataTransferred = downloadTask.FileDataTransferred,
-                CurrentFileTransferPathIndex = downloadTask.CurrentFileTransferPathIndex,
-                CurrentFileTransferBytesOffset = downloadTask.CurrentFileTransferBytesOffset,
-            };
-            await _dbContext.UpdateDownloadFileTransferProgress(key, progress);
-
-            await UpdateDownloadTaskStatus(key, downloadTask.DownloadStatus);
-
-            fileMergeProgress?.OnNext(progress);
-
             fileMergeProgress?.OnCompleted();
 
             if (downloadTask.DownloadStatus is DownloadStatus.MoveFinished or DownloadStatus.MergeFinished)
@@ -273,26 +261,28 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
         return Result.Ok();
     }
 
-    private async Task<Result<Stream>> OpenOrCreateMergeStream(string fileDestinationPath)
+    private async Task UpdateDownloadTaskStatus(DownloadTaskFileBase downloadTask)
     {
-        // Ensure destination directory exists and is otherwise created.
-        var result = _directorySystem.CreateDirectoryFromFilePath(fileDestinationPath);
-        if (result.IsFailed)
-        {
-            await _mediator.SendNotificationAsync(result);
-            return result.LogError();
-        }
+        await _dbContext.SetDownloadStatus(downloadTask.ToKey(), downloadTask.DownloadStatus);
 
-        return _fileSystem.Create(fileDestinationPath, _bufferSize, FileOptions.SequentialScan);
+        // TODO This might not be needed
+        await _dbContext
+            .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTask.Id)
+            .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, downloadTask.DownloadStatus));
+
+        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTask.ToKey()));
     }
 
-    private async Task UpdateDownloadTaskStatus(DownloadTaskKey downloadTaskKey, DownloadStatus newDownloadStatus)
+    private async Task<Result> ErrorDownloadTask(DownloadTaskFileBase downloadTask, Result result)
     {
-        await _dbContext.SetDownloadStatus(downloadTaskKey, newDownloadStatus);
-        await _dbContext
-            .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
-            .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, newDownloadStatus));
+        downloadTask.DownloadStatus = downloadTask.IsSingleFile ? DownloadStatus.MoveError : DownloadStatus.MergeError;
 
-        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey));
+        await _dbContext.SetDownloadStatus(downloadTask.ToKey(), downloadTask.DownloadStatus);
+
+        await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTask.ToKey()));
+
+        await _mediator.SendNotificationAsync(result);
+
+        return result;
     }
 }
