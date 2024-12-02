@@ -509,17 +509,5 @@ public static class EnumExtensions
             var _ => NotificationLevel.Information,
         };
 
-    public static DownloadTaskPhase FromPercentage(decimal downloadPercentage, decimal fileTransferPercentage)
-    {
-        return downloadPercentage switch
-        {
-            0 when fileTransferPercentage == 0 => DownloadTaskPhase.None,
-            > 0 and < 100 when fileTransferPercentage == 0 => DownloadTaskPhase.Downloading,
-            100 when fileTransferPercentage is >= 0 and < 100 => DownloadTaskPhase.FileTransfer,
-            100 when fileTransferPercentage == 100 => DownloadTaskPhase.Completed,
-            _ => DownloadTaskPhase.Unknown,
-        };
-    }
-
     #endregion
 }

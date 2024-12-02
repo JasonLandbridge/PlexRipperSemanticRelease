@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PlexRipper.Domain;
 
-public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTransferProgress
+public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadTaskProgress, IDownloadFileTransferProgress
 {
     [Column(Order = 11)]
     public required string FileName { get; set; }
@@ -56,7 +56,7 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     /// <summary>
     /// Gets or sets the total size received of the file in bytes.
     /// </summary>
-    [Column(Order = 5)]
+    [Column(Order = 20)]
     public required long FileDataTransferred { get; set; }
 
     /// <summary>
@@ -91,29 +91,14 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     [NotMapped]
     public List<string> FilePaths => DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToList();
 
-    /// <summary>
-    /// Gets the percentage of the data transferred to its destination.
-    /// </summary>
     [NotMapped]
-    public decimal FileTransferPercentage => DataFormat.GetPercentage(FileDataTransferred, DataTotal);
-
-    /// <summary>
-    /// Gets  the percentage of the data received from the DataTotal.
-    /// </summary>
-    [NotMapped]
-    public decimal DownloadPercentage => DataFormat.GetPercentage(DataReceived, DataTotal);
+    public decimal Percentage => DownloadTaskPhaseExtensions.Percentage(DownloadTaskPhase, this, this);
 
     [NotMapped]
-    public decimal Percentage =>
-        DownloadTaskPhase switch
-        {
-            DownloadTaskPhase.FileTransfer => FileTransferPercentage,
-            _ => DownloadPercentage,
-        };
+    public DownloadTaskPhase DownloadTaskPhase => DownloadTaskPhaseExtensions.FromPercentage(this, this);
 
     [NotMapped]
-    public DownloadTaskPhase DownloadTaskPhase =>
-        EnumExtensions.FromPercentage(DownloadPercentage, FileTransferPercentage);
+    public long Speed => DownloadTaskPhaseExtensions.Speed(DownloadTaskPhase, this, this);
 
     /// <summary>
     /// Gets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
@@ -179,14 +164,17 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadFileTran
     public string GetFilePathsCompressed =>
         string.Join(';', DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToArray());
 
+    /// <summary>
+    /// Gets the time remaining in seconds the <see cref="DownloadTaskFileBase"/> to finish.
+    /// </summary>
     [NotMapped]
-    public string DownloadSpeedFormatted => DataFormat.FormatSpeedString(DownloadSpeed);
-
-    [NotMapped]
-    public long TimeRemaining => DataFormat.GetTimeRemaining(DataTotal - DataReceived, DownloadSpeed);
+    public long TimeRemaining => DownloadTaskPhaseExtensions.TimeRemaining(DownloadTaskPhase, this, this);
 
     [NotMapped]
     public bool IsSingleFile => DownloadWorkerTasks.Count == 1;
+
+    public override string ToString() =>
+        $"[FileMergeProgress {Title} - {Percentage}% - {DataFormat.FormatSpeedString(Speed)} - {DataFormat.FormatSizeString(DataTotal - DataReceived)} / {DataFormat.FormatSizeString(DataTotal)} - {DataFormat.FormatTimeSpanString(TimeSpan.FromSeconds(TimeRemaining))}]";
 
     #endregion
 }

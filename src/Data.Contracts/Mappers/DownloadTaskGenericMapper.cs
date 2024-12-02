@@ -34,6 +34,8 @@ public static class DownloadTaskGenericMapper
             DownloadSpeed = downloadTaskMovie.DownloadSpeed,
             FileTransferSpeed = downloadTaskMovie.FileTransferSpeed,
             FileDataTransferred = downloadTaskMovie.FileDataTransferred,
+            CurrentFileTransferPathIndex = 0,
+            CurrentFileTransferBytesOffset = 0,
             Children = children,
             DownloadWorkerTasks = [],
             ParentId = Guid.Empty,
@@ -52,8 +54,9 @@ public static class DownloadTaskGenericMapper
 
     #region MovieFile
 
-    public static DownloadTaskGeneric ToGeneric(this DownloadTaskMovieFile file) =>
-        new()
+    public static DownloadTaskGeneric ToGeneric(this DownloadTaskMovieFile file)
+    {
+        var downloadTaskGeneric = new DownloadTaskGeneric()
         {
             Id = file.Id,
             MediaKey = file.Key,
@@ -81,7 +84,11 @@ public static class DownloadTaskGenericMapper
             PlexLibrary = file.PlexLibrary,
             PlexLibraryId = file.PlexLibraryId,
             FileDataTransferred = file.FileDataTransferred,
+            CurrentFileTransferPathIndex = file.CurrentFileTransferPathIndex,
+            CurrentFileTransferBytesOffset = file.CurrentFileTransferBytesOffset,
         };
+        return downloadTaskGeneric;
+    }
 
     #endregion
 
@@ -120,6 +127,8 @@ public static class DownloadTaskGenericMapper
             PlexServerId = downloadTaskTvShow.PlexServerId,
             PlexLibrary = downloadTaskTvShow.PlexLibrary,
             PlexLibraryId = downloadTaskTvShow.PlexLibraryId,
+            CurrentFileTransferPathIndex = 0,
+            CurrentFileTransferBytesOffset = 0,
         };
 
         generic.Calculate();
@@ -164,6 +173,8 @@ public static class DownloadTaskGenericMapper
             PlexServerId = downloadTaskTvShowSeason.PlexServerId,
             PlexLibrary = downloadTaskTvShowSeason.PlexLibrary,
             PlexLibraryId = downloadTaskTvShowSeason.PlexLibraryId,
+            CurrentFileTransferPathIndex = 0,
+            CurrentFileTransferBytesOffset = 0,
         };
 
         generic.Calculate();
@@ -208,6 +219,8 @@ public static class DownloadTaskGenericMapper
             PlexServerId = downloadTaskTvShowEpisode.PlexServerId,
             PlexLibrary = downloadTaskTvShowEpisode.PlexLibrary,
             PlexLibraryId = downloadTaskTvShowEpisode.PlexLibraryId,
+            CurrentFileTransferPathIndex = 0,
+            CurrentFileTransferBytesOffset = 0,
         };
 
         generic.Calculate();
@@ -248,6 +261,8 @@ public static class DownloadTaskGenericMapper
             PlexServerId = file.PlexServerId,
             PlexLibrary = file.PlexLibrary,
             PlexLibraryId = file.PlexLibraryId,
+            CurrentFileTransferPathIndex = file.CurrentFileTransferPathIndex,
+            CurrentFileTransferBytesOffset = file.CurrentFileTransferBytesOffset,
         };
 
     #endregion

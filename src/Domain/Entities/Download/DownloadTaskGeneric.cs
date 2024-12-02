@@ -1,6 +1,6 @@
 namespace PlexRipper.Domain;
 
-public record DownloadTaskGeneric : IDownloadTaskProgress
+public record DownloadTaskGeneric : IDownloadTaskProgress, IDownloadFileTransferProgress
 {
     public required Guid Id { get; init; }
 
@@ -59,11 +59,6 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     public required long DownloadSpeed { get; set; }
 
-    /// <summary>
-    /// Gets  the percentage of the data received from the DataTotal.
-    /// </summary>
-    public decimal DownloadPercentage => DataFormat.GetPercentage(DataReceived, DataTotal);
-
     #endregion
 
     #region File Transfer Progress
@@ -72,10 +67,9 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     public required long FileDataTransferred { get; set; }
 
-    /// <summary>
-    /// Gets the percentage of the data transferred to its destination.
-    /// </summary>
-    public decimal FileTransferPercentage => DataFormat.GetPercentage(FileDataTransferred, DataTotal);
+    public required int CurrentFileTransferPathIndex { get; set; }
+
+    public required long CurrentFileTransferBytesOffset { get; set; }
 
     #endregion
 
@@ -85,9 +79,9 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
     /// The nested <see cref="DownloadTaskGeneric"/> used for seasons and episodes.
     /// "Required = Required.Default" is used for ensuring its optional in the Typescript generating.
     /// </summary>
-    public required List<DownloadTaskGeneric> Children { get; set; } = new();
+    public required List<DownloadTaskGeneric> Children { get; set; } = [];
 
-    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; init; } = new();
+    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; init; } = [];
 
     public required Guid ParentId { get; init; }
 
@@ -103,34 +97,13 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     #region Helpers
 
-    public DownloadTaskPhase DownloadTaskPhase =>
-        EnumExtensions.FromPercentage(DownloadPercentage, FileTransferPercentage);
+    public DownloadTaskPhase DownloadTaskPhase => DownloadTaskPhaseExtensions.FromPercentage(this, this);
 
-    public decimal Percentage =>
-        DownloadTaskPhase switch
-        {
-            DownloadTaskPhase.FileTransfer => FileTransferPercentage,
-            _ => DownloadPercentage,
-        };
+    public decimal Percentage => DownloadTaskPhaseExtensions.Percentage(DownloadTaskPhase, this, this);
 
-    public long Speed =>
-        DownloadTaskPhase switch
-        {
-            DownloadTaskPhase.FileTransfer => FileTransferSpeed,
-            DownloadTaskPhase.Completed => 0,
-            _ => DownloadSpeed,
-        };
+    public long Speed => DownloadTaskPhaseExtensions.Speed(DownloadTaskPhase, this, this);
 
-    public long TimeRemaining =>
-        DownloadTaskPhase switch
-        {
-            DownloadTaskPhase.FileTransfer => DataFormat.GetTimeRemaining(
-                DataTotal - FileDataTransferred,
-                FileTransferSpeed
-            ),
-            DownloadTaskPhase.Completed => 0,
-            _ => DataFormat.GetTimeRemaining(DataTotal - DataReceived, DownloadSpeed),
-        };
+    public long TimeRemaining => DownloadTaskPhaseExtensions.TimeRemaining(DownloadTaskPhase, this, this);
 
     public DownloadTaskKey ToKey() =>
         new()

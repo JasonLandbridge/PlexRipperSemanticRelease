@@ -42,9 +42,6 @@ public record FileMergeProgress
 
     public decimal Percentage => DataFormat.GetPercentage(DataTransferred, DataTotal);
 
-    /// <summary>
-    /// The time remaining in seconds the <see cref="FileTask"/> to finish.
-    /// </summary>
     public long TimeRemaining => DataFormat.GetTimeRemaining(BytesRemaining, TransferSpeed);
 
     public long BytesRemaining => DataTotal - DataTransferred;
