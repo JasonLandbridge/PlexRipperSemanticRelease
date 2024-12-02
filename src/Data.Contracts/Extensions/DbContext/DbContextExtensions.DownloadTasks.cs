@@ -322,6 +322,67 @@ public static partial class DbContextExtensions
         }
     }
 
+    public static async Task<Result> ResetDownloadTaskProgress(
+        this IPlexRipperDbContext dbContext,
+        DownloadTaskKey key,
+        DownloadStatus downloadStatus,
+        CancellationToken cancellationToken = default
+    )
+    {
+        switch (key.Type)
+        {
+            case DownloadTaskType.MovieData:
+                await dbContext
+                    .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(
+                        p =>
+                            p.SetProperty(x => x.DownloadSpeed, 0)
+                                .SetProperty(x => x.DataReceived, 0)
+                                .SetProperty(x => x.FileTransferSpeed, 0)
+                                .SetProperty(x => x.FileDataTransferred, 0)
+                                .SetProperty(x => x.CurrentFileTransferPathIndex, 0)
+                                .SetProperty(x => x.CurrentFileTransferBytesOffset, 0)
+                                .SetProperty(x => x.DownloadStatus, downloadStatus),
+                        cancellationToken
+                    );
+                break;
+            case DownloadTaskType.EpisodeData:
+                await dbContext
+                    .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(
+                        p =>
+                            p.SetProperty(x => x.DownloadSpeed, 0)
+                                .SetProperty(x => x.DataReceived, 0)
+                                .SetProperty(x => x.FileTransferSpeed, 0)
+                                .SetProperty(x => x.FileDataTransferred, 0)
+                                .SetProperty(x => x.CurrentFileTransferPathIndex, 0)
+                                .SetProperty(x => x.CurrentFileTransferBytesOffset, 0)
+                                .SetProperty(x => x.DownloadStatus, downloadStatus),
+                        cancellationToken
+                    );
+                break;
+            case DownloadTaskType.Movie:
+            case DownloadTaskType.TvShow:
+            case DownloadTaskType.Season:
+            case DownloadTaskType.Episode:
+                return _log.Here()
+                    .Error(
+                        "{Name} of type {Type} is not supported in {MethodName}",
+                        nameof(DownloadTaskType),
+                        key.Type,
+                        nameof(ResetDownloadTaskProgress)
+                    )
+                    .ToResult();
+            case DownloadTaskType.None:
+            case DownloadTaskType.MoviePart:
+            case DownloadTaskType.EpisodePart:
+            default:
+                return Result.Fail($"Unsupported DownloadTaskType {key.Type}").LogError();
+        }
+
+        return Result.Ok();
+    }
+
     public static async Task UpdateDownloadFileTransferProgress(
         this IPlexRipperDbContext dbContext,
         DownloadTaskKey key,
