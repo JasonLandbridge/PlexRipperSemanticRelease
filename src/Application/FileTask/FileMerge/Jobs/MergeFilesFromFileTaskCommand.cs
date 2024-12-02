@@ -247,8 +247,6 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 _writeStream = null;
             }
 
-            await UpdateDownloadTaskStatus(key, downloadTask.DownloadStatus);
-
             var progress = new DownloadFileTransferProgress
             {
                 FileTransferSpeed = downloadTask.FileTransferSpeed,
@@ -257,7 +255,8 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
                 CurrentFileTransferBytesOffset = downloadTask.CurrentFileTransferBytesOffset,
             };
             await _dbContext.UpdateDownloadFileTransferProgress(key, progress);
-            await _mediator.Send(new DownloadTaskUpdatedNotification(key), CancellationToken.None);
+
+            await UpdateDownloadTaskStatus(key, downloadTask.DownloadStatus);
 
             fileMergeProgress?.OnNext(progress);
 

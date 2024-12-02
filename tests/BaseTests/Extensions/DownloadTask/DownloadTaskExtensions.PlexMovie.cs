@@ -35,7 +35,10 @@ public static partial class DownloadTaskExtensions
     )
     {
         foreach (var downloadTask in downloadTasks)
+        {
             downloadTask.DownloadStatus = downloadStatus;
+            downloadTask.SetPercentageBasedOnStatus(downloadStatus);
+        }
 
         return downloadTasks;
     }

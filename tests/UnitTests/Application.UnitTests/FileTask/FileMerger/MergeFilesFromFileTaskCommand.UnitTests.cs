@@ -38,7 +38,10 @@ public class MergeFilesFromFileTaskCommandUnitTests : BaseUnitTest<MergeFilesFro
             .Setup(x => x.CreateDirectoryFromFilePath(It.IsAny<string>()))
             .Returns(Result.Fail("Failed to create directory"))
             .Verifiable(Times.Once);
-
+        mock.Mock<IMediator>()
+            .Setup(m => m.Publish(It.IsAny<SendNotificationResult>(), It.IsAny<CancellationToken>()))
+            .Returns(Task.CompletedTask)
+            .Verifiable(Times.Once);
         mock.SetupMediator(It.IsAny<DownloadTaskUpdatedNotification>)
             .Returns(Task.CompletedTask)
             .Verifiable(Times.Once);
