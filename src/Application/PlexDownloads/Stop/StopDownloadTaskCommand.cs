@@ -80,20 +80,15 @@ public class StopDownloadTaskCommandHandler : IRequestHandler<StopDownloadTaskCo
             if (removeTempResult.IsFailed)
                 return removeTempResult;
 
-            // Update the download task status
-            await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Stopped);
-
             // Delete all worker tasks
             await _dbContext
                 .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTaskKey.Id)
                 .ExecuteDeleteAsync(cancellationToken);
 
             // Reset the download progress
-            downloadTask.DataReceived = 0;
-            downloadTask.Percentage = 0;
-            await _dbContext.UpdateDownloadProgress(downloadTaskKey, downloadTask, cancellationToken);
+            await _dbContext.ResetDownloadTaskProgress(downloadTaskKey, DownloadStatus.Stopped, cancellationToken);
 
-            // TODO delete file tasks but first check if already merging
+            // TODO: delete file tasks but first check if already merging
 
             await _mediator.Send(new DownloadTaskUpdatedNotification(downloadTaskKey), cancellationToken);
         }

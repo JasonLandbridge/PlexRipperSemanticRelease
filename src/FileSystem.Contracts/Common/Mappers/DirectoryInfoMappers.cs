@@ -12,7 +12,7 @@ public static class DirectoryInfoMappers
             LastModified = source.LastWriteTimeUtc,
             Type = FileSystemEntityType.Folder,
             Extension = source.Extension,
-            Size = 0, // TODO maybe calculating this is a bit expensive, see if needed
+            Size = 0, // TODO:maybe calculating this is a bit expensive, see if needed
             HasReadPermission = source.CanRead(),
             HasWritePermission = source.CanWrite(),
         };

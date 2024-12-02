@@ -34,9 +34,7 @@ public class FileMergeSchedulerStartFileMergeJobIntegrationTests : BaseIntegrati
         dbContext.DownloadWorkerTasks.AddRange(downloadWorkerTasks);
         await dbContext.SaveChangesAsync();
 
-        var createResult = await container.FileMergeScheduler.CreateFileTaskFromDownloadTask(downloadTask.ToKey());
-        createResult.IsSuccess.ShouldBeTrue();
-        var startResult = await container.FileMergeScheduler.StartFileMergeJob(createResult.Value.Id);
+        var startResult = await container.FileMergeScheduler.StartFileMergeJob(downloadTask.ToKey());
         await container.SchedulerService.AwaitScheduler();
 
         // Assert
@@ -46,6 +44,6 @@ public class FileMergeSchedulerStartFileMergeJobIntegrationTests : BaseIntegrati
         downloadTaskDb.ShouldNotBeNull();
         downloadTaskDb.DownloadStatus.ShouldBe(DownloadStatus.Completed);
 
-        container.MockSignalRService.FileMergeProgressList.Count.ShouldBeGreaterThan(10);
+        container.MockSignalRService.ServerDownloadProgressList.Count.ShouldBeGreaterThanOrEqualTo(3);
     }
 }

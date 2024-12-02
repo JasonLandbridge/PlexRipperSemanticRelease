@@ -23,6 +23,6 @@ public record PlexMediaQuality
         }
     }
 
-    // TODO Pre-calculate this to avoid doing it every time, used to identify the different media files
+    // TODO:Pre-calculate this to avoid doing it every time, used to identify the different media files
     public required string HashId { get; init; }
 }

@@ -101,11 +101,11 @@ public static class DataFormat
     /// <summary>
     /// Returns the bytes per second.
     /// </summary>
-    /// <param name="bytesReceived"></param>
+    /// <param name="bytesReceivedPerSecond"></param>
     /// <param name="elapsedTimeInSeconds"></param>
     /// <returns></returns>
-    public static int GetTransferSpeed(long bytesReceived, double elapsedTimeInSeconds) =>
-        elapsedTimeInSeconds <= 0 ? 0 : (int)Math.Round(bytesReceived / elapsedTimeInSeconds, 2);
+    public static int GetTransferSpeed(long bytesReceivedPerSecond, double elapsedTimeInSeconds) =>
+        elapsedTimeInSeconds <= 0 ? 0 : (int)Math.Round(bytesReceivedPerSecond / elapsedTimeInSeconds, 2);
 
     public static long GetTimeRemaining(long bytesRemaining, double downloadSpeed) =>
         downloadSpeed <= 0 ? 0 : Convert.ToInt64(Math.Floor(bytesRemaining / downloadSpeed));

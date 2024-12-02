@@ -11,8 +11,6 @@ public class MockSignalRService : ISignalRService
 
     public BlockingCollection<DownloadTaskDTO> DownloadTaskUpdate { get; } = new();
 
-    public BlockingCollection<FileMergeProgress> FileMergeProgressList { get; } = new();
-
     public BlockingCollection<ServerDownloadProgressDTO> ServerDownloadProgressList { get; } = new();
     public BlockingCollection<JobStatusUpdateDTO> JobStatusUpdateList { get; } = new();
     public BlockingCollection<DataType> RefreshNotificationList { get; } = new();
@@ -28,16 +26,6 @@ public class MockSignalRService : ISignalRService
         Task.CompletedTask;
 
     public Task SendDownloadTaskCreationProgressUpdate(int current, int total) => Task.CompletedTask;
-
-    public Task SendFileMergeProgressUpdateAsync(
-        FileMergeProgress fileMergeProgress,
-        CancellationToken cancellationToken = default
-    )
-    {
-        FileMergeProgressList.Add(fileMergeProgress, cancellationToken);
-        _log.Verbose("{ClassName} => {@FileMergeProgress}", nameof(MockSignalRService), fileMergeProgress);
-        return Task.CompletedTask;
-    }
 
     public Task SendNotificationAsync(Notification notification) => Task.CompletedTask;
 

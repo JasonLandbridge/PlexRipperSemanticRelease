@@ -29,8 +29,6 @@ public sealed class PlexRipperDbContext : DbContext, IPlexRipperDbContext, IPlex
 
     public DbSet<FolderPath> FolderPaths { get; set; }
 
-    public DbSet<FileTask> FileTasks { get; set; }
-
     public DbSet<Notification> Notifications { get; set; }
 
     public DbSet<PlexLibrary> PlexLibraries { get; set; }

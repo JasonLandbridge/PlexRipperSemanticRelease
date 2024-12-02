@@ -38,8 +38,7 @@
 					flat
 					rounded
 					style="padding: 0.5rem"
-					href="https://discord.com/invite/Qa3BtxN77g"
-					target="_blank">
+					@click="dialogStore.openDialog(DialogType.DiscordServerInviteDialog)">
 					<DiscordIcon />
 				</q-btn>
 
@@ -58,10 +57,11 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@store';
-import DiscordIcon from '@components/Icons/DiscordIcon.vue';
+import { DialogType } from '@enums';
 
 const { t } = useI18n();
 const globalStore = useGlobalStore();
+const dialogStore = useDialogStore();
 
 const emit = defineEmits<{
 	(e: 'show-navigation' | 'show-notifications'): void;

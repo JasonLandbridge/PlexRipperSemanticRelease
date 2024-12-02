@@ -17,7 +17,7 @@ public record DownloadTaskKey
 
     public bool IsDownloadable => Type.IsDownloadable();
 
-    // TODO add title when creating the key
+    // TODO:add title when creating the key
 
     public virtual bool Equals(DownloadTaskKey? other)
     {

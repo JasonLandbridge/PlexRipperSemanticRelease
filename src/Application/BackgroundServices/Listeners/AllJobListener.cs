@@ -94,7 +94,10 @@ public class AllJobListener : IAllJobListener
                 return;
             case JobTypes.FileMergeJob:
                 await _signalRService.SendJobStatusUpdateAsync(
-                    new JobStatusUpdate<List<int>>(result, [dataMap.GetIntValue(FileMergeJob.FileTaskId)])
+                    new JobStatusUpdate<DownloadTaskKey>(
+                        result,
+                        dataMap.GetJsonValue<DownloadTaskKey>(FileMergeJob.DownloadTaskIdParameter)!
+                    )
                 );
                 return;
             default:

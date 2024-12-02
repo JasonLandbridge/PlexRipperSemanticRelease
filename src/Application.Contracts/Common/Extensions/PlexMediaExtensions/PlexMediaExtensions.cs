@@ -19,11 +19,11 @@ public static class PlexMediaExtensions
             Title = plexMovie.Title,
             Year = plexMovie.Year,
             FullTitle = plexMovie.FullTitle,
-            Percentage = 0,
             DataReceived = 0,
             DownloadSpeed = 0,
+            FileDataTransferred = 0,
             FileTransferSpeed = 0,
-            Children = new List<DownloadTaskMovieFile>(),
+            Children = [],
         };
 
     public static DownloadTaskTvShow MapToDownloadTask(this PlexTvShow plexTvShow) =>
@@ -41,11 +41,11 @@ public static class PlexMediaExtensions
             Title = plexTvShow.Title,
             Year = plexTvShow.Year,
             FullTitle = plexTvShow.FullTitle,
-            Percentage = 0,
             DataReceived = 0,
             DownloadSpeed = 0,
-            Children = new List<DownloadTaskTvShowSeason>(),
+            Children = [],
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static DownloadTaskTvShowSeason MapToDownloadTask(this PlexTvShowSeason plexTvShowSeason) =>
@@ -63,13 +63,13 @@ public static class PlexMediaExtensions
             Title = plexTvShowSeason.Title,
             Year = plexTvShowSeason.Year,
             FullTitle = plexTvShowSeason.FullTitle,
-            Percentage = 0,
             DataReceived = 0,
             DownloadSpeed = 0,
-            Children = new List<DownloadTaskTvShowEpisode>(),
+            Children = [],
             ParentId = default,
             Parent = null,
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static DownloadTaskTvShowEpisode MapToDownloadTask(this PlexTvShowEpisode plexTvShowEpisode) =>
@@ -87,13 +87,13 @@ public static class PlexMediaExtensions
             Title = plexTvShowEpisode.Title,
             Year = plexTvShowEpisode.Year,
             FullTitle = plexTvShowEpisode.FullTitle,
-            Percentage = 0,
             DataReceived = 0,
             DownloadSpeed = 0,
-            Children = new List<DownloadTaskTvShowEpisodeFile>(),
+            Children = [],
             ParentId = default,
             Parent = null,
             FileTransferSpeed = 0,
+            FileDataTransferred = 0,
         };
 
     public static List<DownloadTaskMovieFile> MapToDownloadTask(this PlexMediaData plexMediaData, PlexMovie plexMovie)
@@ -110,10 +110,10 @@ public static class PlexMediaExtensions
                 PlexServerId = plexMovie.PlexServerId,
                 PlexLibrary = null,
                 PlexLibraryId = plexMovie.PlexLibraryId,
-                Percentage = 0,
                 DataReceived = 0,
                 DownloadSpeed = 0,
                 FileTransferSpeed = 0,
+                FileDataTransferred = 0,
                 FileName = part.File.GetFileName(),
                 FileLocationUrl = part.ObfuscatedFilePath,
                 Quality = plexMediaData.VideoResolution,
@@ -125,7 +125,7 @@ public static class PlexMediaExtensions
                     TvShowFolder = string.Empty,
                     SeasonFolder = string.Empty,
                 },
-                DownloadWorkerTasks = new List<DownloadWorkerTask>(),
+                DownloadWorkerTasks = [],
                 Parent = null,
                 ParentId = default,
                 FullTitle = $"{plexMovie.FullTitle}/{part.File.GetFileName()}",
@@ -156,10 +156,10 @@ public static class PlexMediaExtensions
                 PlexServerId = plexTvShowEpisode.PlexServerId,
                 PlexLibrary = null,
                 PlexLibraryId = plexTvShowEpisode.PlexLibraryId,
-                Percentage = 0,
                 DataReceived = 0,
                 DownloadSpeed = 0,
                 FileTransferSpeed = 0,
+                FileDataTransferred = 0,
                 FileName = part.File.GetFileName(),
                 FileLocationUrl = part.ObfuscatedFilePath,
                 Quality = plexMediaData.VideoResolution,

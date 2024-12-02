@@ -277,17 +277,23 @@ public static class EnumExtensions
         return value switch
         {
             "Unknown" => DownloadStatus.Unknown,
+            "Error" => DownloadStatus.Error,
             "Queued" => DownloadStatus.Queued,
             "Downloading" => DownloadStatus.Downloading,
             "DownloadFinished" => DownloadStatus.DownloadFinished,
-            "Completed" => DownloadStatus.Completed,
             "Paused" => DownloadStatus.Paused,
             "Stopped" => DownloadStatus.Stopped,
             "Deleted" => DownloadStatus.Deleted,
             "Merging" => DownloadStatus.Merging,
             "Moving" => DownloadStatus.Moving,
-            "Error" => DownloadStatus.Error,
+            "MergePaused" => DownloadStatus.MergePaused,
+            "MovePaused" => DownloadStatus.MovePaused,
+            "MergeFinished" => DownloadStatus.MergeFinished,
+            "MoveFinished" => DownloadStatus.MoveFinished,
+            "Completed" => DownloadStatus.Completed,
             "ServerUnreachable" => DownloadStatus.ServerUnreachable,
+            "MoveError" => DownloadStatus.MoveError,
+            "MergeError" => DownloadStatus.MergeError,
             _ => DefaultException(),
         };
 
@@ -314,17 +320,23 @@ public static class EnumExtensions
         return value switch
         {
             DownloadStatus.Unknown => "Unknown",
+            DownloadStatus.Error => "Error",
             DownloadStatus.Queued => "Queued",
             DownloadStatus.Downloading => "Downloading",
             DownloadStatus.DownloadFinished => "DownloadFinished",
-            DownloadStatus.Completed => "Completed",
             DownloadStatus.Paused => "Paused",
             DownloadStatus.Stopped => "Stopped",
             DownloadStatus.Deleted => "Deleted",
             DownloadStatus.Merging => "Merging",
             DownloadStatus.Moving => "Moving",
-            DownloadStatus.Error => "Error",
+            DownloadStatus.MergePaused => "MergePaused",
+            DownloadStatus.MovePaused => "MovePaused",
+            DownloadStatus.MergeFinished => "MergeFinished",
+            DownloadStatus.MoveFinished => "MoveFinished",
+            DownloadStatus.Completed => "Completed",
             DownloadStatus.ServerUnreachable => "ServerUnreachable",
+            DownloadStatus.MoveError => "MoveError",
+            DownloadStatus.MergeError => "MergeError",
             _ => DefaultException(),
         };
 

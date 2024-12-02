@@ -15,7 +15,7 @@ public record PlexServerSettingItemModule : BaseSettingsModule<PlexServerSetting
             Hidden = false,
         };
 
-    // TODO Update this name when the Server name is updated
+    // TODO:Update this name when the Server name is updated
     public required string PlexServerName
     {
         get => _plexServerName;

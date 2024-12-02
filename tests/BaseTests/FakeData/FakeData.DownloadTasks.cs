@@ -44,6 +44,7 @@ public static partial class FakeData
             .RuleFor(x => x.FileTransferSpeed, _ => 0)
             .RuleFor(x => x.Percentage, _ => 0)
             .RuleFor(x => x.DataReceived, _ => 0)
+            .RuleFor(x => x.FileDataTransferred, _ => 0)
             .RuleFor(x => x.DownloadSpeed, _ => 0)
             .RuleFor(
                 x => x.DataTotal,
@@ -67,7 +68,6 @@ public static partial class FakeData
             .StrictMode(true)
             .UseSeed(seed.Next())
             .ApplyDownloadTaskBase(seed)
-            .RuleFor(x => x.Percentage, _ => 0)
             .RuleFor(x => x.DataReceived, _ => 0)
             .RuleFor(
                 x => x.DataTotal,
@@ -78,6 +78,9 @@ public static partial class FakeData
             )
             .RuleFor(x => x.DownloadSpeed, _ => 0)
             .RuleFor(x => x.FileTransferSpeed, _ => 0)
+            .RuleFor(x => x.FileDataTransferred, _ => 0)
+            .RuleFor(x => x.CurrentFileTransferPathIndex, _ => 0)
+            .RuleFor(x => x.CurrentFileTransferBytesOffset, _ => 0)
             .RuleFor(x => x.FileName, _ => "file.mp4")
             .RuleFor(x => x.FileLocationUrl, _ => DownloadFileUrl)
             .RuleFor(x => x.Quality, f => f.PickRandom("sd", "720", "1080"))
@@ -92,7 +95,7 @@ public static partial class FakeData
                     SeasonFolder = string.Empty,
                 }
             )
-            .RuleFor(x => x.DownloadWorkerTasks, _ => new List<DownloadWorkerTask>());
+            .RuleFor(x => x.DownloadWorkerTasks, _ => GetDownloadWorkerTask(seed).Generate(config.DownloadWorkerTasks));
     }
 
     #endregion

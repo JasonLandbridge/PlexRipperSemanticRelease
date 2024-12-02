@@ -68,10 +68,10 @@ public class GenerateDownloadTaskMoviesCommandHandler : IRequestHandler<Generate
 
             foreach (var plexMovie in plexMovies)
             {
-                // TODO Check for duplicate DownloadTasks already existing
+                // TODO: Check for duplicate DownloadTasks already existing
                 var movieDownloadTask = plexMovie.MapToDownloadTask();
 
-                // TODO Takes first entry which assumes its the highest quality one
+                // TODO: Takes first entry which assumes its the highest quality one
                 var movieData = plexMovie.MovieData.First();
 
                 // Map movieData to DownloadTaskMovieFile and add to movieDownloadTask

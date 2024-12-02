@@ -61,15 +61,6 @@ public class SignalRService : ISignalRService
     }
 
     /// <inheritdoc/>
-    public async Task SendFileMergeProgressUpdateAsync(
-        FileMergeProgress fileMergeProgress,
-        CancellationToken cancellationToken = default
-    )
-    {
-        await _progressHub.Clients.All.FileMergeProgress(fileMergeProgress, cancellationToken);
-    }
-
-    /// <inheritdoc/>
     public async Task SendServerSyncProgressUpdateAsync(SyncServerMediaProgress syncServerMediaProgress)
     {
         await _progressHub.Clients.All.SyncServerMediaProgress(syncServerMediaProgress);

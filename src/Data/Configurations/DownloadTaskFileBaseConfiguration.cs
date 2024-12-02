@@ -16,7 +16,7 @@ public class DownloadTaskFileBaseConfiguration : IEntityTypeConfiguration<Downlo
             .HasForeignKey(x => x.DownloadTaskId)
             .OnDelete(DeleteBehavior.Cascade);
 
-        // TODO This can be removed once the EF Core issue is fixed: https://github.com/dotnet/efcore/issues/28443
+        // TODO:This can be removed once the EF Core issue is fixed: https://github.com/dotnet/efcore/issues/28443
         builder
             .Property(b => b.DirectoryMeta)
             .HasConversion(

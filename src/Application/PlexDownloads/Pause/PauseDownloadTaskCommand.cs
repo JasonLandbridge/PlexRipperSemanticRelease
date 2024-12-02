@@ -1,5 +1,6 @@
 using Application.Contracts;
 using Data.Contracts;
+using FileSystem.Contracts;
 using FluentValidation;
 using Logging.Interface;
 
@@ -26,18 +27,21 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
     private readonly IPlexRipperDbContext _dbContext;
     private readonly IMediator _mediator;
     private readonly IDownloadTaskScheduler _downloadTaskScheduler;
+    private readonly IFileMergeScheduler _fileMergeScheduler;
 
     public PauseDownloadTaskCommandHandler(
         ILog log,
         IPlexRipperDbContext dbContext,
         IMediator mediator,
-        IDownloadTaskScheduler downloadTaskScheduler
+        IDownloadTaskScheduler downloadTaskScheduler,
+        IFileMergeScheduler fileMergeScheduler
     )
     {
         _log = log;
         _dbContext = dbContext;
         _mediator = mediator;
         _downloadTaskScheduler = downloadTaskScheduler;
+        _fileMergeScheduler = fileMergeScheduler;
     }
 
     public async Task<Result> Handle(PauseDownloadTaskCommand command, CancellationToken cancellationToken)
@@ -49,7 +53,7 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
         var downloadTasks = await _dbContext.GetDownloadableChildTaskKeys(key, cancellationToken);
         foreach (var downloadTaskKey in downloadTasks)
         {
-            var downloadTask = await _dbContext.GetDownloadTaskAsync(downloadTaskKey, cancellationToken);
+            var downloadTask = await _dbContext.GetDownloadTaskFileAsync(downloadTaskKey, cancellationToken);
             if (downloadTask is null)
             {
                 ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), downloadTaskKey.Id).LogError();
@@ -60,28 +64,14 @@ public class PauseDownloadTaskCommandHandler : IRequestHandler<PauseDownloadTask
 
             if (await _downloadTaskScheduler.IsDownloading(downloadTaskKey, cancellationToken))
             {
-                var stopResult = await _downloadTaskScheduler.StopDownloadTaskJob(downloadTaskKey, cancellationToken);
-                if (stopResult.IsFailed)
-                {
-                    // Since this command is done per server, we can abort since there will at most be 1 download task downloading at a time and if that fails we can't continue
-                    return stopResult.LogError();
-                }
+                return await _downloadTaskScheduler.StopDownloadTaskJob(downloadTaskKey, cancellationToken);
             }
 
-            if (downloadTask.DownloadStatus is DownloadStatus.Downloading or DownloadStatus.Merging)
+            if (await _fileMergeScheduler.IsDownloadTaskMerging(downloadTaskKey))
             {
-                await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Paused);
+                await _fileMergeScheduler.StopFileMergeJob(downloadTaskKey);
             }
-
-            _log.Debug(
-                "DownloadTask {DownloadTaskId} has been Paused, meaning no downloaded files have been deleted",
-                command.DownloadTaskGuid
-            );
-
-            // TODO delete file tasks but first check if already merging
         }
-
-        await _mediator.Send(new DownloadTaskUpdatedNotification(key), cancellationToken);
 
         return Result.Ok();
     }

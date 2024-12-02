@@ -70,14 +70,50 @@ public enum DownloadStatus
     Moving = 9,
 
     /// <summary>
+    /// Download file has been merged.
+    /// </summary>
+    [EnumMember(Value = "MergePaused")]
+    MergePaused = 10,
+
+    /// <summary>
+    /// Download file has been moved.
+    /// </summary>
+    [EnumMember(Value = "MovePaused")]
+    MovePaused = 11,
+
+    /// <summary>
+    /// Download file has been merged.
+    /// </summary>
+    [EnumMember(Value = "MergeFinished")]
+    MergeFinished = 12,
+
+    /// <summary>
+    /// Download file has been moved.
+    /// </summary>
+    [EnumMember(Value = "MoveFinished")]
+    MoveFinished = 13,
+
+    /// <summary>
     /// Download is completed.
     /// </summary>
     [EnumMember(Value = "Completed")]
-    Completed = 10,
+    Completed = 14,
 
     /// <summary>
     /// The server is offline.
     /// </summary>
     [EnumMember(Value = "ServerUnreachable")]
-    ServerUnreachable = 11,
+    ServerUnreachable = 15,
+
+    /// <summary>
+    /// The server is offline.
+    /// </summary>
+    [EnumMember(Value = "MoveError")]
+    MoveError = 16,
+
+    /// <summary>
+    /// The server is offline.
+    /// </summary>
+    [EnumMember(Value = "MergeError")]
+    MergeError = 17,
 }

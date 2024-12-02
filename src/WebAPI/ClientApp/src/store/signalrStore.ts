@@ -29,7 +29,6 @@ export const useSignalrStore = defineStore('SignalrStore', () => {
 		// Data
 		libraryProgress: LibraryProgress[];
 		syncServerMediaProgress: SyncServerMediaProgress[];
-		fileMergeProgress: FileMergeProgress[];
 		serverConnectionCheckStatusProgress: ServerConnectionCheckStatusProgressDTO[];
 		// Subjects
 		libraryProgressSubject: Subject<LibraryProgress[]>;
@@ -38,11 +37,11 @@ export const useSignalrStore = defineStore('SignalrStore', () => {
 		serverConnectionCheckStatusProgressSubject: Subject<ServerConnectionCheckStatusProgressDTO[]>;
 		refreshDataNotificationSubject: Subject<DataType>;
 	}
+
 	const state = reactive<ISignalRStoreState>({
 		// Data
 		libraryProgress: [],
 		syncServerMediaProgress: [],
-		fileMergeProgress: [],
 		serverConnectionCheckStatusProgress: [],
 		// Subjects
 		libraryProgressSubject: new Subject<LibraryProgress[]>(),
@@ -107,10 +106,6 @@ export const useSignalrStore = defineStore('SignalrStore', () => {
 		progressHubConnection?.on(MessageTypes.ServerDownloadProgress, (data: ServerDownloadProgressDTO) =>
 			downloadStore.updateServerDownloadProgress(data),
 		);
-
-		progressHubConnection?.on(MessageTypes.FileMergeProgress, (data: FileMergeProgress) => {
-			updateState<FileMergeProgress>('fileMergeProgress', data);
-		});
 
 		progressHubConnection?.on(MessageTypes.LibraryProgress, (data: LibraryProgress) => {
 			updateState<LibraryProgress>('libraryProgress', data);

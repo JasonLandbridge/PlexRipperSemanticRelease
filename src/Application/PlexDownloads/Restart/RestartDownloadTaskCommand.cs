@@ -51,19 +51,6 @@ public class RestartDownloadTaskCommandHandler : IRequestHandler<RestartDownload
             if (stopResult.IsFailed)
                 return stopResult.LogError();
 
-            // Reset progress of the downloadTask
-            await _dbContext.UpdateDownloadProgress(
-                childKey,
-                new DownloadTaskProgress
-                {
-                    Percentage = 0,
-                    DataReceived = 0,
-                    DataTotal = downloadTask.DataTotal,
-                    DownloadSpeed = 0,
-                },
-                cancellationToken
-            );
-
             await _dbContext.SetDownloadStatus(childKey, DownloadStatus.Queued);
 
             await _mediator.Send(new DownloadTaskUpdatedNotification(childKey), cancellationToken);

@@ -366,7 +366,13 @@
             "deleted": "Usunięto",
             "merging": "Łączenie",
             "moving": "Poruszający",
-            "completed": "Zakończony"
+            "completed": "Zakończony",
+            "merge-error": "Błąd scalania",
+            "merge-finished": "Scalanie zakończone",
+            "merge-paused": "Scalanie wstrzymane",
+            "move-error": "Błąd przenoszenia",
+            "move-finished": "Przenoszenie zakończone",
+            "move-paused": "Przenoszenie wstrzymane"
         }
     },
     "help": {

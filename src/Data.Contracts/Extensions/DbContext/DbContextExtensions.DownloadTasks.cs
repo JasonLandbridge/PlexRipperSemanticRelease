@@ -91,12 +91,27 @@ public static partial class DbContextExtensions
         return DownloadTaskType.None;
     }
 
+    /// <summary>
+    /// Retrieves a <see cref="DownloadTaskGeneric"/> from the database based on the <paramref name="id"/> and <paramref name="type"/> with all its children and related entities.
+    /// </summary>
+    /// <param name="dbContext"> The <see cref="IPlexRipperDbContext"/> to query. </param>
+    /// <param name="key"> The <see cref="DownloadTaskKey"/> to retrieve the <see cref="DownloadTaskGeneric"/> by. </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests. </param>
+    /// <returns> The <see cref="DownloadTaskGeneric"/> if found, otherwise null. </returns>
     public static Task<DownloadTaskGeneric?> GetDownloadTaskAsync(
         this IPlexRipperDbContext dbContext,
         DownloadTaskKey key,
         CancellationToken cancellationToken = default
     ) => dbContext.GetDownloadTaskAsync(key.Id, key.Type, cancellationToken);
 
+    /// <summary>
+    /// Retrieves a <see cref="DownloadTaskGeneric"/> from the database based on the <paramref name="id"/> and <paramref name="type"/> with all its children and related entities.
+    /// </summary>
+    /// <param name="dbContext"> The <see cref="IPlexRipperDbContext"/> to query. </param>
+    /// <param name="id"> The id of the <see cref="DownloadTaskGeneric"/> to retrieve. </param>
+    /// <param name="type"> The type of the root <see cref="DownloadTaskGeneric"/> to retrieve. </param>
+    /// <param name="cancellationToken"> The token to monitor for cancellation requests. </param>
+    /// <returns> The <see cref="DownloadTaskGeneric"/> if found, otherwise null. </returns>
     public static async Task<DownloadTaskGeneric?> GetDownloadTaskAsync(
         this IPlexRipperDbContext dbContext,
         Guid id,
@@ -273,8 +288,7 @@ public static partial class DbContextExtensions
                     .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.Percentage, progress.Percentage)
-                                .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
+                            p.SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
                         cancellationToken
@@ -285,11 +299,116 @@ public static partial class DbContextExtensions
                     .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
                     .ExecuteUpdateAsync(
                         p =>
-                            p.SetProperty(x => x.Percentage, progress.Percentage)
-                                .SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
+                            p.SetProperty(x => x.DownloadSpeed, progress.DownloadSpeed)
                                 .SetProperty(x => x.DataReceived, progress.DataReceived)
                                 .SetProperty(x => x.DataTotal, progress.DataTotal),
                         cancellationToken
+                    );
+                break;
+            case DownloadTaskType.Movie:
+            case DownloadTaskType.TvShow:
+            case DownloadTaskType.Season:
+            case DownloadTaskType.Episode:
+                _log.Here()
+                    .Error(
+                        "{Name} of type {Type} is not supported in {MethodName}",
+                        nameof(DownloadTaskType),
+                        key.Type,
+                        nameof(UpdateDownloadProgress)
+                    );
+                return;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+
+    public static async Task<Result> ResetDownloadTaskProgress(
+        this IPlexRipperDbContext dbContext,
+        DownloadTaskKey key,
+        DownloadStatus downloadStatus,
+        CancellationToken cancellationToken = default
+    )
+    {
+        switch (key.Type)
+        {
+            case DownloadTaskType.MovieData:
+                await dbContext
+                    .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(
+                        p =>
+                            p.SetProperty(x => x.DownloadSpeed, 0)
+                                .SetProperty(x => x.DataReceived, 0)
+                                .SetProperty(x => x.FileTransferSpeed, 0)
+                                .SetProperty(x => x.FileDataTransferred, 0)
+                                .SetProperty(x => x.CurrentFileTransferPathIndex, 0)
+                                .SetProperty(x => x.CurrentFileTransferBytesOffset, 0)
+                                .SetProperty(x => x.DownloadStatus, downloadStatus),
+                        cancellationToken
+                    );
+                break;
+            case DownloadTaskType.EpisodeData:
+                await dbContext
+                    .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(
+                        p =>
+                            p.SetProperty(x => x.DownloadSpeed, 0)
+                                .SetProperty(x => x.DataReceived, 0)
+                                .SetProperty(x => x.FileTransferSpeed, 0)
+                                .SetProperty(x => x.FileDataTransferred, 0)
+                                .SetProperty(x => x.CurrentFileTransferPathIndex, 0)
+                                .SetProperty(x => x.CurrentFileTransferBytesOffset, 0)
+                                .SetProperty(x => x.DownloadStatus, downloadStatus),
+                        cancellationToken
+                    );
+                break;
+            case DownloadTaskType.Movie:
+            case DownloadTaskType.TvShow:
+            case DownloadTaskType.Season:
+            case DownloadTaskType.Episode:
+                return _log.Here()
+                    .Error(
+                        "{Name} of type {Type} is not supported in {MethodName}",
+                        nameof(DownloadTaskType),
+                        key.Type,
+                        nameof(ResetDownloadTaskProgress)
+                    )
+                    .ToResult();
+            case DownloadTaskType.None:
+            case DownloadTaskType.MoviePart:
+            case DownloadTaskType.EpisodePart:
+            default:
+                return Result.Fail($"Unsupported DownloadTaskType {key.Type}").LogError();
+        }
+
+        return Result.Ok();
+    }
+
+    public static async Task UpdateDownloadFileTransferProgress(
+        this IPlexRipperDbContext dbContext,
+        DownloadTaskKey key,
+        IDownloadFileTransferProgress progress
+    )
+    {
+        switch (key.Type)
+        {
+            case DownloadTaskType.MovieData:
+                await dbContext
+                    .DownloadTaskMovieFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(p =>
+                        p.SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                            .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
+                            .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
+                            .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)
+                    );
+                break;
+            case DownloadTaskType.EpisodeData:
+                await dbContext
+                    .DownloadTaskTvShowEpisodeFile.Where(x => x.Id == key.Id)
+                    .ExecuteUpdateAsync(p =>
+                        p.SetProperty(x => x.FileTransferSpeed, progress.FileTransferSpeed)
+                            .SetProperty(x => x.FileDataTransferred, progress.FileDataTransferred)
+                            .SetProperty(x => x.CurrentFileTransferPathIndex, progress.CurrentFileTransferPathIndex)
+                            .SetProperty(x => x.CurrentFileTransferBytesOffset, progress.CurrentFileTransferBytesOffset)
                     );
                 break;
             case DownloadTaskType.Movie:

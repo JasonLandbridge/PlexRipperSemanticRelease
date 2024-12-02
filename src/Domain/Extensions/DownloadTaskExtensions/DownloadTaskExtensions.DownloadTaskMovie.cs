@@ -19,6 +19,10 @@ public static partial class DownloadTaskExtensions
             {
                 downloadTaskMovieFile.PlexLibraryId = plexLibraryId;
                 downloadTaskMovieFile.PlexServerId = plexServerId;
+                foreach (var downloadWorkerTask in downloadTaskMovieFile.DownloadWorkerTasks)
+                {
+                    downloadWorkerTask.PlexServerId = plexServerId;
+                }
             }
         }
     }
@@ -74,6 +78,10 @@ public static partial class DownloadTaskExtensions
             {
                 downloadTaskTvShowEpisodeFile.PlexLibraryId = plexLibraryId;
                 downloadTaskTvShowEpisodeFile.PlexServerId = plexServerId;
+                foreach (var downloadWorkerTask in downloadTaskTvShowEpisodeFile.DownloadWorkerTasks)
+                {
+                    downloadWorkerTask.PlexServerId = plexServerId;
+                }
             }
         }
     }

@@ -616,55 +616,6 @@ namespace PlexRipper.Data.Migrations
                     b.ToTable("DownloadWorkerTasks");
                 });
 
-            modelBuilder.Entity("PlexRipper.Domain.FileTask", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasColumnOrder(0);
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DestinationDirectory")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<Guid>("DownloadTaskId")
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("DownloadTaskType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .IsUnicode(false)
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("FilePathsCompressed")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<long>("FileSize")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlexLibraryId")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("PlexServerId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PlexLibraryId");
-
-                    b.HasIndex("PlexServerId");
-
-                    b.ToTable("FileTasks");
-                });
-
             modelBuilder.Entity("PlexRipper.Domain.FolderPath", b =>
                 {
                     b.Property<int>("Id")
@@ -1808,6 +1759,12 @@ namespace PlexRipper.Data.Migrations
                 {
                     b.HasBaseType("PlexRipper.Domain.DownloadTaskBase");
 
+                    b.Property<long>("CurrentFileTransferBytesOffset")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("CurrentFileTransferPathIndex")
+                        .HasColumnType("INTEGER");
+
                     b.Property<long>("DataReceived")
                         .HasColumnType("INTEGER")
                         .HasColumnOrder(5);
@@ -1826,6 +1783,10 @@ namespace PlexRipper.Data.Migrations
                         .HasColumnType("INTEGER")
                         .HasColumnOrder(18);
 
+                    b.Property<long>("FileDataTransferred")
+                        .HasColumnType("INTEGER")
+                        .HasColumnOrder(5);
+
                     b.Property<string>("FileLocationUrl")
                         .IsRequired()
                         .HasColumnType("TEXT")
@@ -1840,10 +1801,6 @@ namespace PlexRipper.Data.Migrations
                     b.Property<long>("FileTransferSpeed")
                         .HasColumnType("INTEGER")
                         .HasColumnOrder(19);
-
-                    b.Property<decimal>("Percentage")
-                        .HasColumnType("TEXT")
-                        .HasColumnOrder(4);
 
                     b.Property<string>("Quality")
                         .IsRequired()
@@ -2026,25 +1983,6 @@ namespace PlexRipper.Data.Migrations
                         .IsRequired();
 
                     b.Navigation("DownloadTask");
-
-                    b.Navigation("PlexServer");
-                });
-
-            modelBuilder.Entity("PlexRipper.Domain.FileTask", b =>
-                {
-                    b.HasOne("PlexRipper.Domain.PlexLibrary", "PlexLibrary")
-                        .WithMany()
-                        .HasForeignKey("PlexLibraryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("PlexRipper.Domain.PlexServer", "PlexServer")
-                        .WithMany()
-                        .HasForeignKey("PlexServerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("PlexLibrary");
 
                     b.Navigation("PlexServer");
                 });

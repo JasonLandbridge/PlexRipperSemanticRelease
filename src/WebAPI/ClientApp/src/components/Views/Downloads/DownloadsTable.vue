@@ -41,11 +41,11 @@
 import type { DownloadProgressDTO, PlexServerDTO } from '@dto';
 import type { IDownloadTableNode, ISelection } from '@interfaces';
 import type { QTreeViewTableHeader } from '@props';
-import { useDownloadStore, useServerConnectionStore, useServerStore } from '@store';
+import { useDownloadStore, useServerConnectionStore, useServerStore, useI18n } from '#imports';
 
+const serverStore = useServerStore();
 const downloadStore = useDownloadStore();
 const serverConnectionStore = useServerConnectionStore();
-const serverStore = useServerStore();
 
 const { t } = useI18n();
 

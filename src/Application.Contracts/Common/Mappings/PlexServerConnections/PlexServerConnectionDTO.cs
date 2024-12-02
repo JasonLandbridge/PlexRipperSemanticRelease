@@ -30,7 +30,7 @@ public class PlexServerConnectionDTO
 
     public required bool IsPlexTvConnection { get; set; }
 
-    // TODO Remove this, connections now only have one status
+    // TODO: Remove this, connections now only have one status
     public required List<PlexServerStatusDTO> ServerStatusList { get; set; }
 
     public required PlexServerStatusDTO? LatestConnectionStatus { get; set; }

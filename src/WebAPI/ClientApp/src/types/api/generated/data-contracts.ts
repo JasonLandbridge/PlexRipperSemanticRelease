@@ -121,8 +121,6 @@ export interface DownloadProgressDTO {
   dataTotal: number;
   /** @format int64 */
   downloadSpeed: number;
-  /** @format int64 */
-  fileTransferSpeed: number;
   /** @format guid */
   id: string;
   mediaType: PlexMediaType;
@@ -145,8 +143,14 @@ export enum DownloadStatus {
   Deleted = "Deleted",
   Merging = "Merging",
   Moving = "Moving",
+  MergePaused = "MergePaused",
+  MovePaused = "MovePaused",
+  MergeFinished = "MergeFinished",
+  MoveFinished = "MoveFinished",
   Completed = "Completed",
   ServerUnreachable = "ServerUnreachable",
+  MoveError = "MoveError",
+  MergeError = "MergeError",
 }
 
 export interface DownloadTaskDTO {
@@ -231,6 +235,8 @@ export interface ErrorResponse {
 export interface FileMergeProgress {
   /** @format int64 */
   bytesRemaining: number;
+  /** @format int32 */
+  currentFilePathIndex: number;
   /** @format int64 */
   dataTotal: number;
   /** @format int64 */

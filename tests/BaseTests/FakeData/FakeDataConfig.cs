@@ -28,6 +28,8 @@ public class FakeDataConfig : BaseConfig<FakeDataConfig>
 
     public int TvShowEpisodeDownloadTasksCount { get; set; } = 0;
 
+    public int DownloadWorkerTasks { get; set; } = 0;
+
     #endregion
 
     public bool IncludeMultiPartMovies { get; set; }

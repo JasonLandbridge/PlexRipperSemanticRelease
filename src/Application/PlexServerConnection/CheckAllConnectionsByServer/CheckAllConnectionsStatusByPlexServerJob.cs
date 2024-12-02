@@ -79,7 +79,7 @@ public class CheckAllConnectionsStatusByPlexServerJob : IJob
             _log.Debug(
                 "{JobName} for servers with ids: {PlexServerIds} completed",
                 nameof(CheckAllConnectionsStatusByPlexServerJob),
-                plexServers
+                plexServers.Select(x => x.Id).ToList()
             );
         }
         catch (Exception e)

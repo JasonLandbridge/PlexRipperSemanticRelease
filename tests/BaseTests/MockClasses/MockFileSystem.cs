@@ -30,9 +30,11 @@ public class MockFileSystem : IFileSystem
 
     public Result CreateDirectory(string directory) => Result.Ok();
 
-    public Result<Stream> Open(string path, FileMode mode, FileAccess access, FileShare share) => Result.Ok();
+    public Result<Stream> Open(string path, FileMode mode, FileAccess access, FileShare share) =>
+        Result.Ok((Stream)FakeData.GetFileStream(10));
 
-    public Result<Stream> Create(string path, int bufferSize, FileOptions options) => Result.Ok();
+    public Result<Stream> Create(string path, int bufferSize, FileOptions options) =>
+        Result.Ok((Stream)FakeData.GetFileStream(0));
 
     public Result FileMove(string sourceFileName, string destFileName, bool overwrite = true) => Result.Ok();
 

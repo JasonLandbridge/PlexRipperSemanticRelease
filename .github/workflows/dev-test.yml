@@ -40,7 +40,7 @@ jobs:
                 run: bun run lint
                 working-directory: src/WebAPI/ClientApp/
     # Front-End-Integration-Tests:
-    #  Front-End-Integration-Tests: TODO Tests keep randomly failing during CI, need to investigate
+    #  Front-End-Integration-Tests: TODO: Tests keep randomly failing during CI, need to investigate
     #    defaults:
     #      run:
     #        working-directory: src/WebAPI/ClientApp/

@@ -46,29 +46,4 @@ public static partial class DownloadTaskExtensions
 
         return downloadWorkerTasks;
     }
-
-    public static FileTask ToFileTask(this DownloadTaskGeneric downloadTask)
-    {
-        if (!downloadTask.DownloadWorkerTasks.Any())
-            throw new Exception("DownloadWorkerTasks must be included before converting to FileTask");
-
-        return new FileTask
-        {
-            Id = 0,
-            CreatedAt = DateTime.UtcNow,
-            FilePathsCompressed = string.Join(
-                ';',
-                downloadTask.DownloadWorkerTasks.Select(x => x.DownloadFilePath).ToArray()
-            ),
-            FileName = downloadTask.FileName,
-            FileSize = downloadTask.DataTotal,
-            DownloadTaskId = downloadTask.Id,
-            DownloadTaskType = downloadTask.DownloadTaskType,
-            PlexServer = null,
-            PlexServerId = downloadTask.PlexServerId,
-            PlexLibrary = null,
-            PlexLibraryId = downloadTask.PlexLibraryId,
-            DestinationDirectory = downloadTask.DestinationDirectory,
-        };
-    }
 }

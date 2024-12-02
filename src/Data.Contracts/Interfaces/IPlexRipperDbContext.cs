@@ -13,7 +13,6 @@ public interface IPlexRipperDbContext : IDisposable
     public DbSet<DownloadWorkerLog> DownloadWorkerTasksLogs { get; }
     public DbSet<FolderPath> FolderPaths { get; }
 
-    public DbSet<FileTask> FileTasks { get; }
     public DbSet<Notification> Notifications { get; }
 
     public DbSet<PlexLibrary> PlexLibraries { get; }

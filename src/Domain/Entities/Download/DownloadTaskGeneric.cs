@@ -1,6 +1,6 @@
 namespace PlexRipper.Domain;
 
-public record DownloadTaskGeneric : IDownloadTaskProgress
+public record DownloadTaskGeneric : IDownloadTaskProgress, IDownloadFileTransferProgress
 {
     public required Guid Id { get; init; }
 
@@ -28,19 +28,11 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     public required DownloadStatus DownloadStatus { get; set; }
 
-    public required decimal Percentage { get; set; }
-
-    public required long DataReceived { get; set; }
-
-    public required long DataTotal { get; set; }
-
     public required DateTime CreatedAt { get; init; }
 
     public required string FileName { get; init; }
 
     public required bool IsDownloadable { get; init; }
-
-    public required long TimeRemaining { get; set; }
 
     /// <summary>
     /// Gets or sets the download directory appended to the MediaPath e.g: [DownloadPath]/[TvShow]/[Season]/ or  [DownloadPath]/[Movie]/.
@@ -59,9 +51,27 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
     /// </summary>
     public required string FileLocationUrl { get; init; }
 
+    #region Download Progress
+
+    public required long DataReceived { get; set; }
+
+    public required long DataTotal { get; set; }
+
     public required long DownloadSpeed { get; set; }
 
+    #endregion
+
+    #region File Transfer Progress
+
     public required long FileTransferSpeed { get; set; }
+
+    public required long FileDataTransferred { get; set; }
+
+    public required int CurrentFileTransferPathIndex { get; set; }
+
+    public required long CurrentFileTransferBytesOffset { get; set; }
+
+    #endregion
 
     #region Relationships
 
@@ -69,9 +79,9 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
     /// The nested <see cref="DownloadTaskGeneric"/> used for seasons and episodes.
     /// "Required = Required.Default" is used for ensuring its optional in the Typescript generating.
     /// </summary>
-    public required List<DownloadTaskGeneric> Children { get; set; } = new();
+    public required List<DownloadTaskGeneric> Children { get; set; } = [];
 
-    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; init; } = new();
+    public required List<DownloadWorkerTask> DownloadWorkerTasks { get; init; } = [];
 
     public required Guid ParentId { get; init; }
 
@@ -85,6 +95,16 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     #endregion
 
+    #region Helpers
+
+    public DownloadTaskPhase DownloadTaskPhase => DownloadTaskPhaseExtensions.FromPercentage(this, this);
+
+    public decimal Percentage => DownloadTaskPhaseExtensions.Percentage(DownloadTaskPhase, this, this);
+
+    public long Speed => DownloadTaskPhaseExtensions.Speed(DownloadTaskPhase, this, this);
+
+    public long TimeRemaining => DownloadTaskPhaseExtensions.TimeRemaining(DownloadTaskPhase, this, this);
+
     public DownloadTaskKey ToKey() =>
         new()
         {
@@ -96,4 +116,6 @@ public record DownloadTaskGeneric : IDownloadTaskProgress
 
     public override string ToString() =>
         $"DownloadTaskUpdate: [{DownloadTaskType}] [{DownloadStatus}] [{Title}] [Download Location: {DownloadDirectory}]";
+
+    #endregion
 }

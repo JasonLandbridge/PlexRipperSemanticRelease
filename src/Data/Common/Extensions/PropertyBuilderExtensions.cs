@@ -14,7 +14,7 @@ public static class PropertyBuilderExtensions
     public static PropertyBuilder<T> HasJsonValueConversion<T>(this PropertyBuilder<T> propertyBuilder)
         where T : class
     {
-        // TODO Could add JsonSchema Source Generators here to speed things up
+        // TODO:Could add JsonSchema Source Generators here to speed things up
         propertyBuilder.HasConversion(
             v => JsonSerializer.Serialize(v, DefaultJsonSerializerOptions.ConfigStandard),
             v => JsonSerializer.Deserialize<T>(v, DefaultJsonSerializerOptions.ConfigStandard)!

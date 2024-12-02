@@ -70,7 +70,7 @@ public class DownloadWorker : IDisposable
                 {
                     _log.Here()
                         .Warning(
-                            "Retry {retryCount} due to {exception.Message}. Retrying in {timeSpan.TotalSeconds}s.",
+                            "Retry {retryCount} due to {exceptionMessage}. Retrying in {timeSpanTotalSeconds} seconds.",
                             retryCount,
                             exception.Message,
                             timeSpan.TotalSeconds
@@ -180,7 +180,7 @@ public class DownloadWorker : IDisposable
             var loopIndex = 0;
             var emptyStreamResponse = 0;
             var stopwatch = Stopwatch.StartNew(); // Start timing for speed calculation
-            var previousBytesReceived = DownloadWorkerTask.BytesReceived; // Track bytes received at the last speed calculation
+            var previousBytesReceived = 0; // Track bytes received at the last speed calculation
 
             while (true)
             {
@@ -250,16 +250,20 @@ public class DownloadWorker : IDisposable
 
                 loopIndex++;
                 DownloadWorkerTask.BytesReceived += bytesRead;
+                previousBytesReceived += bytesRead;
 
                 // Calculate the speed based on the elapsed time and bytes downloaded since last check
                 if (stopwatch.ElapsedMilliseconds > 1000)
                 {
                     DownloadWorkerTask.ElapsedTime += 1;
-                    var bytesReceived = DownloadWorkerTask.BytesReceived - previousBytesReceived;
-                    var downloadSpeed = (long)Math.Floor(bytesReceived / (stopwatch.ElapsedMilliseconds / 1000.0)); // Bytes per second
 
-                    DownloadWorkerTask.DownloadSpeed = downloadSpeed;
-                    previousBytesReceived = DownloadWorkerTask.BytesReceived;
+                    // Bytes per second
+                    DownloadWorkerTask.DownloadSpeed = DataFormat.GetTransferSpeed(
+                        previousBytesReceived,
+                        stopwatch.Elapsed.TotalSeconds
+                    );
+
+                    previousBytesReceived = 0;
                     stopwatch.Restart();
                 }
 
