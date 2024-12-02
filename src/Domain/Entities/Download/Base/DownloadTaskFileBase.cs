@@ -176,5 +176,14 @@ public abstract class DownloadTaskFileBase : DownloadTaskBase, IDownloadTaskProg
     public override string ToString() =>
         $"[FileMergeProgress {Title} - {Percentage}% - {DataFormat.FormatSpeedString(Speed)} - {DataFormat.FormatSizeString(DataTotal - DataReceived)} / {DataFormat.FormatSizeString(DataTotal)} - {DataFormat.FormatTimeSpanString(TimeSpan.FromSeconds(TimeRemaining))}]";
 
+    public IDownloadFileTransferProgress ToFileTransferProgress() =>
+        new DownloadFileTransferProgress
+        {
+            FileTransferSpeed = FileTransferSpeed,
+            FileDataTransferred = FileDataTransferred,
+            CurrentFileTransferPathIndex = CurrentFileTransferPathIndex,
+            CurrentFileTransferBytesOffset = CurrentFileTransferBytesOffset,
+        };
+
     #endregion
 }

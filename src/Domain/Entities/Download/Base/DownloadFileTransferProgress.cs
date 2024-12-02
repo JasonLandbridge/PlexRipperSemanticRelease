@@ -1,6 +1,4 @@
-using PlexRipper.Domain;
-
-namespace Application.Contracts;
+namespace PlexRipper.Domain;
 
 public record DownloadFileTransferProgress : IDownloadFileTransferProgress
 {
