@@ -170,6 +170,8 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
 
                     if (stopwatch.ElapsedMilliseconds > 1000)
                     {
+                        _log.VerboseLine(downloadTask.ToString());
+
                         await _dbContext.UpdateDownloadFileTransferProgress(key, progress);
                         await _mediator.Send(new DownloadTaskUpdatedNotification(key), CancellationToken.None);
 

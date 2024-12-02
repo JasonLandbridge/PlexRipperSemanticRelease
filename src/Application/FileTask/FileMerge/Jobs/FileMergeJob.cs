@@ -1,14 +1,4 @@
-using System.Reactive.Concurrency;
-using System.Reactive.Linq;
-using System.Reactive.Subjects;
-using System.Reactive.Threading.Tasks;
-using Application.Contracts;
-using Data.Contracts;
-using Environment;
-using FileSystem.Contracts;
 using Logging.Interface;
-using Microsoft.EntityFrameworkCore;
-using PlexRipper.Application.Notifications;
 using Quartz;
 
 namespace PlexRipper.Application;
@@ -17,13 +7,11 @@ public class FileMergeJob : IJob
 {
     private readonly ILog _log;
     private readonly IMediator _mediator;
-    private readonly IPlexRipperDbContext _dbContext;
 
-    public FileMergeJob(ILog log, IMediator mediator, IPlexRipperDbContext dbContext)
+    public FileMergeJob(ILog log, IMediator mediator)
     {
         _log = log;
         _mediator = mediator;
-        _dbContext = dbContext;
     }
 
     public static string DownloadTaskIdParameter => "DownloadTaskId";
@@ -44,7 +32,6 @@ public class FileMergeJob : IJob
                 return;
             }
 
-            var token = context.CancellationToken;
             _log.Here()
                 .Debug(
                     "Executing job: {NameOfFileMergeJob} for {NameOfFileTaskId} with id: {FileTaskId}",
@@ -53,7 +40,7 @@ public class FileMergeJob : IJob
                     downloadTaskKey.Id
                 );
 
-            await _mediator.Send(new MergeFilesFromFileTaskCommand(downloadTaskKey), token);
+            await _mediator.Send(new MergeFilesFromFileTaskCommand(downloadTaskKey), context.CancellationToken);
         }
         catch (Exception e)
         {

@@ -20,8 +20,6 @@ public class BaseContainer : IDisposable
 
     private readonly ILifetimeScope _lifeTimeScope;
 
-    public Seed Seed => _factory.Seed;
-
     public string DatabaseName => _factory.MemoryDbName;
 
     /// <summary>
@@ -42,6 +40,7 @@ public class BaseContainer : IDisposable
     public static async Task<BaseContainer> Create(ILog log, Seed seed, Action<UnitTestDataConfig>? options = null)
     {
         var config = UnitTestDataConfig.FromOptions(options);
+
         EnvironmentExtensions.SetIntegrationTestMode(true);
 
         var memoryDbName = MockDatabase.GetMemoryDatabaseName();

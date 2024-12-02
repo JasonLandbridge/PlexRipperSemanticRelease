@@ -12,5 +12,6 @@ public static partial class FakeData
         return b;
     }
 
-    public static MemoryStream GetFileStream(double sizeInMib) => new(GetDownloadFile(sizeInMib));
+    public static MemoryStream GetFileStream(double sizeInMib = 0) =>
+        sizeInMib > 0 ? new MemoryStream(GetDownloadFile(sizeInMib)) : new MemoryStream();
 }

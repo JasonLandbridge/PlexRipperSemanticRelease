@@ -35,7 +35,8 @@ public class TestModule : Module
         builder.RegisterType<TestStreamTracker>().As<ITestStreamTracker>().SingleInstance();
         builder.RegisterType<MockDownloadFileStream>().As<IDownloadFileStream>().SingleInstance();
         builder.RegisterType<MockConfigManager>().As<IConfigManager>().SingleInstance();
-
+        builder.RegisterType<MockDirectorySystem>().As<IDirectorySystem>().SingleInstance();
+        builder.RegisterType<MockFileSystem>().As<IFileSystem>().SingleInstance();
         builder.RegisterType<MockSignalRService>().As<ISignalRService>().SingleInstance();
 
         SetMockedDependencies(builder);

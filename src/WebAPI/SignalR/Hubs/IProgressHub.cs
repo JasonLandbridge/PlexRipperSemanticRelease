@@ -26,13 +26,6 @@ public interface IProgressHub
     );
 
     /// <summary>
-    ///  Sends a media file merge progress update to the front-end.
-    /// </summary>
-    /// <param name="fileMergeProgress"></param>
-    /// <param name="cancellationToken"> The <see cref="CancellationToken"/> to use.</param>
-    Task FileMergeProgress(FileMergeProgress fileMergeProgress, CancellationToken cancellationToken = default);
-
-    /// <summary>
     ///  Sends a server connection check status progress update to the front-end.
     /// </summary>
     /// <param name="serverConnectionCheckStatusProgress"></param>

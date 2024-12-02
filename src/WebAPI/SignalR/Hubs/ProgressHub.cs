@@ -47,20 +47,6 @@ public class ProgressHub : Hub<IProgressHub>, IProgressHub
     }
 
     /// <inheritdoc/>
-    public async Task FileMergeProgress(
-        FileMergeProgress fileMergeProgress,
-        CancellationToken cancellationToken = default
-    )
-    {
-        _log.Debug(
-            "Sending progress: {MessageTypesNotification} => {@FileMergeProgress}",
-            MessageTypes.FileMergeProgress.ToString(),
-            fileMergeProgress
-        );
-        await Clients.All.FileMergeProgress(fileMergeProgress, cancellationToken);
-    }
-
-    /// <inheritdoc/>
     public async Task ServerConnectionCheckStatusProgress(
         ServerConnectionCheckStatusProgressDTO serverConnectionCheckStatusProgress,
         CancellationToken cancellationToken = default
