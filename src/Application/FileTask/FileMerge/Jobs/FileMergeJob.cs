@@ -60,7 +60,7 @@ public class FileMergeJob : IJob
 
             if (downloadTask!.DownloadStatus is DownloadStatus.MoveFinished or DownloadStatus.MergeFinished)
             {
-                // TODO - Delete the directory of the tv-show
+                // TODO: - Delete the directory of the tv-show
                 _directorySystem.DeleteDirectoryFromFilePath(downloadTask.FilePaths.First());
 
                 await _dbContext.SetDownloadStatus(downloadTaskKey, DownloadStatus.Completed);

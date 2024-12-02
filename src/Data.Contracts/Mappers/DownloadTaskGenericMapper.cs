@@ -11,7 +11,7 @@ public static class DownloadTaskGenericMapper
         var children = downloadTaskMovie.Children.Select(x => x.ToGeneric()).ToList();
         var child = children.FirstOrDefault();
 
-        // TODO calculate destination and download directory for parents instead of relying on children because those are not always retrieved
+        // TODO: calculate destination and download directory for parents instead of relying on children because those are not always retrieved
 
         var generic = new DownloadTaskGeneric
         {

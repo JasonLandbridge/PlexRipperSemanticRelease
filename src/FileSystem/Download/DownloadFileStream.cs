@@ -33,7 +33,7 @@ public class DownloadFileStream : IDownloadFileStream
             if (createDirectoryResult.IsFailed)
                 return createDirectoryResult.ToResult();
 
-            // TODO This might need to be determined sooner, like when adding downloadTasks
+            // TODO:This might need to be determined sooner, like when adding downloadTasks
             var availableSpace = _diskSystem.GetAvailableSpaceByDirectory(directory);
             if (availableSpace.IsFailed)
                 return availableSpace.ToResult();

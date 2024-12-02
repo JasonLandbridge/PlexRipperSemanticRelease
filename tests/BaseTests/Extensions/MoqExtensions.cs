@@ -7,7 +7,7 @@ namespace PlexRipper.BaseTests;
 
 public static class MoqExtensions
 {
-    // TODO rename to SendMediator
+    // TODO:rename to SendMediator
     public static ISetup<IMediator, Task<TResult>> SetupMediator<TResult>(
         this AutoMock mock,
         Func<IRequest<TResult>> request,

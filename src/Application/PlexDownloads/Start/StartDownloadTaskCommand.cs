@@ -45,7 +45,7 @@ public class StartDownloadTaskCommandHandler : IRequestHandler<StartDownloadTask
         if (key is null)
             return ResultExtensions.EntityNotFound(nameof(DownloadTaskGeneric), command.DownloadTaskGuid).LogError();
 
-        // TODO Improve performance by fetching ALL download tasks in one query
+        // TODO: Improve performance by fetching ALL download tasks in one query
         var downloadableChildTaskKeys = await _dbContext.GetDownloadableChildTaskKeys(key, cancellationToken);
         if (!downloadableChildTaskKeys.Any())
             return ResultExtensions.IsEmpty(nameof(downloadableChildTaskKeys)).LogWarning();
@@ -66,7 +66,7 @@ public class StartDownloadTaskCommandHandler : IRequestHandler<StartDownloadTask
                     if (startResult.IsFailed)
                         return startResult.LogError();
 
-                    // TODO - This should be done in the DownloadJob
+                    // TODO: - This should be done in the DownloadJob
                     await _dbContext.SetDownloadStatus(nextDownloadTaskKey, DownloadStatus.Downloading);
 
                     var activeDownloadKeys = await _downloadTaskScheduler.GetCurrentlyDownloadingKeysByServer(

@@ -111,7 +111,7 @@ public static partial class FakeData
                 {
                     movie.FullTitle = $"{movie.Title} ({movie.Year})";
 
-                    // TODO Need quality selector in the case of multiple quality media
+                    // TODO:Need quality selector in the case of multiple quality media
                     movie.MediaSize = movie.MovieData.First().Parts.Sum(x => x.Size);
                 }
             );

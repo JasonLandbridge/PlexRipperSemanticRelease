@@ -115,7 +115,7 @@ public class GenerateDownloadTaskTvShowEpisodesCommandHandler
                         _dbContext.DownloadTaskTvShowEpisode.Add(episodeDownloadTask);
                     }
 
-                    // TODO Quality Selector needs to be implemented here
+                    // TODO: Quality Selector needs to be implemented here
                     var episodeData = tvShowEpisode.EpisodeData.First();
 
                     // Map movieData to DownloadTaskMovieFile and add to movieDownloadTask

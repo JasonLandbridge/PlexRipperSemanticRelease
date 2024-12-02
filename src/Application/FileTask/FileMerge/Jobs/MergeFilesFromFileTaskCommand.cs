@@ -259,7 +259,7 @@ public class MergeFilesFromFileTaskCommandHandler : IRequestHandler<MergeFilesFr
     {
         await _dbContext.SetDownloadStatus(downloadTask.ToKey(), downloadTask.DownloadStatus);
 
-        // TODO This might not be needed
+        // TODO: This might not be needed
         await _dbContext
             .DownloadWorkerTasks.Where(x => x.DownloadTaskId == downloadTask.Id)
             .ExecuteUpdateAsync(p => p.SetProperty(x => x.DownloadStatus, downloadTask.DownloadStatus));

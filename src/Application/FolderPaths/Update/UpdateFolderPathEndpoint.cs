@@ -50,7 +50,7 @@ public class UpdateFolderPathEndpoint : BaseEndpoint<UpdateFolderPathEndpointReq
 
     public override async Task HandleAsync(UpdateFolderPathEndpointRequest req, CancellationToken ct)
     {
-        // TODO Should prevent updating reserved folder paths with id < 10
+        // TODO: Should prevent updating reserved folder paths with id < 10
         var folderPath = req.FolderPathDto!.ToModel();
         var folderPathDb = await _dbContext
             .FolderPaths.AsTracking()

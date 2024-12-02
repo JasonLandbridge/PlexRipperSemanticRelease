@@ -106,7 +106,7 @@ public class PlexMediaSlim : BaseEntity
                     HashId = "NotImplementedYet",
                 })
                 .Reverse() // This sorts from lowest to highest quality
-                .TakeLast(1) // TODO remove this when quality selector for downloading is implemented
+                .TakeLast(1) // TODO:remove this when quality selector for downloading is implemented
                 .ToList();
         }
     }

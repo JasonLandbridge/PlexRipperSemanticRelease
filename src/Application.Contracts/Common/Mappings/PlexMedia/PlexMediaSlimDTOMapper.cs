@@ -22,7 +22,7 @@ public static class PlexMediaSlimDTOMapper
             Type = source.Type,
             HasThumb = source.HasThumb,
             Qualities = source.Qualities.ToDTO(),
-            SearchTitle = string.Empty, // TODO Missing in PlexMediaSlim
+            SearchTitle = string.Empty, // TODO: Missing in PlexMediaSlim
             Key = source.Key,
             MetaDataKey = source.MetaDataKey,
             PlexToken = string.Empty,
