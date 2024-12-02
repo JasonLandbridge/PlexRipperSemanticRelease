@@ -70,7 +70,7 @@ public class DownloadWorker : IDisposable
                 {
                     _log.Here()
                         .Warning(
-                            "Retry {retryCount} due to {exception.Message}. Retrying in {timeSpan.TotalSeconds}s.",
+                            "Retry {retryCount} due to {exceptionMessage}. Retrying in {timeSpanTotalSeconds} seconds.",
                             retryCount,
                             exception.Message,
                             timeSpan.TotalSeconds
