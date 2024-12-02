@@ -57,7 +57,6 @@
 
 <script setup lang="ts">
 import { useGlobalStore } from '@store';
-import DiscordIcon from '@components/Icons/DiscordIcon.vue';
 import { DialogType } from '@enums';
 
 const { t } = useI18n();

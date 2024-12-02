@@ -69,7 +69,6 @@ export function generateDownloadProgressBase({
 		dataReceived: 0,
 		dataTotal: 1000000000, // 1 GB in bytes
 		downloadSpeed: 0,
-		fileTransferSpeed: 0,
 		mediaType: Convert.toPlexMediaType(type),
 		percentage: 0,
 		status: DownloadStatus.Queued,
