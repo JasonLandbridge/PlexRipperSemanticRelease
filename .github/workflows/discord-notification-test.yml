@@ -6,6 +6,7 @@ on:
 jobs:
     test-notification:
         name: Test discord notification
+        runs-on: ubuntu-latest
         steps:
             -   name: Notify Discord of Dev Release
                 uses: ./.github/workflows/steps/discord-dev-release-notification/
