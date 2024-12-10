@@ -5,5 +5,7 @@ on:
 
 jobs:
     test-notification:
-        -   name: Notify Discord of Dev Release
-            uses: ./.github/workflows/steps/discord-dev-release-notification/
+        name: Test discord notification
+        steps:
+            -   name: Notify Discord of Dev Release
+                uses: ./.github/workflows/steps/discord-dev-release-notification/
