@@ -60,3 +60,5 @@ jobs:
                     file: docker/Dockerfile
             -   name: Notify Discord of Dev Release
                 uses: ./.github/workflows/steps/discord-dev-release-notification/
+                with:
+                    webhook: ${{ secrets.DISCORD_RELEASES_CHANNEL_WEBHOOK }}
