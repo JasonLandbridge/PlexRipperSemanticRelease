@@ -10,7 +10,7 @@ runs:
             uses: sarisia/actions-status-discord@v1
             if: always()
             with:
-                webhook: ${{ secrets.DISCORD_RELEASES_CHANNEL_WEBHOOK }}
+                webhook: ${{ inputs.webhook }}
                 nodetail: true
                 title: "New PlexRipper development version has been released!"
                 description: |
