@@ -1,4 +1,8 @@
 name: 'Notify Discord of build status'
+inputs:
+    webhook:
+        description: 'The Discord webhook URL.'
+        required: true
 runs:
     using: 'composite'
     steps:
@@ -8,7 +12,6 @@ runs:
             with:
                 webhook: ${{ secrets.DISCORD_RELEASES_CHANNEL_WEBHOOK }}
                 nodetail: true
-                status: ${{ job.status }}
                 title: "New PlexRipper development version has been released!"
                 description: |
                     New development version on Docker has been released!
